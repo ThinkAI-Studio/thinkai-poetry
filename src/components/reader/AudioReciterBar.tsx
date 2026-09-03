@@ -85,7 +85,7 @@ export function AudioReciterBar({
         <button
           type="button"
           onClick={togglePlay}
-          className="w-11 h-11 flex items-center justify-center bg-[#2D5A3D] hover:bg-[#234730] text-white rounded-none transition-transform active:scale-95 shrink-0 shadow-md cursor-pointer"
+          className="w-11 h-11 flex items-center justify-center bg-[#2D5A3D] hover:bg-[#234730] text-white rounded-full transition-transform active:scale-95 shrink-0 shadow-md cursor-pointer"
         >
           {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 ml-0.5" />}
         </button>

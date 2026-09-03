@@ -91,7 +91,7 @@ export default function HomePage() {
         <div className="tai-card p-8 sm:p-12 relative overflow-hidden border-l-4 border-l-[#2D5A3D] shadow-md bg-white dark:bg-[#111114]">
           {/* Audio hint badge */}
           {featuredPoem.audio_url && (
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#2D5A3D]/10 text-[#2D5A3D] text-xs font-mono uppercase tracking-wider mb-6">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 bg-[#2D5A3D]/10 text-[#2D5A3D] text-xs font-mono uppercase tracking-wider rounded-full mb-6">
               <Volume2 className="w-3.5 h-3.5 animate-pulse" />
               <span>Có bản thu âm ngâm thơ</span>
             </div>
@@ -150,7 +150,7 @@ export default function HomePage() {
               className="tai-card group p-6 flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300"
             >
               <div>
-                <div className="w-full h-36 bg-neutral-100 dark:bg-neutral-900 mb-5 flex items-center justify-center relative overflow-hidden">
+                <div className="w-full h-36 bg-neutral-100 dark:bg-neutral-900 mb-5 flex items-center justify-center relative overflow-hidden rounded-xl border border-neutral-200/50 dark:border-neutral-800/50">
                   {col.cover_image_url && (
                     <Image
                       src={col.cover_image_url}
@@ -160,7 +160,7 @@ export default function HomePage() {
                       className="object-contain group-hover:scale-110 transition-transform duration-300 opacity-80"
                     />
                   )}
-                  <span className="absolute top-2.5 right-2.5 text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 bg-white/90 dark:bg-black/90 border border-neutral-200 dark:border-neutral-800">
+                  <span className="absolute top-2.5 right-2.5 text-[10px] font-mono uppercase tracking-wider px-2.5 py-0.5 bg-white/90 dark:bg-black/90 rounded-full border border-neutral-200 dark:border-neutral-800">
                     {col.poems_count} bài
                   </span>
                 </div>
@@ -197,7 +197,7 @@ export default function HomePage() {
           </div>
 
           {/* Filter tabs theo thể thơ */}
-          <div className="flex flex-wrap items-center gap-1.5 p-1 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 select-none">
+          <div className="flex flex-wrap items-center gap-1.5 p-1.5 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-full select-none shadow-xs">
             {[
               { id: "all", label: "Tất Cả" },
               { id: "luc_bat", label: "Lục Bát" },
@@ -209,9 +209,9 @@ export default function HomePage() {
                 type="button"
                 onClick={() => setSelectedForm(tab.id as any)}
                 className={cn(
-                  "px-3 py-1 text-xs font-mono tracking-wider uppercase transition-colors cursor-pointer",
+                  "px-4 py-1.5 text-xs font-mono tracking-wider uppercase transition-colors rounded-full cursor-pointer",
                   selectedForm === tab.id
-                    ? "bg-[#2D5A3D] text-white font-bold"
+                    ? "bg-[#2D5A3D] text-white font-bold shadow-sm"
                     : "text-neutral-600 dark:text-neutral-400 hover:text-black dark:hover:text-white"
                 )}
               >

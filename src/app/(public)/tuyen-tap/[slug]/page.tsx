@@ -47,7 +47,7 @@ export default async function CollectionDetailPage({
       {/* Header Tuyển Tập */}
       <div className="tai-card p-8 md:p-10 mb-12 flex flex-col md:flex-row items-center gap-8 border-l-4 border-l-[#2D5A3D]">
         {collection.cover_image_url && (
-          <div className="w-36 h-36 shrink-0 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800 flex items-center justify-center p-4">
+          <div className="w-36 h-36 shrink-0 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800 rounded-2xl flex items-center justify-center p-4 shadow-sm">
             <Image
               src={collection.cover_image_url}
               alt={collection.title}

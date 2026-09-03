@@ -85,11 +85,11 @@
   animation: floatPill var(--float-duration, 4s) ease-in-out infinite;
 }
 
-/* THINKAI STUDIO 0PX SHARP UTILITIES */
+/* SORA LATTICE SOFT BOTANICAL CARD UTILITIES */
 .tai-card {
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
-  border-radius: 0px !important;
+  border-radius: 1.25rem;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 

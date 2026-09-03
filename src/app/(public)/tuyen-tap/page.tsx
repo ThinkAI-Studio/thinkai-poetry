@@ -37,7 +37,7 @@ export default function CollectionsPage() {
           >
             <div>
               {/* Cover / Icon */}
-              <div className="w-full h-44 bg-neutral-100 dark:bg-neutral-900 mb-6 flex items-center justify-center relative overflow-hidden border border-neutral-200/60 dark:border-neutral-800">
+              <div className="w-full h-44 bg-neutral-100 dark:bg-neutral-900 mb-6 flex items-center justify-center relative overflow-hidden rounded-xl border border-neutral-200/60 dark:border-neutral-800">
                 {col.cover_image_url ? (
                   <Image
                     src={col.cover_image_url}
@@ -49,7 +49,7 @@ export default function CollectionsPage() {
                 ) : (
                   <BookMarked className="w-12 h-12 text-neutral-400" />
                 )}
-                <div className="absolute top-3 right-3 px-2.5 py-0.5 bg-white/90 dark:bg-black/90 text-[11px] font-mono uppercase tracking-wider border border-neutral-200 dark:border-neutral-800">
+                <div className="absolute top-3 right-3 px-2.5 py-0.5 bg-white/90 dark:bg-black/90 text-[11px] font-mono uppercase tracking-wider rounded-full border border-neutral-200 dark:border-neutral-800">
                   {col.poems_count} bài thơ
                 </div>
               </div>

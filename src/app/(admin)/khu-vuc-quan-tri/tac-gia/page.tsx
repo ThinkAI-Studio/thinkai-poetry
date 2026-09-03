@@ -48,7 +48,7 @@ export default function AdminAuthorProfilePage() {
       {/* Form & Live Preview Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Form */}
-        <form onSubmit={handleSave} className="p-6 bg-[#0D0D10] border border-white/10 flex flex-col gap-5">
+        <form onSubmit={handleSave} className="p-6 bg-[#0D0D10] border border-white/10 rounded-2xl flex flex-col gap-5 shadow-sm">
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-mono uppercase tracking-wider text-neutral-400">
               Họ và tên / Bút danh *
@@ -58,7 +58,7 @@ export default function AdminAuthorProfilePage() {
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="p-3 bg-[#08080A] border border-white/10 text-white font-serif text-base focus:outline-none focus:border-[#4ade80]"
+              className="p-3 bg-[#08080A] border border-white/10 text-white font-serif text-base rounded-xl focus:outline-none focus:border-[#4ade80]"
             />
           </div>
 
@@ -71,7 +71,7 @@ export default function AdminAuthorProfilePage() {
               value={period}
               onChange={(e) => setPeriod(e.target.value)}
               placeholder="VD: Văn học đương đại, Thơ trữ tình..."
-              className="p-3 bg-[#08080A] border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-[#4ade80]"
+              className="p-3 bg-[#08080A] border border-white/10 text-white font-mono text-xs rounded-xl focus:outline-none focus:border-[#4ade80]"
             />
           </div>
 
@@ -84,7 +84,7 @@ export default function AdminAuthorProfilePage() {
               value={avatarUrl}
               onChange={(e) => setAvatarUrl(e.target.value)}
               placeholder="/floral/flower-pink.png"
-              className="p-3 bg-[#08080A] border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-[#4ade80]"
+              className="p-3 bg-[#08080A] border border-white/10 text-white font-mono text-xs rounded-xl focus:outline-none focus:border-[#4ade80]"
             />
           </div>
 
@@ -96,7 +96,7 @@ export default function AdminAuthorProfilePage() {
               rows={4}
               value={bio}
               onChange={(e) => setBio(e.target.value)}
-              className="p-3 bg-[#08080A] border border-white/10 text-white font-serif text-sm leading-relaxed focus:outline-none focus:border-[#4ade80]"
+              className="p-3 bg-[#08080A] border border-white/10 text-white font-serif text-sm leading-relaxed rounded-xl focus:outline-none focus:border-[#4ade80]"
             />
           </div>
         </form>
@@ -107,15 +107,15 @@ export default function AdminAuthorProfilePage() {
             Xem trước khi hiển thị cho người đọc:
           </span>
 
-          <div className="tai-card p-6 border-l-4 border-l-[#2D5A3D] bg-[#FAF8F5] text-[#1A1A1A] flex flex-col sm:flex-row items-center sm:items-start gap-4">
-            <div className="w-16 h-16 shrink-0 bg-neutral-200 border border-neutral-300 flex items-center justify-center overflow-hidden">
+          <div className="tai-card p-6 rounded-2xl border-l-4 border-l-[#2D5A3D] bg-[#FAF8F5] text-[#1A1A1A] flex flex-col sm:flex-row items-center sm:items-start gap-4 shadow-sm">
+            <div className="w-16 h-16 shrink-0 bg-neutral-200 border border-neutral-300 rounded-full flex items-center justify-center overflow-hidden">
               {avatarUrl ? (
                 <Image
                   src={avatarUrl}
                   alt={name}
                   width={64}
                   height={64}
-                  className="object-cover"
+                  className="object-cover rounded-full"
                 />
               ) : (
                 <User className="w-6 h-6 text-neutral-500" />

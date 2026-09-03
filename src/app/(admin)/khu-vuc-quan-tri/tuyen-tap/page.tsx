@@ -62,7 +62,7 @@ export default function AdminCollectionsPage() {
       {showCreateForm && (
         <form
           onSubmit={handleCreate}
-          className="p-6 bg-[#0D0D10] border border-white/10 flex flex-col gap-4"
+          className="p-6 bg-[#0D0D10] border border-white/10 rounded-2xl flex flex-col gap-4 shadow-md"
         >
           <h3 className="font-serif font-bold text-base text-white flex items-center gap-2">
             <BookMarked className="w-4 h-4 text-[#4ade80]" />
@@ -79,7 +79,7 @@ export default function AdminCollectionsPage() {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="VD: Tuyển Tập Thơ Ánh Thịnh 2026"
-              className="p-3 bg-[#08080A] border border-white/10 text-white font-serif text-base focus:outline-none focus:border-[#4ade80]"
+              className="p-3 bg-[#08080A] border border-white/10 text-white font-serif text-base rounded-xl focus:outline-none focus:border-[#4ade80]"
             />
           </div>
 
@@ -92,7 +92,7 @@ export default function AdminCollectionsPage() {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Mô tả cảm xúc hoặc bối cảnh ra đời của tập thơ..."
-              className="p-3 bg-[#08080A] border border-white/10 text-white font-serif text-sm focus:outline-none focus:border-[#4ade80]"
+              className="p-3 bg-[#08080A] border border-white/10 text-white font-serif text-sm rounded-xl focus:outline-none focus:border-[#4ade80]"
             />
           </div>
 
@@ -100,7 +100,7 @@ export default function AdminCollectionsPage() {
             <button
               type="button"
               onClick={() => setShowCreateForm(false)}
-              className="px-4 py-2 text-xs font-mono text-neutral-400 hover:text-white"
+              className="px-4 py-2 text-xs font-mono text-neutral-400 hover:text-white rounded-full transition-colors"
             >
               Hủy
             </button>
@@ -116,11 +116,11 @@ export default function AdminCollectionsPage() {
         {collections.map((col) => (
           <div
             key={col.id}
-            className="p-6 bg-[#0D0D10] border border-white/10 flex flex-col justify-between"
+            className="p-6 bg-[#0D0D10] border border-white/10 rounded-2xl flex flex-col justify-between shadow-sm"
           >
             <div>
               <div className="flex items-center justify-between mb-4">
-                <span className="text-[11px] font-mono uppercase tracking-wider px-2 py-0.5 bg-white/5 border border-white/10 text-neutral-300">
+                <span className="text-[11px] font-mono uppercase tracking-wider px-2.5 py-0.5 bg-white/5 border border-white/10 text-neutral-300 rounded-full">
                   {col.poems_count} thi phẩm
                 </span>
                 <div className="flex items-center gap-2">

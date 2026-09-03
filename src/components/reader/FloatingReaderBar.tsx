@@ -47,8 +47,8 @@ export function FloatingReaderBar({
   return (
     <div
       className={cn(
-        "fixed bottom-6 right-6 z-40 flex items-center gap-1.5 p-1.5 rounded-none",
-        "bg-white/95 dark:bg-[#111114]/95 backdrop-blur-md border border-neutral-300 dark:border-neutral-800 shadow-xl",
+        "fixed bottom-6 right-6 z-40 flex items-center gap-1.5 p-2 px-2.5 rounded-full",
+        "bg-white/95 dark:bg-[#111114]/95 backdrop-blur-md border border-neutral-300 dark:border-neutral-800 shadow-2xl",
         "text-neutral-800 dark:text-neutral-200 transition-all select-none",
         className
       )}
@@ -59,9 +59,9 @@ export function FloatingReaderBar({
         onClick={() => changeTheme("ivory")}
         title="Nắng sớm (Sáng ngà)"
         className={cn(
-          "w-8 h-8 flex items-center justify-center rounded-none transition-colors",
+          "w-8 h-8 flex items-center justify-center rounded-full transition-colors",
           theme === "ivory"
-            ? "bg-[#2D5A3D] text-white"
+            ? "bg-[#2D5A3D] text-white shadow-sm"
             : "hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-600 dark:text-neutral-400"
         )}
       >
@@ -73,9 +73,9 @@ export function FloatingReaderBar({
         onClick={() => changeTheme("sepia")}
         title="Giấy dó cổ truyền (Sepia)"
         className={cn(
-          "w-8 h-8 flex items-center justify-center rounded-none transition-colors",
+          "w-8 h-8 flex items-center justify-center rounded-full transition-colors",
           theme === "sepia"
-            ? "bg-[#5C4F44] text-white"
+            ? "bg-[#5C4F44] text-white shadow-sm"
             : "hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-600 dark:text-neutral-400"
         )}
       >
@@ -87,9 +87,9 @@ export function FloatingReaderBar({
         onClick={() => changeTheme("dark")}
         title="Đêm sâu (Obsidian Dark)"
         className={cn(
-          "w-8 h-8 flex items-center justify-center rounded-none transition-colors",
+          "w-8 h-8 flex items-center justify-center rounded-full transition-colors",
           theme === "dark"
-            ? "bg-white text-neutral-950 font-bold"
+            ? "bg-white text-neutral-950 font-bold shadow-sm"
             : "hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-600 dark:text-neutral-400"
         )}
       >
@@ -103,7 +103,7 @@ export function FloatingReaderBar({
         type="button"
         onClick={handleZoomOut}
         title="Giảm cỡ chữ"
-        className="w-7 h-8 flex items-center justify-center hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-300"
+        className="w-7 h-8 flex items-center justify-center rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-300"
       >
         <Minus className="w-3.5 h-3.5" />
       </button>
@@ -116,7 +116,7 @@ export function FloatingReaderBar({
         type="button"
         onClick={handleZoomIn}
         title="Tăng cỡ chữ"
-        className="w-7 h-8 flex items-center justify-center hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-300"
+        className="w-7 h-8 flex items-center justify-center rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-300"
       >
         <Plus className="w-3.5 h-3.5" />
       </button>

@@ -92,11 +92,11 @@ export function PoemReaderView({ poem }: PoemReaderViewProps) {
         )}
       >
         {/* Nút Tạo Quote Card nổi ở góc */}
-        <div className="absolute top-4 right-4">
+        <div className="absolute top-5 right-5">
           <button
             type="button"
             onClick={() => setIsQuoteModalOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono tracking-wider uppercase bg-[#FAF8F5] dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-700 hover:border-[#2D5A3D] text-neutral-700 dark:text-neutral-300 transition-colors shadow-xs"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-mono tracking-wider uppercase bg-[#FAF8F5] dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-700 hover:border-[#2D5A3D] text-neutral-700 dark:text-neutral-300 transition-colors rounded-full shadow-xs cursor-pointer"
             title="Tạo ảnh trích dẫn câu thơ để chia sẻ"
           >
             <Quote className="w-3.5 h-3.5 text-[#2D5A3D]" />
@@ -134,15 +134,15 @@ export function PoemReaderView({ poem }: PoemReaderViewProps) {
 
       {/* THÔNG TIN TÁC GIẢ (CHỈ HIỂN THỊ KHI ADMIN BẬT: show_author_info === true) */}
       {poem.show_author_info && poem.author && (
-        <div className="tai-card p-6 md:p-8 mt-10 border-l-4 border-l-[#2D5A3D] flex flex-col sm:flex-row items-center sm:items-start gap-5">
-          <div className="w-20 h-20 shrink-0 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 flex items-center justify-center overflow-hidden">
+        <div className="tai-card rounded-2xl p-6 md:p-8 mt-10 border-l-4 border-l-[#2D5A3D] flex flex-col sm:flex-row items-center sm:items-start gap-5">
+          <div className="w-20 h-20 shrink-0 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-full flex items-center justify-center overflow-hidden shadow-sm">
             {poem.author.avatar_url ? (
               <Image
                 src={poem.author.avatar_url}
                 alt={poem.author.name}
                 width={80}
                 height={80}
-                className="object-cover"
+                className="object-cover rounded-full"
               />
             ) : (
               <User className="w-8 h-8 text-neutral-400" />

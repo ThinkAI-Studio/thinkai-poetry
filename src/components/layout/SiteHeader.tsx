@@ -39,7 +39,7 @@ export function SiteHeader() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="w-8 h-8 flex items-center justify-center bg-[#2D5A3D] text-white rounded-none transition-transform duration-300 group-hover:scale-105 shadow-sm">
+          <div className="w-8 h-8 flex items-center justify-center bg-[#2D5A3D] text-white rounded-xl transition-transform duration-300 group-hover:scale-105 shadow-sm">
             <Feather className="w-4 h-4" />
           </div>
           <div className="flex flex-col">
@@ -89,7 +89,7 @@ export function SiteHeader() {
 
       {/* Mobile Drawer */}
       {mobileOpen && (
-        <div className="md:hidden bg-[#FAF8F5] dark:bg-[#08080A] border-b border-neutral-200 dark:border-neutral-800 px-6 py-6 flex flex-col gap-4 animate-in slide-in-from-top-2">
+        <div className="md:hidden bg-[#FAF8F5] dark:bg-[#08080A] border-b border-neutral-200 dark:border-neutral-800 rounded-b-2xl shadow-xl px-6 py-6 flex flex-col gap-4 animate-in slide-in-from-top-2">
           {navLinks.map((link) => (
             <Link
               key={link.href}

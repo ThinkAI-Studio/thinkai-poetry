@@ -39,7 +39,7 @@ export default function AdminDashboardPage() {
 
       {/* 3 Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-        <div className="p-5 bg-[#0D0D10] border border-white/10 flex flex-col justify-between">
+        <div className="p-5 bg-[#0D0D10] border border-white/10 rounded-2xl shadow-sm flex flex-col justify-between">
           <div className="flex items-center justify-between text-neutral-400 mb-3">
             <span className="text-xs font-mono uppercase tracking-wider">Tổng Thi Phẩm</span>
             <BookOpen className="w-4 h-4 text-[#2D5A3D]" />
@@ -50,7 +50,7 @@ export default function AdminDashboardPage() {
           </span>
         </div>
 
-        <div className="p-5 bg-[#0D0D10] border border-white/10 flex flex-col justify-between">
+        <div className="p-5 bg-[#0D0D10] border border-white/10 rounded-2xl shadow-sm flex flex-col justify-between">
           <div className="flex items-center justify-between text-neutral-400 mb-3">
             <span className="text-xs font-mono uppercase tracking-wider">Tuyển Tập Thơ</span>
             <BookMarked className="w-4 h-4 text-[#2D5A3D]" />
@@ -61,7 +61,7 @@ export default function AdminDashboardPage() {
           </span>
         </div>
 
-        <div className="p-5 bg-[#0D0D10] border border-white/10 flex flex-col justify-between">
+        <div className="p-5 bg-[#0D0D10] border border-white/10 rounded-2xl shadow-sm flex flex-col justify-between">
           <div className="flex items-center justify-between text-neutral-400 mb-3">
             <span className="text-xs font-mono uppercase tracking-wider">Lượt Thưởng Thức</span>
             <Eye className="w-4 h-4 text-[#2D5A3D]" />
@@ -90,7 +90,7 @@ export default function AdminDashboardPage() {
           </Link>
         </div>
 
-        <div className="overflow-x-auto border border-white/10 bg-[#0D0D10]">
+        <div className="overflow-x-auto border border-white/10 bg-[#0D0D10] rounded-2xl">
           <table className="w-full text-left text-xs font-mono">
             <thead className="bg-white/5 border-b border-white/10 uppercase tracking-wider text-neutral-400">
               <tr>
@@ -113,11 +113,11 @@ export default function AdminDashboardPage() {
                   </td>
                   <td className="py-3.5 px-4">
                     {poem.show_author_info ? (
-                      <span className="px-2 py-0.5 bg-emerald-950 text-emerald-400 border border-emerald-800 text-[10px]">
+                      <span className="px-2.5 py-0.5 bg-emerald-950 text-emerald-400 border border-emerald-800 text-[10px] rounded-full">
                         Bật (Hiện)
                       </span>
                     ) : (
-                      <span className="px-2 py-0.5 bg-neutral-800 text-neutral-400 text-[10px]">
+                      <span className="px-2.5 py-0.5 bg-neutral-800 text-neutral-400 text-[10px] rounded-full">
                         Tắt (Ẩn)
                       </span>
                     )}

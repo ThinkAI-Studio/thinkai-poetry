@@ -17,14 +17,14 @@ export default function AuthorsPage() {
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 md:py-16">
       {/* Header Hồ sơ tác giả */}
       <div className="tai-card p-8 md:p-12 mb-12 flex flex-col md:flex-row items-center gap-8 border-l-4 border-l-[#2D5A3D]">
-        <div className="w-32 h-32 shrink-0 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 flex items-center justify-center overflow-hidden">
+        <div className="w-32 h-32 shrink-0 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-full flex items-center justify-center overflow-hidden shadow-md">
           {author.avatar_url ? (
             <Image
               src={author.avatar_url}
               alt={author.name}
               width={112}
               height={112}
-              className="object-contain"
+              className="object-cover rounded-full"
             />
           ) : (
             <User className="w-12 h-12 text-neutral-400" />

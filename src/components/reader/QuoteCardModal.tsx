@@ -115,7 +115,7 @@ export function QuoteCardModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div className="bg-white dark:bg-[#131316] w-full max-w-xl p-6 rounded-none border border-neutral-300 dark:border-neutral-800 shadow-2xl flex flex-col gap-5">
+      <div className="bg-white dark:bg-[#131316] w-full max-w-xl p-6 rounded-2xl border border-neutral-300 dark:border-neutral-800 shadow-2xl flex flex-col gap-5">
         {/* Header Modal */}
         <div className="flex items-center justify-between border-b border-neutral-200 dark:border-neutral-800 pb-3">
           <div className="flex items-center gap-2">
@@ -127,7 +127,7 @@ export function QuoteCardModal({
           <button
             type="button"
             onClick={onClose}
-            className="text-neutral-500 hover:text-neutral-900 dark:hover:text-white"
+            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-500 hover:text-neutral-900 dark:hover:text-white"
           >
             <X className="w-5 h-5" />
           </button>
@@ -137,7 +137,7 @@ export function QuoteCardModal({
         <div
           ref={cardRef}
           className={cn(
-            "p-8 relative overflow-hidden border shadow-lg transition-all duration-300 select-none",
+            "p-8 relative overflow-hidden rounded-xl border shadow-lg transition-all duration-300 select-none",
             themeStyles
           )}
           style={{ minHeight: "260px" }}
@@ -169,7 +169,7 @@ export function QuoteCardModal({
             value={quote}
             onChange={(e) => setQuote(e.target.value)}
             rows={3}
-            className="w-full p-2.5 text-sm font-serif border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100 rounded-none focus:outline-none focus:border-[#2D5A3D]"
+            className="w-full p-3 text-sm font-serif border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100 rounded-xl focus:outline-none focus:border-[#2D5A3D]"
           />
 
           {/* Chọn Theme Card */}
@@ -186,9 +186,9 @@ export function QuoteCardModal({
                 type="button"
                 onClick={() => setCardTheme(t.id as any)}
                 className={cn(
-                  "px-3 py-1 text-xs font-mono rounded-none border transition-colors",
+                  "px-3.5 py-1.5 text-xs font-mono rounded-full border transition-colors cursor-pointer",
                   cardTheme === t.id
-                    ? "bg-[#2D5A3D] text-white border-[#2D5A3D]"
+                    ? "bg-[#2D5A3D] text-white border-[#2D5A3D] shadow-sm"
                     : "border-neutral-300 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800"
                 )}
               >

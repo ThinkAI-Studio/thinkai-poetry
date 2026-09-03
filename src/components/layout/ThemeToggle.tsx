@@ -48,7 +48,7 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
 
   if (!mounted) {
     return (
-      <div className={cn("w-8 h-8 rounded-none border border-neutral-200 dark:border-neutral-800", className)} />
+      <div className={cn("w-8 h-8 rounded-full border border-neutral-200 dark:border-neutral-800", className)} />
     );
   }
 
@@ -59,8 +59,8 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
       aria-label={isDark ? "Chuyển sang giao diện Sáng ngà" : "Chuyển sang giao diện Đêm sâu"}
       title={isDark ? "Chế độ Sáng ngà (Botanical Light)" : "Chế độ Đêm sâu (Obsidian Dark)"}
       className={cn(
-        "relative w-8 h-8 flex items-center justify-center rounded-none cursor-pointer select-none",
-        "border transition-colors duration-300 outline-none",
+        "relative w-8 h-8 flex items-center justify-center rounded-full cursor-pointer select-none",
+        "border transition-colors duration-300 outline-none shadow-xs",
         isDark
           ? "bg-[#111114] border-neutral-800 text-amber-300 hover:border-neutral-700 hover:bg-neutral-900"
           : "bg-white/80 border-neutral-300/80 text-neutral-700 hover:border-neutral-400 hover:bg-neutral-100",

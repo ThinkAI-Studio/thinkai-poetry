@@ -91,7 +91,7 @@ export default function NewPoemPage() {
               value={title}
               onChange={handleTitleChange}
               placeholder="VD: Trăng Thu Dạ Khúc"
-              className="p-3 bg-[#0D0D10] border border-white/10 text-white font-serif text-base focus:outline-none focus:border-[#4ade80]"
+              className="p-3 bg-[#0D0D10] border border-white/10 text-white font-serif text-base rounded-xl focus:outline-none focus:border-[#4ade80]"
             />
           </div>
 
@@ -104,7 +104,7 @@ export default function NewPoemPage() {
               value={slug}
               onChange={(e) => setSlug(e.target.value)}
               placeholder="trang-thu-da-khuc"
-              className="p-3 bg-[#0D0D10] border border-white/10 text-neutral-400 font-mono text-xs focus:outline-none focus:border-[#4ade80]"
+              className="p-3 bg-[#0D0D10] border border-white/10 text-neutral-400 font-mono text-xs rounded-xl focus:outline-none focus:border-[#4ade80]"
             />
           </div>
         </div>
@@ -118,7 +118,7 @@ export default function NewPoemPage() {
             <select
               value={formType}
               onChange={(e) => setFormType(e.target.value as any)}
-              className="p-3 bg-[#0D0D10] border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-[#4ade80]"
+              className="p-3 bg-[#0D0D10] border border-white/10 text-white font-mono text-xs rounded-xl focus:outline-none focus:border-[#4ade80]"
             >
               <option value="luc_bat">Thơ Lục Bát (6 - 8)</option>
               <option value="tu_do">Thơ Tự Do</option>
@@ -134,7 +134,7 @@ export default function NewPoemPage() {
             <select
               value={collectionId}
               onChange={(e) => setCollectionId(e.target.value)}
-              className="p-3 bg-[#0D0D10] border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-[#4ade80]"
+              className="p-3 bg-[#0D0D10] border border-white/10 text-white font-mono text-xs rounded-xl focus:outline-none focus:border-[#4ade80]"
             >
               {mockCollections.map((c) => (
                 <option key={c.id} value={c.id}>
@@ -155,7 +155,7 @@ export default function NewPoemPage() {
             value={excerpt}
             onChange={(e) => setExcerpt(e.target.value)}
             placeholder="Hai câu thơ tâm đắc nhất dùng để giới thiệu..."
-            className="p-3 bg-[#0D0D10] border border-white/10 text-white font-serif text-sm focus:outline-none focus:border-[#4ade80]"
+            className="p-3 bg-[#0D0D10] border border-white/10 text-white font-serif text-sm rounded-xl focus:outline-none focus:border-[#4ade80]"
           />
         </div>
 
@@ -175,7 +175,7 @@ export default function NewPoemPage() {
             value={poemText}
             onChange={(e) => setPoemText(e.target.value)}
             placeholder={`Gió xuân thổi nhẹ qua rèm\nNhành hoa hé nụ dịu êm đón ngày\nSương giăng mờ ảo hàng cây\nHương xưa còn đọng tháng ngày phôi pha.\n\nThềm rêu vương vấn bước qua...`}
-            className="p-4 bg-[#0D0D10] border border-white/10 text-white font-serif text-lg leading-loose focus:outline-none focus:border-[#4ade80] rounded-none"
+            className="p-4 bg-[#0D0D10] border border-white/10 text-white font-serif text-lg leading-loose focus:outline-none focus:border-[#4ade80] rounded-xl"
           />
         </div>
 
@@ -190,16 +190,16 @@ export default function NewPoemPage() {
             value={audioUrl}
             onChange={(e) => setAudioUrl(e.target.value)}
             placeholder="https://... hoặc tải lên Supabase Storage"
-            className="p-3 bg-[#0D0D10] border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-[#4ade80]"
+            className="p-3 bg-[#0D0D10] border border-white/10 text-white font-mono text-xs rounded-xl focus:outline-none focus:border-[#4ade80]"
           />
         </div>
 
         {/* ========================================================= */}
         {/* CÔNG TẮC BẬT / TẮT THÔNG TIN TÁC GIẢ (USER REQUIREMENT)   */}
         {/* ========================================================= */}
-        <div className="p-4 bg-[#0D0D10] border border-white/10 flex items-center justify-between">
+        <div className="p-4 bg-[#0D0D10] border border-white/10 rounded-2xl flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-white/5 flex items-center justify-center text-[#4ade80]">
+            <div className="w-8 h-8 bg-white/5 flex items-center justify-center rounded-lg text-[#4ade80]">
               <UserCheck className="w-4 h-4" />
             </div>
             <div className="flex flex-col">
@@ -227,7 +227,7 @@ export default function NewPoemPage() {
         <div className="flex items-center justify-end gap-4 pt-4 border-t border-white/10">
           <Link
             href="/khu-vuc-quan-tri/tho"
-            className="px-5 py-2.5 text-xs font-mono uppercase text-neutral-400 hover:text-white"
+            className="px-5 py-2.5 text-xs font-mono uppercase text-neutral-400 hover:text-white rounded-full transition-colors"
           >
             Hủy bỏ
           </Link>

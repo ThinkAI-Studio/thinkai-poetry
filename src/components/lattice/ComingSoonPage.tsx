@@ -53,7 +53,7 @@ export function ComingSoonPage({
 
         {/* Form đăng ký nhận tin */}
         {isSubscribed ? (
-          <div className="p-4 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200 font-serif text-sm">
+          <div className="p-4 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200 font-serif text-sm rounded-xl">
             ✓ Cảm ơn bạn! Chúng tôi sẽ gửi thông báo đến bạn ngay khi không gian này mở cửa.
           </div>
         ) : (
@@ -67,7 +67,7 @@ export function ComingSoonPage({
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Nhập email của bạn..."
               required
-              className="w-full px-4 py-3 text-sm font-serif bg-white dark:bg-[#131316] border border-neutral-300 dark:border-neutral-700 text-neutral-900 dark:text-neutral-100 rounded-none focus:outline-none focus:border-[#2D5A3D]"
+              className="w-full px-5 py-3 text-sm font-serif bg-white dark:bg-[#131316] border border-neutral-300 dark:border-neutral-700 text-neutral-900 dark:text-neutral-100 rounded-full focus:outline-none focus:border-[#2D5A3D] shadow-xs"
             />
             <WipeButton
               type="submit"

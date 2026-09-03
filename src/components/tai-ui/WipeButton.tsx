@@ -92,7 +92,7 @@ export const WipeButton = React.forwardRef<HTMLButtonElement, WipeButtonProps>(
                 setWipeState("idle");
               }
             }}
-            className="absolute inset-0 pointer-events-none rounded-none"
+            className="absolute inset-0 pointer-events-none rounded-full"
             style={{ backgroundColor: wipeColor, zIndex: 0 }}
           />
         )}
@@ -109,7 +109,7 @@ export const WipeButton = React.forwardRef<HTMLButtonElement, WipeButtonProps>(
     );
 
     const baseClasses = cn(
-      "relative inline-flex items-center justify-center overflow-hidden rounded-none font-mono text-xs tracking-wider uppercase transition-all duration-300 cursor-pointer select-none outline-none focus-visible:ring-1 focus-visible:ring-black/30 active:scale-[0.98] border shadow-[inset_0_1px_0_0_rgba(255,255,255,0.2)]",
+      "relative inline-flex items-center justify-center overflow-hidden rounded-full font-mono text-xs tracking-wider uppercase transition-all duration-300 cursor-pointer select-none outline-none focus-visible:ring-1 focus-visible:ring-black/30 active:scale-[0.98] border shadow-[inset_0_1px_0_0_rgba(255,255,255,0.2)]",
       className
     );
 

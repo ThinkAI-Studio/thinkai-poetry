@@ -46,10 +46,10 @@ export default function AdminLoginPage() {
 
   return (
     <div className="min-h-screen bg-[#08080A] flex flex-col items-center justify-center px-4">
-      <div className="w-full max-w-md p-8 bg-[#0D0D10] border border-white/10 shadow-2xl flex flex-col gap-6">
+      <div className="w-full max-w-md p-8 bg-[#0D0D10] border border-white/10 rounded-2xl shadow-2xl flex flex-col gap-6">
         {/* Header */}
         <div className="flex flex-col items-center text-center gap-3">
-          <div className="w-12 h-12 bg-[#2D5A3D] text-white flex items-center justify-center shadow-md">
+          <div className="w-12 h-12 bg-[#2D5A3D] text-white flex items-center justify-center rounded-xl shadow-md">
             <Feather className="w-6 h-6" />
           </div>
 
@@ -63,7 +63,7 @@ export default function AdminLoginPage() {
         </div>
 
         {error && (
-          <div className="p-3 bg-red-950/60 border border-red-500/40 text-red-300 text-xs font-mono text-center">
+          <div className="p-3 bg-red-950/60 border border-red-500/40 text-red-300 text-xs font-mono text-center rounded-lg">
             {error}
           </div>
         )}
@@ -81,11 +81,11 @@ export default function AdminLoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Nhập mật khẩu (anhthinh)..."
-              className="p-3.5 bg-[#08080A] border border-white/15 text-white font-mono text-sm focus:outline-none focus:border-[#4ade80]"
+              className="p-3.5 bg-[#08080A] border border-white/15 text-white font-mono text-sm rounded-xl focus:outline-none focus:border-[#4ade80]"
             />
           </div>
 
-          <div className="p-3 bg-white/[0.03] border border-white/5 flex items-center gap-2 text-[11px] font-mono text-neutral-400">
+          <div className="p-3 bg-white/[0.03] border border-white/5 flex items-center gap-2 text-[11px] font-mono text-neutral-400 rounded-lg">
             <Key className="w-3.5 h-3.5 text-[#4ade80] shrink-0" />
             <span>Gợi ý test nhanh: Mật khẩu là <strong>anhthinh</strong></span>
           </div>
