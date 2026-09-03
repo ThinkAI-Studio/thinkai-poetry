@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Sun, Moon, BookOpen, Type, Minus, Plus } from "lucide-react";
+import { Sun, Moon, BookOpen, Minus, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export type ReaderTheme = "ivory" | "sepia" | "dark";
@@ -20,25 +20,40 @@ export function FloatingReaderBar({
   const [theme, setTheme] = useState<ReaderTheme>("ivory");
 
   useEffect(() => {
-    // Load stored theme
-    const saved = localStorage.getItem("reader-theme") as ReaderTheme | null;
-    if (saved) {
-      setTheme(saved);
-      document.documentElement.setAttribute("data-reader-theme", saved);
-    }
+    const syncTheme = () => {
+      const readerTheme = document.documentElement.getAttribute("data-reader-theme") as ReaderTheme | null;
+      const isDark = document.documentElement.classList.contains("dark");
+      if (readerTheme === "sepia") {
+        setTheme("sepia");
+      } else if (readerTheme === "dark" || isDark) {
+        setTheme("dark");
+      } else {
+        setTheme("ivory");
+      }
+    };
+
+    syncTheme();
+    window.addEventListener("themechange", syncTheme);
+    return () => window.removeEventListener("themechange", syncTheme);
   }, []);
 
   const changeTheme = (newTheme: ReaderTheme) => {
     setTheme(newTheme);
     localStorage.setItem("reader-theme", newTheme);
     document.documentElement.setAttribute("data-reader-theme", newTheme);
+
     if (newTheme === "dark") {
       document.documentElement.classList.add("dark");
       localStorage.setItem("site-theme", "dark");
+    } else if (newTheme === "sepia") {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("site-theme", "sepia");
     } else {
       document.documentElement.classList.remove("dark");
       localStorage.setItem("site-theme", "light");
     }
+
+    window.dispatchEvent(new Event("themechange"));
   };
 
   const handleZoomOut = () => setFontSize((prev) => Math.max(15, prev - 1));
@@ -59,7 +74,7 @@ export function FloatingReaderBar({
         onClick={() => changeTheme("ivory")}
         title="Nắng sớm (Sáng ngà)"
         className={cn(
-          "w-8 h-8 flex items-center justify-center rounded-full transition-colors",
+          "w-8 h-8 flex items-center justify-center rounded-full transition-colors cursor-pointer",
           theme === "ivory"
             ? "bg-[#2D5A3D] text-white shadow-sm"
             : "hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-600 dark:text-neutral-400"
@@ -73,7 +88,7 @@ export function FloatingReaderBar({
         onClick={() => changeTheme("sepia")}
         title="Giấy dó cổ truyền (Sepia)"
         className={cn(
-          "w-8 h-8 flex items-center justify-center rounded-full transition-colors",
+          "w-8 h-8 flex items-center justify-center rounded-full transition-colors cursor-pointer",
           theme === "sepia"
             ? "bg-[#5C4F44] text-white shadow-sm"
             : "hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-600 dark:text-neutral-400"
@@ -87,7 +102,7 @@ export function FloatingReaderBar({
         onClick={() => changeTheme("dark")}
         title="Đêm sâu (Obsidian Dark)"
         className={cn(
-          "w-8 h-8 flex items-center justify-center rounded-full transition-colors",
+          "w-8 h-8 flex items-center justify-center rounded-full transition-colors cursor-pointer",
           theme === "dark"
             ? "bg-white text-neutral-950 font-bold shadow-sm"
             : "hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-600 dark:text-neutral-400"
@@ -103,7 +118,7 @@ export function FloatingReaderBar({
         type="button"
         onClick={handleZoomOut}
         title="Giảm cỡ chữ"
-        className="w-7 h-8 flex items-center justify-center rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-300"
+        className="w-7 h-8 flex items-center justify-center rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-300 cursor-pointer"
       >
         <Minus className="w-3.5 h-3.5" />
       </button>
@@ -116,7 +131,7 @@ export function FloatingReaderBar({
         type="button"
         onClick={handleZoomIn}
         title="Tăng cỡ chữ"
-        className="w-7 h-8 flex items-center justify-center rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-300"
+        className="w-7 h-8 flex items-center justify-center rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-300 cursor-pointer"
       >
         <Plus className="w-3.5 h-3.5" />
       </button>

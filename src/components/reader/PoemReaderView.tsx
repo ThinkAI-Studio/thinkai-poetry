@@ -96,7 +96,7 @@ export function PoemReaderView({ poem }: PoemReaderViewProps) {
           <button
             type="button"
             onClick={() => setIsQuoteModalOpen(true)}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-mono tracking-wider uppercase bg-[#FAF8F5] dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-700 hover:border-[#2D5A3D] text-neutral-700 dark:text-neutral-300 transition-colors rounded-full shadow-xs cursor-pointer"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-mono tracking-wider uppercase bg-[var(--bg-page)] border border-[var(--border-subtle)] hover:border-[#2D5A3D] text-[var(--text-primary)] transition-colors rounded-full shadow-xs cursor-pointer"
             title="Tạo ảnh trích dẫn câu thơ để chia sẻ"
           >
             <Quote className="w-3.5 h-3.5 text-[#2D5A3D]" />
@@ -106,22 +106,22 @@ export function PoemReaderView({ poem }: PoemReaderViewProps) {
 
         {/* Nội dung bài thơ */}
         <div
-          className="font-serif leading-loose text-neutral-900 dark:text-neutral-100 max-w-lg mx-auto"
-          style={{ fontSize: `${fontSize}px` }}
+          className="font-serif leading-loose max-w-lg mx-auto"
+          style={{ fontSize: `${fontSize}px`, color: "var(--text-primary)" }}
           dangerouslySetInnerHTML={{ __html: poem.content_html }}
         />
 
         {/* Chú giải từ cổ / Điển cố (nếu có) */}
         {poem.annotations && poem.annotations.length > 0 && (
-          <div className="mt-12 pt-6 border-t border-neutral-200 dark:border-neutral-800">
-            <h4 className="font-serif text-sm font-bold uppercase tracking-wider text-neutral-500 mb-3 flex items-center gap-2">
+          <div className="mt-12 pt-6 border-t border-[var(--border-subtle)]">
+            <h4 className="font-serif text-sm font-bold uppercase tracking-wider text-[var(--text-muted)] mb-3 flex items-center gap-2">
               <Sparkles className="w-3.5 h-3.5 text-[#2D5A3D]" />
               <span>Chú giải từ vựng & Điển cố</span>
             </h4>
-            <ul className="flex flex-col gap-2 text-sm font-serif text-neutral-600 dark:text-neutral-400">
+            <ul className="flex flex-col gap-2 text-sm font-serif text-[var(--text-secondary)]">
               {poem.annotations.map((ann) => (
                 <li key={ann.id}>
-                  <strong className="text-neutral-900 dark:text-neutral-200">
+                  <strong className="text-[var(--text-primary)] font-bold">
                     {ann.term}:
                   </strong>{" "}
                   {ann.explanation}

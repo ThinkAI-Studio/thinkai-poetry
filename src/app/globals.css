@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @layer base {
   :root {
     --bg-page: #FAF8F5;
@@ -7,11 +9,25 @@
     --text-primary: #1A1A1A;
     --text-secondary: #5A5A5A;
     --text-muted: #8E8E8E;
-    --border-subtle: rgba(0, 0, 0, 0.07);
-    --border-strong: rgba(0, 0, 0, 0.15);
+    --border-subtle: rgba(0, 0, 0, 0.08);
+    --border-strong: rgba(0, 0, 0, 0.18);
     --accent-green: #2D5A3D;
     --accent-green-hover: #234730;
     --accent-pink: #F8D7DA;
+    color-scheme: light;
+  }
+
+  /* Toàn trang Dark Mode (Obsidian Dark) */
+  .dark,
+  [data-reader-theme="dark"] {
+    --bg-page: #08080A;
+    --bg-card: #111114;
+    --text-primary: #F4F4F5;
+    --text-secondary: #A1A1AA;
+    --text-muted: #71717A;
+    --border-subtle: rgba(255, 255, 255, 0.08);
+    --border-strong: rgba(255, 255, 255, 0.18);
+    color-scheme: dark;
   }
 
   /* Chế độ đọc Thơ: Giấy dó truyền thống (Sepia) */
@@ -21,25 +37,15 @@
     --text-primary: #2C251E;
     --text-secondary: #5C4F44;
     --text-muted: #8C7B6D;
-    --border-subtle: rgba(44, 37, 30, 0.1);
+    --border-subtle: rgba(44, 37, 30, 0.12);
     --border-strong: rgba(44, 37, 30, 0.22);
-  }
-
-  /* Chế độ đọc Thơ: Đêm tĩnh lặng (Obsidian Dark - ThinkAI) */
-  [data-reader-theme="dark"] {
-    --bg-page: #08080A;
-    --bg-card: #111114;
-    --text-primary: #F4F4F5;
-    --text-secondary: #A1A1AA;
-    --text-muted: #71717A;
-    --border-subtle: rgba(255, 255, 255, 0.08);
-    --border-strong: rgba(255, 255, 255, 0.18);
+    color-scheme: light;
   }
 
   body {
     background-color: var(--bg-page);
     color: var(--text-primary);
-    transition: background-color 0.4s ease, color 0.4s ease;
+    transition: background-color 0.3s ease, color 0.3s ease;
     overflow-x: hidden;
   }
 }
@@ -87,7 +93,8 @@
 
 /* SORA LATTICE SOFT BOTANICAL CARD UTILITIES */
 .tai-card {
-  background: var(--bg-card);
+  background-color: var(--bg-card);
+  color: var(--text-primary);
   border: 1px solid var(--border-subtle);
   border-radius: 1.25rem;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);

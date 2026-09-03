@@ -9,7 +9,7 @@ export default function PublicLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen flex flex-col bg-[#FAF8F5] dark:bg-[#08080A] text-[#1A1A1A] dark:text-[#F4F4F5] transition-colors duration-400">
+    <div className="min-h-screen flex flex-col bg-[var(--bg-page)] text-[var(--text-primary)] transition-colors duration-300">
       <SmoothScroll />
       <SiteHeader />
       <main className="flex-1 pt-20">{children}</main>

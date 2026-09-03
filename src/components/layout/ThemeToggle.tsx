@@ -15,18 +15,17 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
 
   useEffect(() => {
     setMounted(true);
-    const savedTheme = localStorage.getItem("site-theme");
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const activeDark = savedTheme === "dark" || (!savedTheme && prefersDark);
+    const syncTheme = () => {
+      const isHtmlDark = document.documentElement.classList.contains("dark");
+      const savedTheme = localStorage.getItem("site-theme");
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const activeDark = isHtmlDark || savedTheme === "dark" || (!savedTheme && prefersDark);
+      setIsDark(activeDark);
+    };
 
-    setIsDark(activeDark);
-    if (activeDark) {
-      document.documentElement.classList.add("dark");
-      document.documentElement.setAttribute("data-reader-theme", "dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-      document.documentElement.setAttribute("data-reader-theme", "ivory");
-    }
+    syncTheme();
+    window.addEventListener("themechange", syncTheme);
+    return () => window.removeEventListener("themechange", syncTheme);
   }, []);
 
   const toggleTheme = () => {
@@ -44,6 +43,7 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
       localStorage.setItem("site-theme", "light");
       localStorage.setItem("reader-theme", "ivory");
     }
+    window.dispatchEvent(new Event("themechange"));
   };
 
   if (!mounted) {

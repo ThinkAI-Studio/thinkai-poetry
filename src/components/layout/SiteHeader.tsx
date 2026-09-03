@@ -32,7 +32,7 @@ export function SiteHeader() {
       className={cn(
         "fixed top-0 left-0 right-0 z-40 transition-all duration-300",
         isScrolled
-          ? "bg-[#FAF8F5]/90 dark:bg-[#08080A]/90 backdrop-blur-md border-b border-neutral-200/80 dark:border-neutral-800/80 py-3.5 shadow-sm"
+          ? "bg-[var(--bg-page)]/90 backdrop-blur-md border-b border-[var(--border-subtle)] py-3.5 shadow-sm"
           : "bg-transparent py-5"
       )}
     >
@@ -89,7 +89,7 @@ export function SiteHeader() {
 
       {/* Mobile Drawer */}
       {mobileOpen && (
-        <div className="md:hidden bg-[#FAF8F5] dark:bg-[#08080A] border-b border-neutral-200 dark:border-neutral-800 rounded-b-2xl shadow-xl px-6 py-6 flex flex-col gap-4 animate-in slide-in-from-top-2">
+        <div className="md:hidden bg-[var(--bg-page)] border-b border-[var(--border-subtle)] rounded-b-2xl shadow-xl px-6 py-6 flex flex-col gap-4 animate-in slide-in-from-top-2">
           {navLinks.map((link) => (
             <Link
               key={link.href}
