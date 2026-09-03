@@ -32,6 +32,33 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="vi" suppressHydrationWarning>
+      <head>
+        {/* Zero-FOUC instant theme script (Sora Labs / Lattice pattern) */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var saved = localStorage.getItem('site-theme') || localStorage.getItem('reader-theme');
+                  var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                  if (saved === 'dark' || (!saved && prefersDark)) {
+                    document.documentElement.classList.add('dark');
+                    document.documentElement.setAttribute('data-reader-theme', 'dark');
+                    document.documentElement.style.colorScheme = 'dark';
+                  } else if (saved === 'sepia') {
+                    document.documentElement.classList.remove('dark');
+                    document.documentElement.setAttribute('data-reader-theme', 'sepia');
+                  } else {
+                    document.documentElement.classList.remove('dark');
+                    document.documentElement.setAttribute('data-reader-theme', 'ivory');
+                    document.documentElement.style.colorScheme = 'light';
+                  }
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
+      </head>
       <body
         className={`${jakarta.variable} ${playfair.variable} antialiased`}
         style={{ fontFamily: "var(--font-sans), sans-serif" }}

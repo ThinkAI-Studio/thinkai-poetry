@@ -32,6 +32,13 @@ export function FloatingReaderBar({
     setTheme(newTheme);
     localStorage.setItem("reader-theme", newTheme);
     document.documentElement.setAttribute("data-reader-theme", newTheme);
+    if (newTheme === "dark") {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("site-theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("site-theme", "light");
+    }
   };
 
   const handleZoomOut = () => setFontSize((prev) => Math.max(15, prev - 1));

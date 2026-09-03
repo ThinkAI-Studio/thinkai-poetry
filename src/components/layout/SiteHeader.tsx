@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Feather, Menu, X } from "lucide-react";
 import { TaiButton } from "@/components/tai-ui/TaiButton";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { cn } from "@/lib/utils";
 
 export function SiteHeader() {
@@ -64,8 +65,11 @@ export function SiteHeader() {
           ))}
         </nav>
 
-        {/* Desktop CTA & Mobile Hamburger */}
+        {/* Desktop CTA & Theme Toggle & Mobile Hamburger */}
         <div className="flex items-center gap-3">
+          {/* Sora Labs Style Theme Switcher */}
+          <ThemeToggle />
+
           <Link href="/tuyen-tap" className="hidden sm:inline-flex">
             <TaiButton variant="primary" size="sm">
               Khám Phá Thơ
@@ -96,6 +100,10 @@ export function SiteHeader() {
               {link.label}
             </Link>
           ))}
+          <div className="flex items-center justify-between pt-2">
+            <span className="text-xs font-mono text-neutral-500 uppercase">Chế độ hiển thị:</span>
+            <ThemeToggle />
+          </div>
           <Link href="/tuyen-tap" onClick={() => setMobileOpen(false)} className="pt-2">
             <TaiButton variant="primary" size="default" className="w-full">
               Khám Phá Thơ
