@@ -1,0 +1,127 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-page: #FAF8F5;
+    --bg-card: #FFFFFF;
+    --text-primary: #1A1A1A;
+    --text-secondary: #5A5A5A;
+    --text-muted: #8E8E8E;
+    --border-subtle: rgba(0, 0, 0, 0.07);
+    --border-strong: rgba(0, 0, 0, 0.15);
+    --accent-green: #2D5A3D;
+    --accent-green-hover: #234730;
+    --accent-pink: #F8D7DA;
+  }
+
+  /* Chế độ đọc Thơ: Giấy dó truyền thống (Sepia) */
+  [data-reader-theme="sepia"] {
+    --bg-page: #F5EFEB;
+    --bg-card: #EFE8E2;
+    --text-primary: #2C251E;
+    --text-secondary: #5C4F44;
+    --text-muted: #8C7B6D;
+    --border-subtle: rgba(44, 37, 30, 0.1);
+    --border-strong: rgba(44, 37, 30, 0.22);
+  }
+
+  /* Chế độ đọc Thơ: Đêm tĩnh lặng (Obsidian Dark - ThinkAI) */
+  [data-reader-theme="dark"] {
+    --bg-page: #08080A;
+    --bg-card: #111114;
+    --text-primary: #F4F4F5;
+    --text-secondary: #A1A1AA;
+    --text-muted: #71717A;
+    --border-subtle: rgba(255, 255, 255, 0.08);
+    --border-strong: rgba(255, 255, 255, 0.18);
+  }
+
+  body {
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+    transition: background-color 0.4s ease, color 0.4s ease;
+    overflow-x: hidden;
+  }
+}
+
+/* KHUNG HOA ĐUNG ĐƯA THEO GIÓ (SORA LATTICE FLORAL ANIMATION) */
+@keyframes floralSwayRotate {
+  0%, 100% {
+    transform: rotate(var(--sway-rotate-from, -4deg));
+  }
+  50% {
+    transform: rotate(var(--sway-rotate-to, 6deg));
+  }
+}
+
+@keyframes floralSwayTranslate {
+  0%, 100% {
+    transform: translateY(0px) translateX(0px);
+  }
+  50% {
+    transform: translateY(var(--sway-translate-y, -8px)) translateX(var(--sway-translate-x, 4px));
+  }
+}
+
+@keyframes floatPill {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.floral-sway-rotate {
+  animation: floralSwayRotate var(--sway-duration, 4.5s) ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+.floral-sway-translate {
+  animation: floralSwayTranslate var(--sway-duration, 5.2s) ease-in-out infinite;
+}
+
+.floating-pill {
+  animation: floatPill var(--float-duration, 4s) ease-in-out infinite;
+}
+
+/* THINKAI STUDIO 0PX SHARP UTILITIES */
+.tai-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 0px !important;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tai-card:hover {
+  border-color: var(--border-strong);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+}
+
+/* ĐỊNH DẠNG THƠ VIỆT NAM (POETRY TYPOGRAPHY) */
+.poem-verse {
+  line-height: 2.1;
+  letter-spacing: 0.015em;
+}
+
+/* Thể thơ Lục bát: Câu 6 lùi 2.5rem, câu 8 đứng đầu */
+.poem-luc-bat .verse-6 {
+  padding-left: 2.5rem;
+}
+.poem-luc-bat .verse-8 {
+  padding-left: 0rem;
+}
+
+/* Thể thơ Song thất lục bát */
+.poem-song-that .verse-7-1 {
+  padding-left: 1.5rem;
+}
+.poem-song-that .verse-7-2 {
+  padding-left: 1.5rem;
+}
+.poem-song-that .verse-6 {
+  padding-left: 3rem;
+}
+.poem-song-that .verse-8 {
+  padding-left: 0rem;
+}
