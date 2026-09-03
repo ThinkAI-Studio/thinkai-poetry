@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Feather, Menu, X } from "lucide-react";
-import { TaiButton } from "@/components/tai-ui/TaiButton";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { cn } from "@/lib/utils";
 
@@ -21,10 +20,9 @@ export function SiteHeader() {
 
   const navLinks = [
     { href: "/tuyen-tap", label: "Tuyển Tập" },
-    { href: "/#tho-moi", label: "Tác Phẩm Mới" },
     { href: "/tac-gia", label: "Tác Giả" },
     { href: "/dien-dan", label: "Diễn Đàn" },
-    { href: "/yeu-thich", label: "Yêu Thích" },
+    { href: "/yeu-thich", label: "Tủ Sách" },
   ];
 
   return (
@@ -32,28 +30,28 @@ export function SiteHeader() {
       className={cn(
         "fixed top-0 left-0 right-0 z-40 transition-all duration-300",
         isScrolled
-          ? "bg-[var(--bg-page)]/90 backdrop-blur-md border-b border-[var(--border-subtle)] py-3.5 shadow-sm"
+          ? "bg-[var(--bg-page)]/90 backdrop-blur-md border-b border-[var(--border-subtle)] py-3 shadow-xs"
           : "bg-transparent py-5"
       )}
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between">
-        {/* Logo */}
+        {/* Logo matching ThinkAI Thơ reference */}
         <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="w-8 h-8 flex items-center justify-center bg-[#2D5A3D] text-white rounded-xl transition-transform duration-300 group-hover:scale-105 shadow-sm">
+          <div className="w-8 h-8 flex items-center justify-center bg-[#2D5A3D] text-white rounded-full transition-transform duration-300 group-hover:scale-105 shadow-sm">
             <Feather className="w-4 h-4" />
           </div>
-          <div className="flex flex-col">
-            <span className="font-serif text-lg font-bold tracking-tight text-neutral-900 dark:text-neutral-100 leading-none">
-              Ánh Thịnh Thi Quán
+          <div className="flex items-baseline gap-1.5">
+            <span className="font-serif text-xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">
+              ThinkAI Thơ
             </span>
-            <span className="text-[10px] font-mono tracking-widest uppercase text-neutral-500 mt-0.5">
-              ThinkAI Studio
+            <span className="hidden sm:inline text-xs font-serif italic text-neutral-500">
+              • Ánh Thịnh
             </span>
           </div>
         </Link>
 
-        {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-7">
+        {/* Desktop Nav matching reference: Tuyển Tập, Tác Giả, Diễn Đàn, Tủ Sách */}
+        <nav className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
             <Link
               key={link.href}
@@ -66,20 +64,21 @@ export function SiteHeader() {
         </nav>
 
         {/* Desktop CTA & Theme Toggle & Mobile Hamburger */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3.5">
           {/* Sora Labs Style Theme Switcher */}
           <ThemeToggle />
 
-          <Link href="/tuyen-tap" className="hidden sm:inline-flex">
-            <TaiButton variant="primary" size="sm">
-              Khám Phá Thơ
-            </TaiButton>
+          <Link
+            href="/tho/vuon-xua-hoa-no"
+            className="hidden sm:inline-flex items-center justify-center px-5 py-2 text-xs font-mono uppercase tracking-wider text-white bg-[#2D5A3D] hover:bg-[#244831] rounded-full transition-all duration-200 hover:shadow-md active:scale-95 cursor-pointer select-none"
+          >
+            Bắt Đầu Đọc
           </Link>
 
           <button
             type="button"
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden p-2 text-neutral-800 dark:text-neutral-200 hover:bg-black/5 dark:hover:bg-white/5"
+            className="md:hidden p-2 text-neutral-800 dark:text-neutral-200 hover:bg-black/5 dark:hover:bg-white/5 rounded-full"
             aria-label="Toggle Navigation"
           >
             {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -104,10 +103,12 @@ export function SiteHeader() {
             <span className="text-xs font-mono text-neutral-500 uppercase">Chế độ hiển thị:</span>
             <ThemeToggle />
           </div>
-          <Link href="/tuyen-tap" onClick={() => setMobileOpen(false)} className="pt-2">
-            <TaiButton variant="primary" size="default" className="w-full">
-              Khám Phá Thơ
-            </TaiButton>
+          <Link
+            href="/tho/vuon-xua-hoa-no"
+            onClick={() => setMobileOpen(false)}
+            className="w-full text-center py-2.5 text-xs font-mono uppercase tracking-wider text-white bg-[#2D5A3D] rounded-full shadow-sm"
+          >
+            Bắt Đầu Đọc
           </Link>
         </div>
       )}

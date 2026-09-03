@@ -1,21 +1,32 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { motion } from "motion/react";
 import { FloralDecoration } from "@/components/lattice/FloralDecoration";
-import { TaiButton } from "@/components/tai-ui/TaiButton";
-import { WipeButton } from "@/components/tai-ui/WipeButton";
+import { FloatingVersePill } from "@/components/lattice/FloatingVersePill";
 import { ArrowRoll } from "@/components/tai-ui/ArrowRoll";
-import { mockPoems, mockCollections, mockAuthor } from "@/data/mock-poetry";
+import { mockPoems, mockCollections } from "@/data/mock-poetry";
 import { PoemFormType } from "@/types/database";
-import { Sparkles, BookOpen, Feather, Volume2, ArrowRight, BookMarked } from "lucide-react";
+import { Volume2, Play, Pause } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function HomePage() {
   const [selectedForm, setSelectedForm] = useState<PoemFormType | "all">("all");
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  const featuredPoem = mockPoems[0]; // Vườn Xưa Hoa Nở
+  const togglePlay = () => {
+    if (!audioRef.current) return;
+    if (isPlaying) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    } else {
+      audioRef.current.play().catch(() => {});
+      setIsPlaying(true);
+    }
+  };
 
   const filteredPoems =
     selectedForm === "all"
@@ -23,109 +34,151 @@ export default function HomePage() {
       : mockPoems.filter((p) => p.form_type === selectedForm);
 
   return (
-    <div className="flex flex-col gap-20 md:gap-32 pb-24 overflow-x-hidden">
+    <div className="flex flex-col gap-16 md:gap-24 pb-24 overflow-x-hidden">
       {/* ========================================================= */}
-      {/* 1. HERO SECTION: SORA LATTICE FLORAL CANVAS               */}
+      {/* 1. HERO SECTION (CHUẨN 100% THEO THIẾT KẾ MẪU)             */}
       {/* ========================================================= */}
-      <section className="relative min-h-[90vh] flex flex-col items-center justify-center px-4 sm:px-6 text-center overflow-hidden">
-        {/* Khung hoa lá màu nước đung đưa theo gió */}
+      <section className="relative min-h-[85vh] sm:min-h-[88vh] flex flex-col items-center justify-center px-4 sm:px-6 text-center overflow-hidden pt-4 pb-16">
+        {/* Nền hoa lá màu nước đung đưa & cánh hoa tương tác */}
         <FloralDecoration />
 
-        <div className="relative z-10 max-w-3xl mx-auto flex flex-col items-center gap-7 pt-6">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 dark:bg-[#131316]/90 border border-neutral-200/90 dark:border-neutral-800 shadow-sm text-xs font-mono tracking-wider uppercase text-[#2D5A3D]">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Ánh Thịnh Thi Tuyển • ThinkAI Studio</span>
-          </div>
+        {/* Audio Element cho bản ngâm thơ mẫu */}
+        <audio
+          ref={audioRef}
+          src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+          preload="none"
+          onEnded={() => setIsPlaying(false)}
+        />
 
-          {/* Tiêu đề Serif kết hợp Italic nghệ thuật kiểu Sora Lattice */}
-          <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100 leading-[1.15]">
-            Không gian thi ca <br />
-            <span className="italic font-normal text-[#2D5A3D] dark:text-[#5BA26B]">
+        {/* Container nội dung Hero */}
+        <div className="relative z-10 max-w-4xl mx-auto flex flex-col items-center w-full">
+          {/* Tiêu đề chính: Dòng 1 Bold Serif, Dòng 2 Italic Serif thanh thoát */}
+          <div className="mb-8 select-none">
+            <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50 leading-tight">
+              Không gian thi ca đương đại
+            </h1>
+            <p className="font-serif italic text-3xl sm:text-4xl md:text-5xl text-neutral-900 dark:text-neutral-100 font-normal mt-1.5 tracking-tight">
               nơi hồn thơ lắng đọng
-            </span>
-          </h1>
-
-          {/* Mô tả giàu chất thơ */}
-          <p className="font-serif text-lg sm:text-xl text-neutral-600 dark:text-neutral-400 max-w-xl leading-relaxed">
-            Tuyển tập những tác phẩm thi ca đương đại trác tuyệt. Nơi mỗi câu chữ được nâng niu, hòa cùng âm điệu ngâm thơ và vẻ đẹp thanh tao của hoa cỏ.
-          </p>
-
-          {/* Nút hành động */}
-          <div className="flex flex-col sm:flex-row items-center gap-4 pt-2">
-            <Link href="/tuyen-tap">
-              <TaiButton variant="primary" size="lg">
-                Khám Phá Tuyển Tập
-              </TaiButton>
-            </Link>
-
-            <Link href="#tho-moi">
-              <WipeButton
-                as="div"
-                wipeColor="#2D5A3D"
-                textColor="#1A1A1A"
-                hoverTextColor="#ffffff"
-                className="px-6 py-3.5 text-sm bg-white dark:bg-[#131316] text-neutral-800 dark:text-neutral-200 border border-neutral-300 dark:border-neutral-700"
-              >
-                <span>Thưởng Thức Bài Thơ Mới</span>
-                <span className="ml-1.5">↓</span>
-              </WipeButton>
-            </Link>
+            </p>
           </div>
-        </div>
-      </section>
 
-      {/* ========================================================= */}
-      {/* 2. FEATURED POEM OF THE DAY (TÁC PHẨM ĐẶC SẮC)           */}
-      {/* ========================================================= */}
-      <section className="max-w-4xl mx-auto px-4 sm:px-6 w-full">
-        <div className="text-center mb-8">
-          <span className="text-xs font-mono uppercase tracking-widest text-[#2D5A3D] font-semibold">
-            — Thi Phẩm Tiêu Biểu —
-          </span>
-          <h2 className="font-serif text-3xl font-bold text-neutral-900 dark:text-neutral-100 mt-1">
-            {featuredPoem.title}
-          </h2>
-        </div>
-
-        <div className="tai-card p-8 sm:p-12 relative overflow-hidden border-l-4 border-l-[#2D5A3D] shadow-md bg-white dark:bg-[#111114]">
-          {/* Audio hint badge */}
-          {featuredPoem.audio_url && (
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 bg-[#2D5A3D]/10 text-[#2D5A3D] text-xs font-mono uppercase tracking-wider rounded-full mb-6">
-              <Volume2 className="w-3.5 h-3.5 animate-pulse" />
-              <span>Có bản thu âm ngâm thơ</span>
+          {/* VÙNG KHUNG THƠ TRUNG TÂM VÀ CÁC THẺ FLOATING PILLS */}
+          <div className="relative w-full max-w-lg mx-auto flex items-center justify-center">
+            {/* Floating Pill bên trái (theo ảnh mẫu) */}
+            <div className="absolute -left-12 sm:-left-36 md:-left-44 bottom-14 z-30 hidden sm:block">
+              <FloatingVersePill
+                label="--thể-thơ-lục-bát"
+                iconDotColor="#2D5A3D"
+                delay={0.2}
+                onClick={() => {
+                  setSelectedForm("luc_bat");
+                  document.getElementById("vuon-tho")?.scrollIntoView({ behavior: "smooth" });
+                }}
+              />
             </div>
-          )}
 
-          {/* Preview stanzas */}
-          <div className="font-serif text-lg md:text-xl leading-loose text-neutral-800 dark:text-neutral-200 poem-luc-bat max-w-md mx-auto my-4 text-left">
-            <p className="verse-6">Gió xuân thổi nhẹ qua rèm</p>
-            <p className="verse-8">Nhành hoa hé nụ dịu êm đón ngày</p>
-            <p className="verse-6">Sương giăng mờ ảo hàng cây</p>
-            <p className="verse-8">Hương xưa còn đọng tháng ngày phôi pha...</p>
-          </div>
+            {/* Floating Pills bên phải (theo ảnh mẫu) */}
+            <div className="absolute -right-10 sm:-right-36 md:-right-48 top-12 z-30 hidden sm:block">
+              <FloatingVersePill
+                label="--phong-trào-thơ-mới"
+                iconDotColor="#D97706"
+                delay={0.6}
+                onClick={() => {
+                  setSelectedForm("tu_do");
+                  document.getElementById("vuon-tho")?.scrollIntoView({ behavior: "smooth" });
+                }}
+              />
+            </div>
 
-          <div className="flex items-center justify-between pt-8 mt-6 border-t border-neutral-200 dark:border-neutral-800">
-            <span className="font-serif italic text-sm text-neutral-500">
-              — {featuredPoem.author?.name} • Thể thơ Lục bát
-            </span>
+            <div className="absolute -right-8 sm:-right-28 md:-right-36 bottom-6 z-30 hidden sm:block">
+              <FloatingVersePill
+                label="--ngâm-thơ-audio"
+                iconDotColor="#7C3AED"
+                delay={1.0}
+                onClick={togglePlay}
+              />
+            </div>
 
-            <Link href={`/tho/${featuredPoem.slug}`}>
-              <TaiButton variant="primary" size="sm" icon={<ArrowRight className="w-3.5 h-3.5" />}>
-                Đọc toàn văn
-              </TaiButton>
-            </Link>
+            {/* THẺ TRÍCH DẪN THƠ TRUNG TÂM (ELEVATED HERO POEM CARD) */}
+            <motion.div
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+              className="tai-card w-full p-7 sm:p-9 rounded-2xl shadow-xl backdrop-blur-sm border border-neutral-200/90 dark:border-neutral-800/90 text-left relative z-20"
+            >
+              {/* Nội dung bài thơ mẫu */}
+              <div className="space-y-4 font-serif text-base sm:text-lg leading-relaxed text-neutral-800 dark:text-neutral-200">
+                <div className="space-y-1">
+                  <p>Gió xuân thổi nhẹ qua rèm,</p>
+                  <p>Nhành hoa hé nụ dịu êm đón ngày,</p>
+                  <p>Không gian thi ca đương đại.</p>
+                </div>
+                <div className="space-y-1">
+                  <p>Dạt dào một tấm lòng son,</p>
+                  <p>Ngàn năm dẫu bước chân mòn nẻo xưa,</p>
+                  <p>Khí thiêng đất Việt ngàn năm.</p>
+                </div>
+              </div>
+
+              {/* Tên tác giả ký họa */}
+              <div className="mt-5 text-right font-serif text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+                Ánh Thịnh
+              </div>
+
+              {/* TRÌNH PHÁT AUDIO MINI DƯỚI ĐÁY CARD (THEO ẢNH MẪU) */}
+              <div className="flex items-center gap-3 pt-4 border-t border-neutral-200/70 dark:border-neutral-800/70 mt-4">
+                <button
+                  type="button"
+                  onClick={togglePlay}
+                  className="w-7 h-7 flex items-center justify-center bg-neutral-900 dark:bg-white text-white dark:text-neutral-950 rounded-full transition-transform active:scale-90 hover:scale-105 cursor-pointer shadow-xs shrink-0"
+                  aria-label={isPlaying ? "Dừng ngâm thơ" : "Phát ngâm thơ"}
+                  title={isPlaying ? "Tạm dừng" : "Ngâm thơ diễn cảm"}
+                >
+                  {isPlaying ? (
+                    <Pause className="w-3 h-3 fill-current" />
+                  ) : (
+                    <Play className="w-3 h-3 fill-current ml-0.5" />
+                  )}
+                </button>
+
+                {/* Sóng âm Equalizer động */}
+                <div className="flex items-center gap-0.5 h-4 px-1 shrink-0">
+                  {[25, 60, 95, 45, 80, 35, 75, 55, 90, 30].map((h, i) => (
+                    <span
+                      key={i}
+                      className={cn(
+                        "w-0.5 rounded-full transition-all duration-200",
+                        isPlaying ? "bg-[#2D5A3D] dark:bg-[#4ade80]" : "bg-neutral-400 dark:bg-neutral-600"
+                      )}
+                      style={{
+                        height: isPlaying ? `${Math.max(25, h)}%` : "30%",
+                      }}
+                    />
+                  ))}
+                </div>
+
+                {/* Thanh tiến trình ngâm thơ */}
+                <div className="flex-1 h-1 bg-neutral-200 dark:bg-neutral-800 rounded-full overflow-hidden">
+                  <div
+                    className={cn(
+                      "h-full bg-[#2D5A3D] dark:bg-[#4ade80] rounded-full transition-all duration-300",
+                      isPlaying ? "w-2/5 animate-pulse" : "w-1/12"
+                    )}
+                  />
+                </div>
+              </div>
+            </motion.div>
           </div>
         </div>
       </section>
 
       {/* ========================================================= */}
-      {/* 3. TUYỂN TẬP THI CA (FEATURED COLLECTIONS)                 */}
+      {/* 2. TUYỂN TẬP THI CA (FEATURED COLLECTIONS)                 */}
       {/* ========================================================= */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 w-full">
-        <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-10 gap-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-8 gap-4">
           <div>
-            <span className="text-xs font-mono uppercase tracking-widest text-[#2D5A3D] font-semibold">
+            <span className="text-xs font-mono uppercase tracking-widest text-[#2D5A3D] dark:text-[#4ade80] font-semibold">
               Tuyển Tập & Bộ Sưu Tập
             </span>
             <h2 className="font-serif text-3xl sm:text-4xl font-bold text-neutral-900 dark:text-neutral-100 mt-1">
@@ -147,7 +200,7 @@ export default function HomePage() {
             <Link
               key={col.id}
               href={`/tuyen-tap/${col.slug}`}
-              className="tai-card group p-6 flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300"
+              className="tai-card group p-6 flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300 rounded-2xl"
             >
               <div>
                 <div className="w-full h-36 bg-neutral-100 dark:bg-neutral-900 mb-5 flex items-center justify-center relative overflow-hidden rounded-xl border border-neutral-200/50 dark:border-neutral-800/50">
@@ -157,15 +210,15 @@ export default function HomePage() {
                       alt={col.title}
                       width={80}
                       height={80}
-                      className="object-contain group-hover:scale-110 transition-transform duration-300 opacity-80"
+                      className="object-contain group-hover:scale-110 transition-transform duration-300 opacity-85"
                     />
                   )}
-                  <span className="absolute top-2.5 right-2.5 text-[10px] font-mono uppercase tracking-wider px-2.5 py-0.5 bg-white/90 dark:bg-black/90 rounded-full border border-neutral-200 dark:border-neutral-800">
+                  <span className="absolute top-2.5 right-2.5 text-[10px] font-mono uppercase tracking-wider px-2.5 py-0.5 bg-white/90 dark:bg-black/90 text-neutral-800 dark:text-neutral-200 rounded-full border border-neutral-200 dark:border-neutral-800">
                     {col.poems_count} bài
                   </span>
                 </div>
 
-                <h3 className="font-serif text-xl font-bold text-neutral-900 dark:text-neutral-100 group-hover:text-[#2D5A3D] transition-colors line-clamp-1 mb-2">
+                <h3 className="font-serif text-xl font-bold text-neutral-900 dark:text-neutral-100 group-hover:text-[#2D5A3D] dark:group-hover:text-[#4ade80] transition-colors line-clamp-1 mb-2">
                   {col.title}
                 </h3>
                 <p className="font-serif text-sm text-neutral-600 dark:text-neutral-400 line-clamp-2 leading-relaxed mb-4">
@@ -183,13 +236,13 @@ export default function HomePage() {
       </section>
 
       {/* ========================================================= */}
-      {/* 4. TẤT CẢ BÀI THƠ MỚI (#THO-MOI)                          */}
+      {/* 3. TẤT CẢ BÀI THƠ MỚI (#VUON-THO)                         */}
       {/* ========================================================= */}
-      <section id="tho-moi" className="max-w-6xl mx-auto px-4 sm:px-6 w-full scroll-mt-28">
+      <section id="vuon-tho" className="max-w-6xl mx-auto px-4 sm:px-6 w-full scroll-mt-28">
         <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-8 gap-4">
           <div>
-            <span className="text-xs font-mono uppercase tracking-widest text-[#2D5A3D] font-semibold">
-              Thi Phẩm Mới Nhất
+            <span className="text-xs font-mono uppercase tracking-widest text-[#2D5A3D] dark:text-[#4ade80] font-semibold">
+              Thi Phẩm Chọn Lọc
             </span>
             <h2 className="font-serif text-3xl font-bold text-neutral-900 dark:text-neutral-100 mt-1">
               Vườn thơ hôm nay
@@ -227,11 +280,11 @@ export default function HomePage() {
             <Link
               key={poem.id}
               href={`/tho/${poem.slug}`}
-              className="tai-card p-6 flex flex-col justify-between group hover:-translate-y-0.5 transition-all"
+              className="tai-card p-6 flex flex-col justify-between group hover:-translate-y-0.5 transition-all rounded-2xl"
             >
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs font-mono uppercase tracking-wider text-[#2D5A3D]">
+                  <span className="text-xs font-mono uppercase tracking-wider text-[#2D5A3D] dark:text-[#4ade80]">
                     {poem.form_type === "luc_bat" ? "Thơ Lục Bát" : poem.form_type === "that_ngon" ? "Thơ Đường Luật" : "Thơ Tự Do"}
                   </span>
                   {poem.audio_url && (
@@ -242,7 +295,7 @@ export default function HomePage() {
                   )}
                 </div>
 
-                <h3 className="font-serif text-2xl font-bold text-neutral-900 dark:text-neutral-100 group-hover:text-[#2D5A3D] transition-colors mb-3">
+                <h3 className="font-serif text-2xl font-bold text-neutral-900 dark:text-neutral-100 group-hover:text-[#2D5A3D] dark:group-hover:text-[#4ade80] transition-colors mb-3">
                   {poem.title}
                 </h3>
 

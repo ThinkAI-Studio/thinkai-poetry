@@ -16,7 +16,7 @@ export default function AuthorsPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 md:py-16">
       {/* Header Hồ sơ tác giả */}
-      <div className="tai-card p-8 md:p-12 mb-12 flex flex-col md:flex-row items-center gap-8 border-l-4 border-l-[#2D5A3D]">
+      <div className="tai-card p-8 md:p-12 mb-12 flex flex-col md:flex-row items-center gap-8 border-l-4 border-l-[#2D5A3D] rounded-2xl">
         <div className="w-32 h-32 shrink-0 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-full flex items-center justify-center overflow-hidden shadow-md">
           {author.avatar_url ? (
             <Image
@@ -32,16 +32,16 @@ export default function AuthorsPage() {
         </div>
 
         <div className="flex flex-col gap-3 text-center md:text-left">
-          <div className="inline-flex items-center justify-center md:justify-start gap-2 text-xs font-mono uppercase tracking-wider text-[#2D5A3D]">
+          <div className="inline-flex items-center justify-center md:justify-start gap-2 text-xs font-mono uppercase tracking-wider text-[#2D5A3D] dark:text-[#4ade80]">
             <Feather className="w-3.5 h-3.5" />
             <span>{author.period}</span>
           </div>
 
-          <h1 className="font-serif text-3xl sm:text-4xl font-bold text-neutral-900 dark:text-neutral-100">
+          <h1 className="font-serif text-3xl sm:text-4xl font-bold text-neutral-900 dark:text-neutral-50">
             {author.name}
           </h1>
 
-          <p className="font-serif text-base text-neutral-600 dark:text-neutral-400 leading-relaxed max-w-xl">
+          <p className="font-serif text-base text-neutral-600 dark:text-neutral-300 leading-relaxed max-w-xl">
             {author.bio}
           </p>
         </div>
@@ -50,7 +50,7 @@ export default function AuthorsPage() {
       {/* Danh sách các tác phẩm của Tác giả */}
       <div className="flex flex-col gap-4">
         <h2 className="font-serif text-2xl font-bold text-neutral-900 dark:text-neutral-100 mb-2 flex items-center gap-2">
-          <BookOpen className="w-5 h-5 text-[#2D5A3D]" />
+          <BookOpen className="w-5 h-5 text-[#2D5A3D] dark:text-[#4ade80]" />
           <span>Thi phẩm đã xuất bản</span>
         </h2>
 
@@ -58,28 +58,23 @@ export default function AuthorsPage() {
           <Link
             key={poem.id}
             href={`/tho/${poem.slug}`}
-            className="tai-card p-5 group flex items-center justify-between hover:bg-neutral-50 dark:hover:bg-neutral-900/40 transition-colors"
+            className="tai-card p-6 flex items-center justify-between group hover:border-neutral-400 dark:hover:border-neutral-700 transition-colors rounded-2xl"
           >
             <div className="flex items-center gap-4">
-              <span className="font-mono text-sm font-bold text-neutral-400 w-6">
-                {(index + 1).toString().padStart(2, "0")}
+              <span className="font-mono text-sm text-neutral-400 dark:text-neutral-600 w-6">
+                0{index + 1}
               </span>
-              <div className="flex flex-col">
-                <span className="font-serif font-bold text-lg text-neutral-900 dark:text-neutral-100 group-hover:text-[#2D5A3D] transition-colors">
+              <div>
+                <h3 className="font-serif font-bold text-lg text-neutral-900 dark:text-neutral-100 group-hover:text-[#2D5A3D] dark:group-hover:text-[#4ade80] transition-colors">
                   {poem.title}
-                </span>
-                <span className="text-xs font-mono text-neutral-500">
-                  {poem.excerpt}
-                </span>
+                </h3>
+                <p className="font-serif text-xs text-neutral-500 dark:text-neutral-400">
+                  {poem.form_type === "luc_bat" ? "Thơ Lục Bát" : poem.form_type === "that_ngon" ? "Thơ Đường Luật" : "Thơ Tự Do"} • {poem.view_count} lượt đọc
+                </p>
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
-              <span className="font-mono text-xs uppercase tracking-wider text-neutral-500 group-hover:text-black dark:group-hover:text-white">
-                Đọc thơ
-              </span>
-              <ArrowRoll size="sm" />
-            </div>
+            <ArrowRoll size="sm" />
           </Link>
         ))}
       </div>

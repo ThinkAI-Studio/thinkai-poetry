@@ -35,15 +35,15 @@ export function ComingSoonPage({
 
       <div className="relative z-10 max-w-2xl mx-auto flex flex-col items-center gap-6">
         {/* Badge */}
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 dark:bg-[#131316]/90 border border-neutral-200 dark:border-neutral-800 shadow-sm text-xs font-mono tracking-wider uppercase text-[#2D5A3D]">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 dark:bg-[#131316]/90 border border-neutral-200 dark:border-neutral-800 shadow-sm text-xs font-mono tracking-wider uppercase text-[#2D5A3D] dark:text-[#4ade80]">
           <Sparkles className="w-3.5 h-3.5" />
           <span>{badge}</span>
         </div>
 
         {/* Tiêu đề Serif kết hợp Italic */}
-        <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100 leading-tight">
+        <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50 leading-tight">
           Một góc tĩnh lặng <br />
-          <span className="italic font-normal text-[#2D5A3D]">đang được ươm mầm...</span>
+          <span className="italic font-normal text-[#2D5A3D] dark:text-[#5BA26B]">đang được ươm mầm...</span>
         </h1>
 
         {/* Mô tả */}

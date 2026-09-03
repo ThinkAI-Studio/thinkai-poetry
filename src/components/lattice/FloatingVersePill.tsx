@@ -1,43 +1,57 @@
 "use client";
 
 import React from "react";
+import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 
 interface FloatingVersePillProps {
   label: string;
   iconDotColor?: string;
   className?: string;
-  duration?: number;
   delay?: number;
+  onClick?: () => void;
 }
 
 export function FloatingVersePill({
   label,
   iconDotColor = "#2D5A3D",
   className,
-  duration = 4.2,
   delay = 0,
+  onClick,
 }: FloatingVersePillProps) {
   return (
-    <div
+    <motion.div
+      onClick={onClick}
       className={cn(
-        "floating-pill inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full",
-        "bg-white/90 backdrop-blur-md border border-neutral-200/80 shadow-md",
-        "text-xs md:text-sm font-serif text-neutral-800 transition-transform duration-300 hover:scale-105 select-none cursor-pointer",
+        "inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full select-none cursor-pointer",
+        "bg-white/90 dark:bg-[#141418]/90 backdrop-blur-md border border-neutral-200/80 dark:border-neutral-800/80 shadow-md",
+        "font-mono text-xs text-neutral-700 dark:text-neutral-300 transition-colors",
         className
       )}
-      style={
-        {
-          "--float-duration": `${duration}s`,
-          animationDelay: `${delay}s`,
-        } as React.CSSProperties
-      }
+      initial={{ opacity: 0, scale: 0.85, y: 15 }}
+      animate={{
+        opacity: 1,
+        scale: 1,
+        y: [0, -7, 0],
+      }}
+      transition={{
+        opacity: { duration: 0.6, delay },
+        scale: { duration: 0.6, delay },
+        y: { duration: 4.2 + delay, repeat: Infinity, ease: "easeInOut", delay },
+      }}
+      whileHover={{
+        scale: 1.12,
+        y: -3,
+        boxShadow: "0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1)",
+        transition: { type: "spring", stiffness: 400, damping: 15 },
+      }}
+      whileTap={{ scale: 0.94 }}
     >
       <span
-        className="w-2 h-2 rounded-full shrink-0"
+        className="w-2 h-2 rounded-full shrink-0 shadow-xs"
         style={{ backgroundColor: iconDotColor }}
       />
-      <span className="whitespace-nowrap italic">{label}</span>
-    </div>
+      <span className="whitespace-nowrap tracking-tight">{label}</span>
+    </motion.div>
   );
 }

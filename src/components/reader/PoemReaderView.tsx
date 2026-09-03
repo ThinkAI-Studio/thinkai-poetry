@@ -51,7 +51,7 @@ export function PoemReaderView({ poem }: PoemReaderViewProps) {
 
       {/* Header Bài Thơ */}
       <div className="text-center mb-10">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#2D5A3D]/10 text-[#2D5A3D] text-xs font-mono uppercase tracking-wider mb-4">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#2D5A3D]/10 text-[#2D5A3D] dark:text-[#4ade80] text-xs font-mono uppercase tracking-wider mb-4 border border-[#2D5A3D]/20">
           <BookOpen className="w-3 h-3" />
           <span>{formTypeName}</span>
         </div>
@@ -60,7 +60,7 @@ export function PoemReaderView({ poem }: PoemReaderViewProps) {
           {poem.title}
         </h1>
 
-        <div className="flex items-center justify-center flex-wrap gap-4 text-xs font-mono text-neutral-500">
+        <div className="flex items-center justify-center flex-wrap gap-4 text-xs font-mono text-neutral-600 dark:text-neutral-400">
           {poem.author && (
             <span className="flex items-center gap-1.5">
               <User className="w-3.5 h-3.5" />
@@ -150,16 +150,16 @@ export function PoemReaderView({ poem }: PoemReaderViewProps) {
           </div>
 
           <div className="flex flex-col gap-1.5 text-center sm:text-left">
-            <span className="text-xs font-mono uppercase tracking-widest text-[#2D5A3D] font-semibold">
+            <span className="text-xs font-mono uppercase tracking-widest text-[#2D5A3D] dark:text-[#4ade80] font-semibold">
               Tác giả thi phẩm
             </span>
             <Link
-              href={`/tac-gia/${poem.author.slug}`}
-              className="font-serif text-xl font-bold text-neutral-900 dark:text-neutral-100 hover:text-[#2D5A3D] transition-colors"
+              href={`/tac-gia`}
+              className="font-serif text-xl font-bold text-neutral-900 dark:text-neutral-100 hover:text-[#2D5A3D] dark:hover:text-[#4ade80] transition-colors"
             >
               {poem.author.name}
             </Link>
-            <p className="font-serif text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed max-w-xl">
+            <p className="font-serif text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed max-w-xl">
               {poem.author.bio}
             </p>
           </div>
