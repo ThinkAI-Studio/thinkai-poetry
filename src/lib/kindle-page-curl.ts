@@ -1,7 +1,8 @@
 /**
  * Hữu Thịnh Thi Quán - Masterpiece Kindle & Apple Books Page Curl Engine
  * Chuyển động lật trang sách thơ chuẩn xác, tự nhiên:
- * - Polygon interpolation lật trang chéo từ góc sách (Top-Right / Top-Left Corner Page Curl)
+ * - Trang theme CŨ (::view-transition-old) được bóc góc và lật cuộn đi (Peel & Flip Away)
+ * - Trang theme MỚI (::view-transition-new) nằm ở lớp dưới lộ ra mượt mà
  * - Đổ bóng gấp nếp trang sách tự nhiên bằng GPU (Paper Fold Shadow via CSS drop-shadow)
  * - Âm thanh giấy Dó xúc giác 2 thì (Web Audio API)
  */
@@ -16,23 +17,23 @@ interface PageCurlOptions {
 }
 
 /**
- * 5-Keyframe Page Curl Polygons:
- * Mô phỏng chuyển động gấp nếp lật góc trang sách chéo tự nhiên (Apple Books / Kindle)
+ * 5-Keyframe Page Curl Polygons cho Trang Cũ (Peel Old Page Away):
+ * Mô phỏng chính xác góc trang sách cũ bị nhấc lên, cuộn chéo và lật hẳn ra khỏi màn hình
  */
-const FORWARD_CURL_POLYGONS = [
-  "polygon(100% 0%, 100% 0%, 100% 0%, 100% 0%, 100% 0%)",
-  "polygon(70% 0%, 100% 0%, 100% 30%, 100% 30%, 70% 0%)",
-  "polygon(35% 0%, 100% 0%, 100% 65%, 65% 100%, 0% 35%)",
-  "polygon(0% 0%, 100% 0%, 100% 100%, 35% 100%, 0% 65%)",
-  "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 100%)",
+const PEEL_OLD_PAGE_FORWARD = [
+  "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
+  "polygon(0% 0%, 72% 0%, 100% 28%, 100% 100%, 0% 100%)",
+  "polygon(0% 0%, 38% 0%, 100% 62%, 100% 100%, 0% 100%)",
+  "polygon(0% 0%, 0% 0%, 100% 100%, 38% 100%, 0% 62%)",
+  "polygon(0% 100%, 0% 100%, 100% 100%, 0% 100%)",
 ];
 
-const BACKWARD_CURL_POLYGONS = [
-  "polygon(0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%)",
-  "polygon(0% 0%, 30% 0%, 0% 30%, 0% 30%, 0% 0%)",
-  "polygon(0% 0%, 65% 0%, 0% 65%, 35% 100%, 0% 35%)",
-  "polygon(0% 0%, 100% 0%, 65% 100%, 0% 100%, 0% 0%)",
-  "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 100%)",
+const PEEL_OLD_PAGE_BACKWARD = [
+  "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
+  "polygon(28% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 28%)",
+  "polygon(62% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 62%)",
+  "polygon(100% 0%, 100% 0%, 100% 100%, 38% 100%, 0% 100%)",
+  "polygon(100% 100%, 100% 100%, 100% 100%, 100% 100%)",
 ];
 
 /**
@@ -110,8 +111,8 @@ export function executeKindlePageCurl({
 
   const isDarkTarget = targetTheme === "dark";
   const resolvedDirection = direction || (isDarkTarget ? "forward" : "backward");
-  const keyframes = resolvedDirection === "forward" ? FORWARD_CURL_POLYGONS : BACKWARD_CURL_POLYGONS;
-  const duration = 520;
+  const oldPageKeyframes = resolvedDirection === "forward" ? PEEL_OLD_PAGE_FORWARD : PEEL_OLD_PAGE_BACKWARD;
+  const duration = 540;
 
   // Tạm thời tắt CSS transitions trên live DOM để chụp ảnh snapshot tức thì, triệt tiêu hoàn toàn flicker
   document.documentElement.classList.add("theme-transitioning");
@@ -129,10 +130,26 @@ export function executeKindlePageCurl({
     if (transition && transition.ready) {
       transition.ready
         .then(() => {
-          // Hoạt ảnh lật trang sách chéo từ góc màn hình (Apple Books / Kindle Page Curl)
-          const anim = document.documentElement.animate(
+          // 1. ANIMATE TRANG CŨ (::view-transition-old): Cuộn lật bóc góc đi khỏi màn hình
+          const oldAnim = document.documentElement.animate(
             {
-              clipPath: keyframes,
+              clipPath: oldPageKeyframes,
+              transform: resolvedDirection === "forward"
+                ? ["rotate(0deg)", "rotate(-1.8deg)"]
+                : ["rotate(0deg)", "rotate(1.8deg)"],
+            },
+            {
+              duration,
+              easing: "cubic-bezier(0.25, 1, 0.35, 1)",
+              pseudoElement: "::view-transition-old(root)",
+            }
+          );
+
+          // 2. ANIMATE TRANG MỚI (::view-transition-new): Lộ ra dưới trang cũ đang bóc đi
+          document.documentElement.animate(
+            {
+              transform: ["scale(0.975)", "scale(1)"],
+              filter: ["brightness(0.92)", "brightness(1)"],
             },
             {
               duration,
@@ -141,7 +158,7 @@ export function executeKindlePageCurl({
             }
           );
 
-          anim.finished.finally(() => {
+          oldAnim.finished.finally(() => {
             clearTimeout(safetyCleanup);
             document.documentElement.classList.remove("theme-transitioning");
           });
@@ -160,5 +177,6 @@ export function executeKindlePageCurl({
     onCommit(targetTheme);
   }
 }
+
 
 

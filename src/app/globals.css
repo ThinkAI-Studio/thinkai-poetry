@@ -157,16 +157,17 @@
   box-sizing: border-box;
 }
 
-/* Trang cũ nằm tĩnh ở dưới */
+/* Trang cũ nằm ở lớp trên (z-index: 2), bóc góc cuộn lật đi (Apple Books / Kindle Old Page Flip Away) */
 ::view-transition-old(root) {
+  z-index: 2;
+  filter: drop-shadow(-14px 16px 24px rgba(0, 0, 0, 0.55));
+}
+
+/* Trang mới nằm tĩnh ở lớp dưới (z-index: 1), dần lộ ra khi trang cũ bóc lật đi */
+::view-transition-new(root) {
   z-index: 1;
 }
 
-/* Trang mới lật mở ở trên với bóng gấp nếp giấy Dó (Apple Books / Kindle Page Curl Shadow) */
-::view-transition-new(root) {
-  z-index: 2;
-  filter: drop-shadow(-10px 12px 18px rgba(0, 0, 0, 0.45));
-}
 
 
 /* Triệt tiêu hoàn toàn hiện tượng nhấp nháy / flicker màu sắc khi chuyển theme */
