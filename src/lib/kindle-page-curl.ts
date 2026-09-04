@@ -39,13 +39,13 @@ function playStickmanPushAudio() {
     popOsc.stop(ctx.currentTime + 0.04);
 
     // 2. Tiếng trượt màn hình kéo dài (Sliding Friction Sound)
-    const duration = 0.32;
+    const duration = 0.65;
     const bufferSize = Math.floor(ctx.sampleRate * duration);
     const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
     const data = buffer.getChannelData(0);
 
     for (let i = 0; i < bufferSize; i++) {
-      const decay = Math.exp(-i / (ctx.sampleRate * 0.08));
+      const decay = Math.exp(-i / (ctx.sampleRate * 0.16));
       data[i] = (Math.random() * 2 - 1) * decay;
     }
 
@@ -144,7 +144,7 @@ function spawnStickmanPusher(pushDirection: "left" | "right", duration: number) 
         ],
     {
       duration,
-      easing: "cubic-bezier(0.3, 1, 0.35, 1)",
+      easing: "cubic-bezier(0.22, 1, 0.36, 1)",
     }
   );
 
@@ -179,15 +179,15 @@ export function executeKindlePageCurl({
   const isDarkTarget = targetTheme === "dark";
   const resolvedDirection = direction || (isDarkTarget ? "forward" : "backward");
   const pushDirection = resolvedDirection === "forward" ? "left" : "right";
-  const duration = 620;
+  const duration = 1150;
 
   // Tạm thời tắt CSS transitions trên live DOM để chụp ảnh snapshot tức thì, triệt tiêu hoàn toàn flicker
   document.documentElement.classList.add("theme-transitioning");
 
-  // Safety net: luôn cleanup sau 850ms
+  // Safety net: luôn cleanup sau 1400ms, kể cả khi View Transition bị stuck trên mobile
   const safetyCleanup = setTimeout(() => {
     document.documentElement.classList.remove("theme-transitioning");
-  }, 850);
+  }, 1400);
 
   try {
     const transition = (document as any).startViewTransition(() => {
