@@ -61,36 +61,31 @@
 }
 
 /* ============================================================
-   POETIC INK BLEED & WATERCOLOR VIEW TRANSITION
+   3D BOOK PAGE FLIP VIEW TRANSITION (HIỆU ỨNG LẬT TRANG SÁCH THƠ)
    ============================================================ */
+
+::view-transition {
+  perspective: 2200px;
+  overflow: hidden;
+}
 
 /* Tắt hoạt ảnh cross-fade mờ phẳng mặc định của trình duyệt */
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation: none;
   mix-blend-mode: normal;
+  backface-visibility: hidden;
+  box-sizing: border-box;
 }
 
-/* Thứ tự hiển thị lớp: Lớp trang mới luôn nằm trên cùng */
+/* Trang cũ lật lên trước (z-index cao hơn) */
 ::view-transition-old(root) {
-  z-index: 1;
+  z-index: 100;
 }
 
+/* Trang mới nằm ở dưới như trang sách tiếp theo được hé lộ */
 ::view-transition-new(root) {
-  z-index: 9999;
-  /* Gắn bộ lọc rách mép thớ giấy Dó vào đường viền loang mực */
-  filter: url(#ink-bleed-filter);
-}
-
-/* Khi từ tối quay về sáng: Lớp cũ co lại vào tâm */
-.dark::view-transition-old(root) {
-  z-index: 9999;
-  filter: url(#ink-bleed-filter);
-}
-
-.dark::view-transition-new(root) {
   z-index: 1;
-  filter: none;
 }
 
 /* ============================================================

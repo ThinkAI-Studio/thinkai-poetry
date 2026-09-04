@@ -116,10 +116,10 @@ export function FloralDecoration() {
 
   const renderFloralItem = (item: FloralItem, corner: "left" | "right") => {
     const srcMap = {
-      pink: "/images/flowers/cherry-blossom.png",
-      yellow: "/images/flowers/apricot-blossom.png",
-      leaf1: "/images/flowers/leaf-branch-1.png",
-      leaf2: "/images/flowers/leaf-branch-2.png",
+      pink: "/floral/flower-pink.png",
+      yellow: "/floral/flower-yellow.png",
+      leaf1: "/floral/leaf-1.png",
+      leaf2: "/floral/leaf-2.png",
     };
 
     const isLeaf = item.type.startsWith("leaf");
@@ -160,6 +160,7 @@ export function FloralDecoration() {
           alt="Hoa thi ca Ánh Thịnh"
           width={item.size}
           height={item.size}
+          unoptimized
           className={`object-contain transition-all duration-300 drop-shadow-sm ${
             isLeaf ? "opacity-75 group-hover:opacity-100" : "opacity-90 group-hover:opacity-100"
           }`}
