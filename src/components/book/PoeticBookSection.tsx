@@ -96,76 +96,86 @@ export function PoeticBookSection({ className }: { className?: string }) {
         </div>
       </div>
 
-      {/* TABS LỌC THỂ THƠ (SLIDING PILL) */}
-      <div className="flex items-center justify-between flex-wrap gap-4 mb-8">
-        <div
-          onMouseLeave={() => setHoveredTab(null)}
-          className="relative flex flex-wrap items-center gap-1 p-1 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-full select-none shadow-xs"
-        >
-          {[
-            { id: "all", label: "Tất Cả" },
-            { id: "luc_bat", label: "Lục Bát" },
-            { id: "tu_do", label: "Tự Do" },
-            { id: "that_ngon", label: "Đường Luật" },
-            { id: "song_that_luc_bat", label: "Song Thất" },
-          ].map((tab) => {
-            const isActive = selectedForm === tab.id;
-            const isHovered = hoveredTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                type="button"
-                onClick={() => {
-                  setSelectedForm(tab.id as any);
-                  // Tự lật đến bài đầu tiên thuộc thể loại đó
-                  if (tab.id !== "all") {
-                    const firstMatchIdx = poems.findIndex((p) => p.form_type === tab.id);
-                    if (firstMatchIdx !== -1) {
-                      goToPage(firstMatchIdx);
+      {/* TABS LỌC THỂ THƠ (SLIDING PILL) - RESPONSIVE TOUCH SCROLL */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8 w-full">
+        <div className="w-full sm:w-auto overflow-x-auto no-scrollbar py-1">
+          <div
+            onMouseLeave={() => setHoveredTab(null)}
+            className="relative inline-flex items-center gap-1 p-1 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-full select-none shadow-xs flex-nowrap min-w-max"
+          >
+            {[
+              { id: "all", label: "Tất Cả" },
+              { id: "luc_bat", label: "Lục Bát" },
+              { id: "tu_do", label: "Tự Do" },
+              { id: "that_ngon", label: "Đường Luật" },
+              { id: "song_that_luc_bat", label: "Song Thất" },
+            ].map((tab) => {
+              const isActive = selectedForm === tab.id;
+              const isHovered = hoveredTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => {
+                    setSelectedForm(tab.id as any);
+                    // Tự lật đến bài đầu tiên thuộc thể loại đó
+                    if (tab.id !== "all") {
+                      const firstMatchIdx = poems.findIndex((p) => p.form_type === tab.id);
+                      if (firstMatchIdx !== -1) {
+                        goToPage(firstMatchIdx);
+                      }
                     }
-                  }
-                }}
-                onMouseEnter={() => setHoveredTab(tab.id)}
-                className="relative px-3.5 py-1.5 text-xs font-mono tracking-wider uppercase transition-colors rounded-full cursor-pointer z-10 outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-green)]"
-              >
-                {isHovered && !isActive && (
-                  <motion.div
-                    layoutId="hoverSectionFilterTab"
-                    transition={SPRINGS.responsive}
-                    className="absolute inset-0 bg-black/5 dark:bg-white/10 rounded-full -z-10"
-                  />
-                )}
-                {isActive && (
-                  <motion.div
-                    layoutId="activeSectionFilterTab"
-                    transition={SPRINGS.responsive}
-                    className="absolute inset-0 bg-[var(--accent-green)] rounded-full shadow-sm -z-10"
-                  />
-                )}
-                <span
-                  className={cn(
-                    "transition-colors duration-200",
-                    isActive
-                      ? "text-white font-bold"
-                      : "text-neutral-600 dark:text-neutral-400 hover:text-black dark:hover:text-white"
-                  )}
+                  }}
+                  onMouseEnter={() => setHoveredTab(tab.id)}
+                  className="relative px-3 sm:px-3.5 py-1.5 text-xs font-mono tracking-wider uppercase transition-colors rounded-full cursor-pointer z-10 outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-green)] shrink-0 whitespace-nowrap"
                 >
-                  {tab.label}
-                </span>
-              </button>
-            );
-          })}
+                  {isHovered && !isActive && (
+                    <motion.div
+                      layoutId="hoverSectionFilterTab"
+                      transition={SPRINGS.responsive}
+                      className="absolute inset-0 bg-black/5 dark:bg-white/10 rounded-full -z-10"
+                    />
+                  )}
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeSectionFilterTab"
+                      transition={SPRINGS.responsive}
+                      className="absolute inset-0 bg-[var(--accent-green)] rounded-full shadow-sm -z-10"
+                    />
+                  )}
+                  <span
+                    className={cn(
+                      "transition-colors duration-200",
+                      isActive
+                        ? "text-white font-bold"
+                        : "text-neutral-600 dark:text-neutral-400 hover:text-black dark:hover:text-white"
+                    )}
+                  >
+                    {tab.label}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* Chỉ số bài thơ hiện tại */}
-        <div className="text-xs font-mono text-neutral-500 flex items-center gap-2">
-          <span>Đang đọc bài:</span>
-          <span className="font-poem-heading font-bold text-sm text-neutral-800 dark:text-neutral-200">
-            {poems[currentPageIndex]?.title}
-          </span>
-          <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-100 dark:bg-neutral-800 text-amber-900 dark:text-amber-200 font-bold">
-            {(currentPageIndex + 1).toString().padStart(2, "0")} / {poems.length.toString().padStart(2, "0")}
-          </span>
+        <div className="text-xs font-mono text-neutral-500 flex items-center gap-2 shrink-0 self-end sm:self-center">
+          {poems.length > 0 ? (
+            <>
+              <span>Đang đọc bài:</span>
+              <span className="font-poem-heading font-bold text-sm text-neutral-800 dark:text-neutral-200">
+                {poems[currentPageIndex]?.title}
+              </span>
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-100 dark:bg-neutral-800 text-amber-900 dark:text-amber-200 font-bold">
+                {(currentPageIndex + 1).toString().padStart(2, "0")} / {poems.length.toString().padStart(2, "0")}
+              </span>
+            </>
+          ) : (
+            <span className="text-xs font-serif italic text-neutral-400 dark:text-neutral-500">
+              Không gian thi ca đương đại
+            </span>
+          )}
         </div>
       </div>
 

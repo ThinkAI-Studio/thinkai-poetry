@@ -157,14 +157,22 @@
   box-sizing: border-box;
 }
 
-/* Trang cũ lật lên trước (z-index cao hơn) */
+/* Trang cũ nằm tĩnh ở dưới */
 ::view-transition-old(root) {
-  z-index: 100;
+  z-index: 1;
 }
 
-/* Trang mới nằm ở dưới như trang sách tiếp theo được hé lộ */
+/* Trang mới mở rộng mượt mà ở trên */
 ::view-transition-new(root) {
-  z-index: 1;
+  z-index: 9999;
+}
+
+/* Triệt tiêu hoàn toàn hiện tượng nhấp nháy / flicker màu sắc khi chuyển theme */
+html.theme-transitioning,
+html.theme-transitioning *,
+html.theme-transitioning *::before,
+html.theme-transitioning *::after {
+  transition: none !important;
 }
 
 /* ============================================================

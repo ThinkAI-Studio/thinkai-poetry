@@ -15,6 +15,7 @@ interface TransitionOptions {
 }
 
 export function executePoeticTransition({
+  event,
   targetTheme,
   direction,
   onCommit,
@@ -23,6 +24,7 @@ export function executePoeticTransition({
   const resolvedDirection = direction || (isGoingDark ? "forward" : "backward");
 
   executeKindlePageCurl({
+    event,
     targetTheme,
     direction: resolvedDirection,
     onCommit,

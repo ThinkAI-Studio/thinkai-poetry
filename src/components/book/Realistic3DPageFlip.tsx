@@ -514,44 +514,49 @@ export function Realistic3DPageFlip({
     return (
       <div className={cn("relative w-full select-none", className)}>
         <div
-          className="relative rounded-3xl p-8 sm:p-14 shadow-[0_30px_90px_-20px_rgba(0,0,0,0.5)] dark:shadow-[0_35px_100px_-20px_rgba(0,0,0,0.9)] border border-amber-900/30 dark:border-amber-500/20 flex flex-col items-center justify-center text-center"
-          style={{
-            background: "linear-gradient(135deg, #1C3325 0%, #122219 45%, #0B1711 100%)",
-          }}
+          className="relative rounded-3xl p-8 sm:p-14 shadow-[0_30px_90px_-20px_rgba(0,0,0,0.1)] dark:shadow-[0_35px_100px_-20px_rgba(0,0,0,0.9)] border border-amber-900/20 dark:border-amber-500/20 flex flex-col items-center justify-center text-center bg-gradient-to-br from-[#FAF5EC] via-[#F3EDE0] to-[#E9DFCF] dark:from-[#1C3325] dark:via-[#122219] dark:to-[#0B1711] transition-colors duration-300"
         >
           {/* Ke góc đồng cổ 4 góc */}
           <div className="absolute top-2.5 left-2.5 w-8 h-8 pointer-events-none">
-            <div className="w-full h-full border-t-2 border-l-2 border-[#C5A059]/80 rounded-tl-lg" />
+            <div className="w-full h-full border-t-2 border-l-2 border-[#916207]/60 dark:border-[#C5A059]/80 rounded-tl-lg" />
           </div>
           <div className="absolute top-2.5 right-2.5 w-8 h-8 pointer-events-none">
-            <div className="w-full h-full border-t-2 border-r-2 border-[#C5A059]/80 rounded-tr-lg" />
+            <div className="w-full h-full border-t-2 border-r-2 border-[#916207]/60 dark:border-[#C5A059]/80 rounded-tr-lg" />
           </div>
           <div className="absolute bottom-2.5 left-2.5 w-8 h-8 pointer-events-none">
-            <div className="w-full h-full border-b-2 border-l-2 border-[#C5A059]/80 rounded-bl-lg" />
+            <div className="w-full h-full border-b-2 border-l-2 border-[#916207]/60 dark:border-[#C5A059]/80 rounded-bl-lg" />
           </div>
           <div className="absolute bottom-2.5 right-2.5 w-8 h-8 pointer-events-none">
-            <div className="w-full h-full border-b-2 border-r-2 border-[#C5A059]/80 rounded-br-lg" />
+            <div className="w-full h-full border-b-2 border-r-2 border-[#916207]/60 dark:border-[#C5A059]/80 rounded-br-lg" />
           </div>
 
           <div className="max-w-md mx-auto py-8 flex flex-col items-center">
-            <div className="w-16 h-16 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mb-5 text-[var(--accent-gold)]">
+            <div className="w-16 h-16 rounded-full bg-amber-500/15 border border-amber-500/30 flex items-center justify-center mb-5 text-[var(--accent-gold)]">
               <Feather className="w-7 h-7" />
             </div>
 
-            <h3 className="font-poem-heading text-2xl sm:text-3xl font-bold text-amber-100 mb-3 tracking-tight">
+            <h3 className="font-poem-heading text-2xl sm:text-3xl font-bold text-neutral-900 dark:text-amber-100 mb-3 tracking-tight">
               Kho Thơ Đang Chờ Khởi Tạo
             </h3>
 
-            <p className="font-poem-verse text-sm sm:text-base text-amber-200/70 mb-8 leading-relaxed">
+            <p className="font-poem-verse text-sm sm:text-base text-neutral-700 dark:text-amber-200/70 mb-8 leading-relaxed">
               Dữ liệu mẫu đã được dọn sạch hoàn toàn. Không gian thi ca Thịnh và Thơ đã sẵn sàng để đón nhận những thi phẩm sáng tác nguyên bản.
             </p>
 
-            <Link
-              href="/admin/poems/new"
-              className="inline-flex items-center justify-center px-6 py-3 rounded-full bg-[var(--accent-gold)] hover:bg-[#d4ad64] text-neutral-950 font-serif font-bold text-sm tracking-wide shadow-lg transition-all active:scale-95 cursor-pointer"
-            >
-              <span>Soạn Thi Phẩm Đầu Tiên</span>
-            </Link>
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <Link
+                href="/admin/poems/new"
+                className="inline-flex items-center justify-center px-6 py-2.5 rounded-full bg-[var(--accent-green)] hover:bg-[var(--accent-green-hover)] dark:bg-[var(--accent-gold)] dark:hover:bg-[#d4ad64] text-white dark:text-neutral-950 font-serif font-bold text-sm tracking-wide shadow-md transition-all active:scale-95 cursor-pointer"
+              >
+                <span>Soạn Thi Phẩm Mới</span>
+              </Link>
+              <Link
+                href="/authors"
+                className="inline-flex items-center justify-center px-6 py-2.5 rounded-full border border-[var(--border-strong)] bg-white/60 dark:bg-black/20 hover:bg-white/90 text-[var(--text-primary)] font-serif text-sm tracking-wide transition-all active:scale-95 cursor-pointer"
+              >
+                <span>Về Trang Tác Giả</span>
+              </Link>
+            </div>
           </div>
         </div>
       </div>

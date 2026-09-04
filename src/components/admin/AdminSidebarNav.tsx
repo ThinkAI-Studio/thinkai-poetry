@@ -33,10 +33,9 @@ export function AdminSidebarNav() {
     setLoggingOut(true);
     try {
       await fetch("/api/admin/logout", { method: "POST" });
-      router.push("/authors");
-      router.refresh();
+      window.location.href = "/";
     } catch {
-      router.push("/authors");
+      window.location.href = "/";
     }
   };
 

@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Menu, X, BookOpen } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { Menu, X } from "lucide-react";
 import { ThemeSwitch } from "@/components/layout/ThemeSwitch";
 import { usePoeticBook } from "@/context/PoeticBookContext";
 import { cn } from "@/lib/utils";
@@ -11,6 +12,8 @@ export function SiteHeader() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const { openBook } = usePoeticBook();
+  const pathname = usePathname();
+  const router = useRouter();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -19,6 +22,37 @@ export function SiteHeader() {
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Xử lý motion back cuộn mượt mà khi nhấp vào Logo từ bất kỳ đâu trên website
+  const handleLogoClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (pathname === "/") {
+      const lenis = (window as unknown as { __lenis?: any }).__lenis;
+      if (lenis) {
+        lenis.scrollTo(0, {
+          offset: 0,
+          duration: 1.2,
+          easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        });
+      } else {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    } else {
+      router.push("/");
+      setTimeout(() => {
+        const lenis = (window as unknown as { __lenis?: any }).__lenis;
+        if (lenis) {
+          lenis.scrollTo(0, {
+            offset: 0,
+            duration: 1.0,
+            easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+          });
+        } else {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+      }, 80);
+    }
+  };
 
   const navLinks = [
     { href: "/collections", label: "Tuyển Tập" },
@@ -37,13 +71,18 @@ export function SiteHeader() {
       )}
     >
       <div className="max-w-6xl mx-auto px-6 sm:px-8 flex items-center justify-between">
-        {/* Logo: Thư pháp tao nhã + Thịnh và Thơ */}
-        <Link href="/" className="flex items-center gap-2.5 group select-none">
-          <span className="w-8 h-8 rounded-full bg-[var(--accent-green)] text-white dark:bg-[var(--accent-gold)] dark:text-[#121211] flex items-center justify-center font-serif font-bold text-lg shadow-sm transition-transform duration-200 group-hover:scale-105">
+        {/* Logo: Thư pháp tao nhã + Thịnh và Thơ (Motion SmoothScroll to top) */}
+        <Link
+          href="/"
+          onClick={handleLogoClick}
+          className="flex items-center gap-2.5 group select-none cursor-pointer"
+          title="Trở về đầu trang Thịnh và Thơ"
+        >
+          <span className="w-8 h-8 rounded-full bg-[var(--accent-green)] text-white dark:bg-[var(--accent-gold)] dark:text-[#121211] flex items-center justify-center font-serif font-bold text-lg shadow-sm transition-transform duration-200 group-hover:scale-105 active:scale-95">
             T
           </span>
           <div className="flex flex-col">
-            <span className="font-serif text-[22px] font-bold tracking-tight text-neutral-900 dark:text-[#EAE6DF] leading-none">
+            <span className="font-serif text-[22px] font-bold tracking-tight text-neutral-900 dark:text-[#EAE6DF] leading-none group-hover:text-[var(--accent-green)] dark:group-hover:text-[var(--accent-gold)] transition-colors">
               Thịnh và Thơ
             </span>
             <span className="font-sans text-[10px] tracking-[0.2em] uppercase text-neutral-500 dark:text-neutral-400 mt-0.5">

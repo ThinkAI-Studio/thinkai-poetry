@@ -10,6 +10,7 @@
 export type SiteTheme = "ivory" | "sepia" | "dark";
 
 interface PageCurlOptions {
+  event?: React.MouseEvent | MouseEvent;
   targetTheme: SiteTheme;
   direction?: "forward" | "backward";
   onCommit: (theme: SiteTheme) => void;
@@ -85,8 +86,8 @@ function playKindleTactileAudio() {
 }
 
 export function executeKindlePageCurl({
+  event,
   targetTheme,
-  direction = "forward",
   onCommit,
 }: PageCurlOptions) {
   const prefersReduced =
@@ -105,14 +106,24 @@ export function executeKindlePageCurl({
 
   playKindleTactileAudio();
 
-  const isGoingDark = targetTheme === "dark";
-  const resolvedDirection = direction || (isGoingDark ? "forward" : "backward");
-  const duration = 440; // 440ms chuẩn nhịp lướt trang sách
+  // Tính toán tâm chuyển đổi từ vị trí nút nhấp hoặc góc trên bên phải
+  let x = typeof window !== "undefined" ? window.innerWidth - 60 : 0;
+  let y = 40;
 
-  const clipPathKeyframes =
-    resolvedDirection === "forward"
-      ? FORWARD_CLIP_KEYFRAMES
-      : BACKWARD_CLIP_KEYFRAMES;
+  if (event && "clientX" in event && event.clientX) {
+    x = event.clientX;
+    y = event.clientY;
+  }
+
+  const endRadius = Math.hypot(
+    Math.max(x, typeof window !== "undefined" ? window.innerWidth - x : 1000),
+    Math.max(y, typeof window !== "undefined" ? window.innerHeight - y : 1000)
+  );
+
+  const duration = 460;
+
+  // Tạm thời tắt CSS transitions trên live DOM để chụp ảnh snapshot tức thì, triệt tiêu hoàn toàn flicker
+  document.documentElement.classList.add("theme-transitioning");
 
   try {
     const transition = (document as any).startViewTransition(() => {
@@ -122,42 +133,33 @@ export function executeKindlePageCurl({
     if (transition && transition.ready) {
       transition.ready
         .then(() => {
-          // 1. Áp dụng Clip-Path bóc tách góc trên trang cũ (::view-transition-old)
-          // 3 keyframes GPU native compositor loại bỏ hoàn toàn hiện tượng khựng tại p = 0.5
-          document.documentElement.animate(
+          // Trang mới mở rộng dạng vầng sáng / loang mực tròn siêu mượt từ nút công tắc
+          const anim = document.documentElement.animate(
             {
-              clipPath: clipPathKeyframes,
-              filter: [
-                "brightness(1) drop-shadow(0 0 0 rgba(0,0,0,0))",
-                "brightness(0.97) drop-shadow(-3px -3px 8px rgba(0,0,0,0.15))",
-                "brightness(0.92) drop-shadow(-6px -6px 14px rgba(0,0,0,0.22))",
+              clipPath: [
+                `circle(0px at ${x}px ${y}px)`,
+                `circle(${endRadius}px at ${x}px ${y}px)`,
               ],
             },
             {
               duration,
-              easing: "cubic-bezier(0.2, 0.0, 0.2, 1)",
-              pseudoElement: "::view-transition-old(root)",
-            }
-          );
-
-          // 2. Trang mới hé lộ từ phía dưới với hiệu ứng sáng lên dịu nhẹ
-          document.documentElement.animate(
-            {
-              transform: ["scale(0.985)", "scale(1)"],
-              filter: ["brightness(0.92)", "brightness(1)"],
-            },
-            {
-              duration,
-              easing: "cubic-bezier(0.2, 0.0, 0.2, 1)",
+              easing: "cubic-bezier(0.22, 1, 0.36, 1)",
               pseudoElement: "::view-transition-new(root)",
             }
           );
+
+          anim.finished.finally(() => {
+            document.documentElement.classList.remove("theme-transitioning");
+          });
         })
         .catch(() => {
-          // Fallback an toàn nếu transition bị hủy
+          document.documentElement.classList.remove("theme-transitioning");
         });
+    } else {
+      document.documentElement.classList.remove("theme-transitioning");
     }
   } catch {
+    document.documentElement.classList.remove("theme-transitioning");
     onCommit(targetTheme);
   }
 }
