@@ -5,17 +5,18 @@ import { motion, useReducedMotion } from "motion/react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
-import { TAI_EASE } from "@/lib/motion";
+import { SPRINGS } from "@/lib/motion";
+import { useMagnetic } from "@/lib/useMagnetic";
 
 export const taiButtonVariants = cva(
-  "relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full font-mono text-xs tracking-wider uppercase transition-all duration-200 group cursor-pointer select-none outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A3D]/40 active:scale-[0.98]",
+  "relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full font-mono text-xs tracking-wider uppercase transition-colors duration-200 group cursor-pointer select-none outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A3D]/40",
   {
     variants: {
       variant: {
         primary:
           "bg-[#2D5A3D] text-white hover:bg-[#234730] font-semibold shadow-[0_2px_8px_-2px_rgba(45,90,61,0.3)]",
         secondary:
-          "bg-white text-neutral-900 hover:bg-neutral-50 border border-neutral-200 hover:border-neutral-300 font-medium shadow-sm",
+          "bg-white text-neutral-900 hover:bg-neutral-50 border border-neutral-200 hover:border-neutral-300 font-medium shadow-xs",
         outline:
           "bg-transparent text-neutral-900 border border-neutral-300 hover:border-neutral-900 hover:bg-black/[0.02] font-medium",
         ghost:
@@ -58,6 +59,7 @@ export const TaiButton = React.forwardRef<HTMLButtonElement, TaiButtonProps>(
     ref
   ) => {
     const prefersReduced = useReducedMotion();
+    const { ref: magneticRef, x, y, handleMouseMove, handleMouseLeave } = useMagnetic(0.2);
 
     if (asChild) {
       return (
@@ -75,12 +77,21 @@ export const TaiButton = React.forwardRef<HTMLButtonElement, TaiButtonProps>(
 
     return (
       <Component
-        ref={ref as any}
+        ref={(node: any) => {
+          // Sync internal magnetic ref & forwarded ref
+          magneticRef.current = node;
+          if (typeof ref === "function") ref(node);
+          else if (ref) (ref as any).current = node;
+        }}
         // @ts-ignore
         href={href}
+        style={prefersReduced ? undefined : { x, y }}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
         className={cn(taiButtonVariants({ variant, size, className }))}
-        whileHover={{ y: prefersReduced ? 0 : -1 }}
-        whileTap={{ scale: prefersReduced ? 1 : 0.98 }}
+        whileHover={{ scale: prefersReduced ? 1 : 1.03 }}
+        whileTap={{ scale: prefersReduced ? 1 : 0.94 }}
+        transition={SPRINGS.responsive}
         {...(props as any)}
       >
         <span className="relative flex items-center justify-center gap-2">

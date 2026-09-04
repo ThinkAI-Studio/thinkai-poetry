@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "motion/react";
 
@@ -61,6 +61,37 @@ const rightClusterItems: FloralItem[] = [
 
 export function FloralDecoration() {
   const [burstPetals, setBurstPetals] = useState<BurstPetal[]>([]);
+  const [windForce, setWindForce] = useState(0);
+  const lastMousePos = useRef({ x: 0, y: 0, time: Date.now() });
+
+  // Lắng nghe tốc độ rê chuột để tạo gió lay động hoa lá tự nhiên
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    const handleMouseMove = (e: MouseEvent) => {
+      const now = Date.now();
+      const dt = Math.max(1, now - lastMousePos.current.time);
+      const dx = e.clientX - lastMousePos.current.x;
+      const dy = e.clientY - lastMousePos.current.y;
+      const speed = Math.hypot(dx, dy) / dt; // pixels per ms
+
+      if (speed > 1.0) {
+        const direction = dx > 0 ? 1 : -1;
+        const force = Math.min(14, speed * 4.5 * direction);
+        setWindForce(force);
+
+        clearTimeout(timer);
+        timer = setTimeout(() => setWindForce(0), 400);
+      }
+
+      lastMousePos.current = { x: e.clientX, y: e.clientY, time: now };
+    };
+
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      clearTimeout(timer);
+    };
+  }, []);
 
   // Tương tác khi người dùng click vào hoa: Phun cánh hoa màu nước bay nhẹ nhàng
   const handleFlowerClick = (e: React.MouseEvent) => {
@@ -73,77 +104,65 @@ export function FloralDecoration() {
       id: Date.now() + i,
       x: centerX,
       y: centerY,
-      vx: (Math.random() - 0.5) * 140,
-      vy: -Math.random() * 90 - 40,
+      vx: (Math.random() - 0.5) * 160,
+      vy: -Math.random() * 120 - 40,
       color: colors[Math.floor(Math.random() * colors.length)],
-      size: Math.floor(Math.random() * 10) + 12,
+      size: Math.random() * 14 + 10,
       rotation: Math.random() * 360,
     }));
 
     setBurstPetals((prev) => [...prev.slice(-18), ...newPetals]);
-
-    // Xóa cánh hoa sau khi hoạt ảnh kết thúc
-    setTimeout(() => {
-      setBurstPetals((prev) => prev.filter((p) => !newPetals.some((np) => np.id === p.id)));
-    }, 2000);
   };
 
-  const renderFloralItem = (item: FloralItem, side: "left" | "right") => {
-    const imgSrc =
-      item.type === "pink"
-        ? "/floral/flower-pink.png"
-        : item.type === "yellow"
-        ? "/floral/flower-yellow.png"
-        : item.type === "leaf1"
-        ? "/floral/leaf-1.png"
-        : "/floral/leaf-2.png";
+  const renderFloralItem = (item: FloralItem, corner: "left" | "right") => {
+    const srcMap = {
+      pink: "/images/flowers/cherry-blossom.png",
+      yellow: "/images/flowers/apricot-blossom.png",
+      leaf1: "/images/flowers/leaf-branch-1.png",
+      leaf2: "/images/flowers/leaf-branch-2.png",
+    };
 
     const isLeaf = item.type.startsWith("leaf");
 
     return (
       <motion.div
         key={item.id}
-        onClick={!isLeaf ? handleFlowerClick : undefined}
-        className={`absolute select-none ${isLeaf ? "pointer-events-none" : "cursor-pointer pointer-events-auto"}`}
+        className="absolute pointer-events-auto cursor-pointer select-none group"
         style={{
           bottom: item.bottom,
-          ...(side === "left" ? { left: item.left } : { right: item.right }),
-          width: item.size,
-          height: item.size,
+          ...(item.left ? { left: item.left } : { right: item.right }),
           zIndex: item.zIndex,
+          transformOrigin: corner === "left" ? "bottom left" : "bottom right",
         }}
-        initial={{ scale: 0.8, opacity: 0 }}
         animate={{
-          scale: 1,
-          opacity: 1,
-          rotate: [item.initialRotate - 4, item.initialRotate + 4, item.initialRotate - 4],
+          rotate: [
+            item.initialRotate - 4 + windForce,
+            item.initialRotate + 5 + windForce,
+            item.initialRotate - 4,
+          ],
           y: [0, -6, 0],
         }}
         transition={{
-          rotate: { duration: item.duration, repeat: Infinity, ease: "easeInOut" },
+          rotate: windForce !== 0 ? { type: "spring", stiffness: 320, damping: 16 } : { duration: item.duration, repeat: Infinity, ease: "easeInOut" },
           y: { duration: item.duration * 1.1, repeat: Infinity, ease: "easeInOut" },
-          scale: { duration: 0.6, ease: "easeOut" },
         }}
-        whileHover={
-          !isLeaf
-            ? {
-                scale: 1.25,
-                rotate: item.initialRotate + (side === "left" ? -8 : 8),
-                transition: { type: "spring", stiffness: 400, damping: 12 },
-              }
-            : undefined
-        }
-        whileTap={!isLeaf ? { scale: 0.88 } : undefined}
-        title={!isLeaf ? "Bấm vào hoa để bung cánh hoa bay trong gió" : undefined}
+        whileHover={{
+          scale: 1.22,
+          rotate: item.initialRotate + (corner === "left" ? -8 : 8),
+          transition: { type: "spring", stiffness: 400, damping: 15 },
+        }}
+        whileTap={{ scale: 0.92 }}
+        onClick={handleFlowerClick}
+        title="Bấm vào hoa để bung tỏa cánh hoa màu nước"
       >
         <Image
-          src={imgSrc}
-          alt="Hoa thi ca"
+          src={srcMap[item.type]}
+          alt="Hoa thi ca Ánh Thịnh"
           width={item.size}
           height={item.size}
-          className="w-full h-full object-contain drop-shadow-sm transition-transform duration-300 pointer-events-none"
-          draggable={false}
-          priority
+          className={`object-contain transition-all duration-300 drop-shadow-sm ${
+            isLeaf ? "opacity-75 group-hover:opacity-100" : "opacity-90 group-hover:opacity-100"
+          }`}
         />
       </motion.div>
     );

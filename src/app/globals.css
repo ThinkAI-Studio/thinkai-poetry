@@ -2,6 +2,14 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* CẤU HÌNH THEME FONTS CHO TAILWIND CSS V4 */
+@theme {
+  --font-sans: var(--font-sans), system-ui, -apple-system, sans-serif;
+  --font-serif: var(--font-heading), "Times New Roman", Georgia, serif;
+  --font-heading: var(--font-heading), "Times New Roman", Georgia, serif;
+  --font-verse: var(--font-verse), Georgia, serif;
+}
+
 @layer base {
   :root {
     --bg-page: #FAF8F5;
@@ -17,7 +25,7 @@
     color-scheme: light;
   }
 
-  /* Toàn trang Dark Mode (Obsidian Dark) */
+  /* Toàn trang Dark Mode (Obsidian Dark / Nghiên Mực) */
   .dark,
   [data-reader-theme="dark"] {
     --bg-page: #08080A;
@@ -30,7 +38,7 @@
     color-scheme: dark;
   }
 
-  /* Chế độ đọc Thơ: Giấy dó truyền thống (Sepia) */
+  /* Chế độ đọc Thơ: Giấy dó truyền thống (Sepia Tea Wash) */
   [data-reader-theme="sepia"] {
     --bg-page: #F5EFEB;
     --bg-card: #EFE8E2;
@@ -45,16 +53,94 @@
   body {
     background-color: var(--bg-page);
     color: var(--text-primary);
-    transition: background-color 0.3s ease, color 0.3s ease;
+    font-family: var(--font-sans);
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
   }
 }
 
-/* SORA LABS THEME VIEW TRANSITION */
+/* ============================================================
+   POETIC INK BLEED & WATERCOLOR VIEW TRANSITION
+   ============================================================ */
+
+/* Tắt hoạt ảnh cross-fade mờ phẳng mặc định của trình duyệt */
 ::view-transition-old(root),
 ::view-transition-new(root) {
-  animation-duration: 0.35s;
-  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* Thứ tự hiển thị lớp: Lớp trang mới luôn nằm trên cùng */
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 9999;
+  /* Gắn bộ lọc rách mép thớ giấy Dó vào đường viền loang mực */
+  filter: url(#ink-bleed-filter);
+}
+
+/* Khi từ tối quay về sáng: Lớp cũ co lại vào tâm */
+.dark::view-transition-old(root) {
+  z-index: 9999;
+  filter: url(#ink-bleed-filter);
+}
+
+.dark::view-transition-new(root) {
+  z-index: 1;
+  filter: none;
+}
+
+/* ============================================================
+   ĐỊNH NGHĨA TYPOGRAPHY THI PHẨM VIỆT NAM
+   ============================================================ */
+.font-poem-heading {
+  font-family: var(--font-heading);
+  letter-spacing: -0.01em;
+}
+
+.font-poem-verse {
+  font-family: var(--font-verse);
+  letter-spacing: 0.015em;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  font-feature-settings: "kern" 1, "liga" 1;
+}
+
+/* Khổ thơ & khoảng thở giữa các đoạn thơ */
+.poem-body {
+  line-height: 2.15;
+}
+
+.poem-verse {
+  line-height: 2.15;
+  letter-spacing: 0.015em;
+}
+
+/* Thể thơ Lục bát: Câu 6 lùi 2ch, câu 8 đứng thẳng lề */
+.poem-luc-bat .verse-6,
+.poem-luc-bat p:nth-child(odd) {
+  padding-left: 2ch;
+}
+.poem-luc-bat .verse-8,
+.poem-luc-bat p:nth-child(even) {
+  padding-left: 0ch;
+}
+
+/* Thể thơ Song thất lục bát */
+.poem-song-that .verse-7-1 {
+  padding-left: 1.5ch;
+}
+.poem-song-that .verse-7-2 {
+  padding-left: 1.5ch;
+}
+.poem-song-that .verse-6 {
+  padding-left: 3ch;
+}
+.poem-song-that .verse-8 {
+  padding-left: 0ch;
 }
 
 /* KHUNG HOA ĐUNG ĐƯA THEO GIÓ (SORA LATTICE FLORAL ANIMATION) */
@@ -110,32 +196,4 @@
 .tai-card:hover {
   border-color: var(--border-strong);
   box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
-}
-
-/* ĐỊNH DẠNG THƠ VIỆT NAM (POETRY TYPOGRAPHY) */
-.poem-verse {
-  line-height: 2.1;
-  letter-spacing: 0.015em;
-}
-
-/* Thể thơ Lục bát: Câu 6 lùi 2.5rem, câu 8 đứng đầu */
-.poem-luc-bat .verse-6 {
-  padding-left: 2.5rem;
-}
-.poem-luc-bat .verse-8 {
-  padding-left: 0rem;
-}
-
-/* Thể thơ Song thất lục bát */
-.poem-song-that .verse-7-1 {
-  padding-left: 1.5rem;
-}
-.poem-song-that .verse-7-2 {
-  padding-left: 1.5rem;
-}
-.poem-song-that .verse-6 {
-  padding-left: 3rem;
-}
-.poem-song-that .verse-8 {
-  padding-left: 0rem;
 }

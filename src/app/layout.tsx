@@ -1,16 +1,31 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Plus_Jakarta_Sans } from "next/font/google";
+import { EB_Garamond, Lora, Be_Vietnam_Pro } from "next/font/google";
+import { PoeticPaperTexture } from "@/components/effects/PoeticPaperTexture";
 import "./globals.css";
 
-const playfair = Playfair_Display({
-  variable: "--font-serif",
+// 1. Phông Tiêu Đề & Thi Phẩm: EB Garamond (Kinh điển thời Thơ Mới, tao nhã, chuẩn mực)
+const ebGaramond = EB_Garamond({
+  variable: "--font-heading",
   subsets: ["latin", "vietnamese"],
+  weight: ["400", "500", "600", "700", "800"],
+  style: ["normal", "italic"],
   display: "swap",
 });
 
-const jakarta = Plus_Jakarta_Sans({
+// 2. Phông Thân Thơ & Khổ Thơ: Lora (Nét bút lông trữ tình, dấu thanh tiếng Việt uốn mềm tuyệt mỹ)
+const lora = Lora({
+  variable: "--font-verse",
+  subsets: ["latin", "vietnamese"],
+  weight: ["400", "500", "600"],
+  style: ["normal", "italic"],
+  display: "swap",
+});
+
+// 3. Phông Giao Diện & Metadata: Be Vietnam Pro (Chuẩn mực Quốc ngữ hiện đại thiết kế bởi người Việt)
+const beVietnamPro = Be_Vietnam_Pro({
   variable: "--font-sans",
   subsets: ["latin", "vietnamese"],
+  weight: ["300", "400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -60,9 +75,11 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${jakarta.variable} ${playfair.variable} antialiased`}
+        className={`${beVietnamPro.variable} ${ebGaramond.variable} ${lora.variable} antialiased`}
         style={{ fontFamily: "var(--font-sans), sans-serif" }}
       >
+        {/* Lớp vân thớ giấy Dó hữu cơ & Bộ lọc SVG Loang Mực */}
+        <PoeticPaperTexture />
         {children}
       </body>
     </html>

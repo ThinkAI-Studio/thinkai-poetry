@@ -1,31 +1,38 @@
 "use client";
 
 import React, { useState, useRef } from "react";
+import { motion, AnimatePresence } from "motion/react";
 import { X, Download, Sparkles } from "lucide-react";
 import { TaiButton } from "@/components/tai-ui/TaiButton";
+import { Poem } from "@/types/database";
+import { SPRINGS } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
 interface QuoteCardModalProps {
   isOpen: boolean;
   onClose: () => void;
+  poem?: Poem;
   defaultQuote?: string;
-  poemTitle: string;
-  authorName: string;
+  poemTitle?: string;
+  authorName?: string;
 }
 
 export function QuoteCardModal({
   isOpen,
   onClose,
-  defaultQuote = "Lòng anh như hoa sen thơm ngát\nNở giữa bùn lầy đón ánh mai...",
+  poem,
+  defaultQuote,
   poemTitle,
   authorName,
 }: QuoteCardModalProps) {
-  const [quote, setQuote] = useState(defaultQuote);
+  const resolvedTitle = poemTitle || poem?.title || "Thi Phẩm";
+  const resolvedAuthor = authorName || poem?.author?.name || "Ánh Thịnh";
+  const initialQuote = defaultQuote || poem?.excerpt || "Gió xuân thổi nhẹ qua rèm\nNhành hoa hé nụ dịu êm đón ngày...";
+
+  const [quote, setQuote] = useState(initialQuote);
   const [cardTheme, setCardTheme] = useState<"botanical" | "ivory" | "sepia" | "dark">("botanical");
   const cardRef = useRef<HTMLDivElement | null>(null);
   const [isExporting, setIsExporting] = useState(false);
-
-  if (!isOpen) return null;
 
   const handleExportImage = () => {
     try {
@@ -58,166 +65,175 @@ export function QuoteCardModal({
       ctx.strokeRect(50, 50, canvas.width - 100, canvas.height - 100);
 
       // Quotation Mark
+      ctx.font = 'italic 72px "EB Garamond", serif';
       ctx.fillStyle = accentColor;
-      ctx.font = "italic bold 72px serif";
-      ctx.textAlign = "center";
-      ctx.fillText("“", canvas.width / 2, 140);
+      ctx.fillText("“", 120, 160);
 
-      // Quote Text (Multi-line)
+      // Quote Text (Split lines)
+      ctx.font = 'italic 34px "Lora", "EB Garamond", Georgia, serif';
       ctx.fillStyle = textColor;
-      ctx.font = "italic 32px serif";
+      ctx.textAlign = "center";
+
       const lines = quote.split("\n");
-      const startY = 240;
-      const lineHeight = 52;
+      const lineHeight = 55;
+      const startY = 300 - ((lines.length - 1) * lineHeight) / 2;
+
       lines.forEach((line, index) => {
         ctx.fillText(line.trim(), canvas.width / 2, startY + index * lineHeight);
       });
 
-      // Divider
-      const divY = startY + lines.length * lineHeight + 30;
-      ctx.strokeStyle = accentColor;
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.moveTo(canvas.width / 2 - 80, divY);
-      ctx.lineTo(canvas.width / 2 + 80, divY);
-      ctx.stroke();
+      // Closing Quote
+      ctx.font = 'italic 72px "EB Garamond", serif';
+      ctx.fillStyle = accentColor;
+      ctx.textAlign = "left";
+      ctx.fillText("”", canvas.width - 160, startY + lines.length * lineHeight);
 
-      // Author attribution
+      // Poem & Author Attribution
+      ctx.textAlign = "center";
+      ctx.font = 'bold 22px "EB Garamond", serif';
       ctx.fillStyle = textColor;
-      ctx.font = "bold 24px serif";
-      ctx.fillText(`— ${authorName} —`, canvas.width / 2, divY + 50);
+      ctx.fillText(`— ${resolvedTitle} —`, canvas.width / 2, 530);
 
-      // Subtitle
-      ctx.fillStyle = isDark ? "#A1A1AA" : "#71717A";
-      ctx.font = "16px monospace";
-      ctx.fillText(`Tác phẩm: ${poemTitle}  •  Ánh Thịnh Thi Quán`, canvas.width / 2, divY + 85);
+      ctx.font = '16px "Be Vietnam Pro", sans-serif';
+      ctx.fillStyle = isDark ? "#A1A1AA" : "#5A5A5A";
+      ctx.fillText(`Tác giả: ${resolvedAuthor} • Ánh Thịnh Thi Quán`, canvas.width / 2, 565);
 
-      // Download trigger
-      const dataUrl = canvas.toDataURL("image/png");
+      // Download
       const link = document.createElement("a");
-      link.download = `trich-doan-${poemTitle.toLowerCase().replace(/\s+/g, "-")}.png`;
-      link.href = dataUrl;
+      link.download = `anh-thinh-tho-${Date.now()}.png`;
+      link.href = canvas.toDataURL("image/png");
       link.click();
     } catch (err) {
-      console.error("Export quote error:", err);
-      alert("Không thể xuất ảnh lúc này. Bạn vui lòng thử lại nhé!");
+      console.error(err);
     } finally {
       setIsExporting(false);
     }
   };
 
-  const themeStyles = {
-    botanical: "bg-[#FAF8F5] text-[#1A1A1A] border-[#2D5A3D]/20",
-    ivory: "bg-[#FFFFFF] text-[#1A1A1A] border-neutral-200",
-    sepia: "bg-[#F5EFEB] text-[#2C251E] border-[#5C4F44]/20",
-    dark: "bg-[#08080A] text-[#F4F4F5] border-white/10",
-  }[cardTheme];
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div className="bg-white dark:bg-[#131316] w-full max-w-xl p-6 rounded-2xl border border-neutral-300 dark:border-neutral-800 shadow-2xl flex flex-col gap-5">
-        {/* Header Modal */}
-        <div className="flex items-center justify-between border-b border-neutral-200 dark:border-neutral-800 pb-3">
-          <div className="flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-[#2D5A3D]" />
-            <h3 className="font-serif font-bold text-lg text-neutral-900 dark:text-neutral-100">
-              Tạo Thẻ Trích Dẫn Thơ (Quote Card)
-            </h3>
-          </div>
-          <button
-            type="button"
+    <AnimatePresence>
+      {isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          {/* Backdrop mờ dần với hiệu ứng blur diffusion */}
+          <motion.div
+            initial={{ opacity: 0, backdropFilter: "blur(0px)" }}
+            animate={{ opacity: 1, backdropFilter: "blur(12px)" }}
+            exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
+            transition={{ duration: 0.3 }}
             onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-500 hover:text-neutral-900 dark:hover:text-white"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-
-        {/* Live Card Preview Target */}
-        <div
-          ref={cardRef}
-          className={cn(
-            "p-8 relative overflow-hidden rounded-xl border shadow-lg transition-all duration-300 select-none",
-            themeStyles
-          )}
-          style={{ minHeight: "260px" }}
-        >
-          <div className="relative z-10 flex flex-col justify-between h-full gap-6">
-            <div className="text-2xl font-serif text-[#2D5A3D] select-none font-bold">“</div>
-
-            <p className="font-serif text-lg md:text-xl leading-relaxed whitespace-pre-line italic text-center px-4">
-              {quote}
-            </p>
-
-            <div className="flex flex-col items-center justify-center pt-4 border-t border-current/10 gap-1">
-              <span className="font-serif text-sm font-bold tracking-wide">
-                — {authorName} —
-              </span>
-              <span className="text-xs font-mono opacity-70">
-                Tác phẩm: {poemTitle} • ThinkAI Poetry
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Điều khiển tùy chọn */}
-        <div className="flex flex-col gap-3">
-          <label className="text-xs font-mono uppercase tracking-wider text-neutral-600 dark:text-neutral-400">
-            Chỉnh sửa câu thơ trích dẫn:
-          </label>
-          <textarea
-            value={quote}
-            onChange={(e) => setQuote(e.target.value)}
-            rows={3}
-            className="w-full p-3 text-sm font-serif border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100 rounded-xl focus:outline-none focus:border-[#2D5A3D]"
+            className="absolute inset-0 bg-black/60 cursor-pointer"
           />
 
-          {/* Chọn Theme Card */}
-          <div className="flex items-center gap-2 pt-2">
-            <span className="text-xs font-mono text-neutral-500 mr-2">Nền thi ảnh:</span>
-            {[
-              { id: "botanical", label: "Hoa Cỏ" },
-              { id: "ivory", label: "Sáng Ngà" },
-              { id: "sepia", label: "Giấy Dó" },
-              { id: "dark", label: "Đêm Sâu" },
-            ].map((t) => (
+          {/* Modal Dialog Card bung nở lò xo */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.92, y: 20, filter: "blur(4px)" }}
+            animate={{ opacity: 1, scale: 1, y: 0, filter: "blur(0px)" }}
+            exit={{ opacity: 0, scale: 0.94, y: 15, filter: "blur(3px)" }}
+            transition={SPRINGS.bouncy}
+            className="relative z-10 bg-white dark:bg-[#131316] w-full max-w-xl p-6 rounded-2xl border border-neutral-300 dark:border-neutral-800 shadow-2xl flex flex-col gap-5 max-h-[90vh] overflow-y-auto"
+          >
+            {/* Header Modal */}
+            <div className="flex items-center justify-between pb-3 border-b border-neutral-200 dark:border-neutral-800">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-[#2D5A3D] dark:text-[#4ade80]" />
+                <h3 className="font-poem-heading text-lg font-bold text-neutral-900 dark:text-neutral-100">
+                  Tạo Ảnh Trích Dẫn Thi Ca
+                </h3>
+              </div>
               <button
-                key={t.id}
                 type="button"
-                onClick={() => setCardTheme(t.id as any)}
-                className={cn(
-                  "px-3.5 py-1.5 text-xs font-mono rounded-full border transition-colors cursor-pointer",
-                  cardTheme === t.id
-                    ? "bg-[#2D5A3D] text-white border-[#2D5A3D] shadow-sm"
-                    : "border-neutral-300 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800"
-                )}
+                onClick={onClose}
+                className="p-1 rounded-full text-neutral-400 hover:text-black dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer"
               >
-                {t.label}
+                <X className="w-5 h-5" />
               </button>
-            ))}
-          </div>
-        </div>
+            </div>
 
-        {/* Nút Xuất Ảnh */}
-        <div className="flex justify-end gap-3 pt-2">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-4 py-2 text-xs font-mono uppercase text-neutral-600 dark:text-neutral-400 hover:text-black dark:hover:text-white"
-          >
-            Hủy
-          </button>
+            {/* Preview Card */}
+            <div
+              ref={cardRef}
+              className={cn(
+                "p-8 rounded-xl border flex flex-col items-center justify-center text-center relative overflow-hidden transition-colors min-h-[220px]",
+                cardTheme === "dark" && "bg-[#08080A] text-[#F4F4F5] border-neutral-800",
+                cardTheme === "sepia" && "bg-[#F5EFEB] text-[#2C251E] border-amber-900/20",
+                cardTheme === "ivory" && "bg-[#FAF8F5] text-[#1A1A1A] border-neutral-300",
+                cardTheme === "botanical" && "bg-emerald-950/20 text-emerald-950 dark:text-emerald-100 border-[#2D5A3D]/30"
+              )}
+            >
+              <span className="font-poem-heading italic text-4xl text-[#2D5A3D] dark:text-[#4ade80] select-none opacity-40">
+                “
+              </span>
+              <p className="font-poem-verse italic text-base sm:text-lg leading-relaxed whitespace-pre-line my-3">
+                {quote}
+              </p>
+              <div className="mt-4 pt-3 border-t border-current/10 w-full flex flex-col items-center">
+                <span className="font-poem-heading font-bold text-sm">— {resolvedTitle} —</span>
+                <span className="text-[11px] font-mono opacity-70 mt-0.5">
+                  {resolvedAuthor} • Ánh Thịnh Thi Quán
+                </span>
+              </div>
+            </div>
 
-          <TaiButton
-            variant="primary"
-            onClick={handleExportImage}
-            disabled={isExporting}
-            icon={<Download className="w-3.5 h-3.5" />}
-          >
-            {isExporting ? "Đang xuất ảnh..." : "Tải ảnh về"}
-          </TaiButton>
+            {/* Chỉnh sửa câu trích dẫn */}
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-mono uppercase text-neutral-600 dark:text-neutral-400">
+                Nội dung câu thơ trích dẫn:
+              </label>
+              <textarea
+                value={quote}
+                onChange={(e) => setQuote(e.target.value)}
+                rows={3}
+                className="w-full p-3 text-sm font-poem-verse border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100 rounded-xl focus:outline-none focus:border-[#2D5A3D]"
+              />
+
+              {/* Chọn Theme Card */}
+              <div className="flex items-center gap-2 pt-2 flex-wrap">
+                <span className="text-xs font-mono text-neutral-500 mr-2">Nền thi ảnh:</span>
+                {[
+                  { id: "botanical", label: "Hoa Cỏ" },
+                  { id: "ivory", label: "Sáng Ngà" },
+                  { id: "sepia", label: "Giấy Dó" },
+                  { id: "dark", label: "Đêm Sâu" },
+                ].map((t) => (
+                  <button
+                    key={t.id}
+                    type="button"
+                    onClick={() => setCardTheme(t.id as any)}
+                    className={cn(
+                      "px-3.5 py-1.5 text-xs font-mono rounded-full border transition-colors cursor-pointer",
+                      cardTheme === t.id
+                        ? "bg-[#2D5A3D] text-white border-[#2D5A3D] shadow-xs"
+                        : "border-neutral-300 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                    )}
+                  >
+                    {t.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Nút Xuất Ảnh */}
+            <div className="flex justify-end gap-3 pt-2">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 text-xs font-mono uppercase text-neutral-600 dark:text-neutral-400 hover:text-black dark:hover:text-white cursor-pointer"
+              >
+                Hủy
+              </button>
+
+              <TaiButton
+                variant="primary"
+                onClick={handleExportImage}
+                disabled={isExporting}
+                icon={<Download className="w-3.5 h-3.5" />}
+              >
+                {isExporting ? "Đang xuất ảnh..." : "Tải ảnh về"}
+              </TaiButton>
+            </div>
+          </motion.div>
         </div>
-      </div>
-    </div>
+      )}
+    </AnimatePresence>
   );
 }
