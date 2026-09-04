@@ -162,10 +162,12 @@
   z-index: 1;
 }
 
-/* Trang mới mở rộng ở trên — KHÔNG dùng z-index cứng để tránh che nội dung mobile */
+/* Trang mới lật mở ở trên với bóng gấp nếp giấy Dó (Apple Books / Kindle Page Curl Shadow) */
 ::view-transition-new(root) {
   z-index: 2;
+  filter: drop-shadow(-10px 12px 18px rgba(0, 0, 0, 0.45));
 }
+
 
 /* Triệt tiêu hoàn toàn hiện tượng nhấp nháy / flicker màu sắc khi chuyển theme */
 html.theme-transitioning,

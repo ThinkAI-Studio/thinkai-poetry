@@ -1,10 +1,9 @@
 /**
  * Hữu Thịnh Thi Quán - Masterpiece Kindle & Apple Books Page Curl Engine
- * Chuyển động lật trang sách thơ chuẩn xác, tự nhiên, không vết cắt lỗi:
- * - 26-frame continuous perimeter polygon interpolation (Không nhảy đỉnh, không cắt chéo màn hình)
- * - Đổ bóng trang sách tự nhiên bằng GPU (Natural Page Shadow via CSS filter)
+ * Chuyển động lật trang sách thơ chuẩn xác, tự nhiên:
+ * - Polygon interpolation lật trang chéo từ góc sách (Top-Right / Top-Left Corner Page Curl)
+ * - Đổ bóng gấp nếp trang sách tự nhiên bằng GPU (Paper Fold Shadow via CSS drop-shadow)
  * - Âm thanh giấy Dó xúc giác 2 thì (Web Audio API)
- * - Triệt tiêu hoàn toàn đường kẻ chéo và hiện tượng chớp đen
  */
 
 export type SiteTheme = "ivory" | "sepia" | "dark";
@@ -17,20 +16,23 @@ interface PageCurlOptions {
 }
 
 /**
- * 3-Keyframe Native Compositor Polygons:
- * Cố định topo 6 đỉnh, nội suy tuyến tính trực tiếp trên GPU compositor,
- * loại bỏ hoàn toàn lỗi kẹp toạ độ (clamping bug) gây đơ ở nửa màn hình (p = 0.5).
+ * 5-Keyframe Page Curl Polygons:
+ * Mô phỏng chuyển động gấp nếp lật góc trang sách chéo tự nhiên (Apple Books / Kindle)
  */
-const FORWARD_CLIP_KEYFRAMES = [
-  "polygon(0% 0%, 100% 0%, 100% 100%, 100% 100%, 0% 100%, 0% 0%)",
-  "polygon(0% 0%, 100% 0%, 100% 0%,   0% 100%,   0% 100%, 0% 0%)",
-  "polygon(0% 0%, 0% 0%,     0% 0%,     0% 0%,     0% 0%,   0% 0%)",
+const FORWARD_CURL_POLYGONS = [
+  "polygon(100% 0%, 100% 0%, 100% 0%, 100% 0%, 100% 0%)",
+  "polygon(70% 0%, 100% 0%, 100% 30%, 100% 30%, 70% 0%)",
+  "polygon(35% 0%, 100% 0%, 100% 65%, 65% 100%, 0% 35%)",
+  "polygon(0% 0%, 100% 0%, 100% 100%, 35% 100%, 0% 65%)",
+  "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 100%)",
 ];
 
-const BACKWARD_CLIP_KEYFRAMES = [
-  "polygon(100% 0%, 100% 100%, 0% 100%, 0% 100%, 0% 0%, 100% 0%)",
-  "polygon(100% 0%, 100% 100%, 100% 100%, 0% 0%, 0% 0%, 100% 0%)",
-  "polygon(100% 0%, 100% 0%,   100% 0%,   100% 0%, 100% 0%, 100% 0%)",
+const BACKWARD_CURL_POLYGONS = [
+  "polygon(0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%)",
+  "polygon(0% 0%, 30% 0%, 0% 30%, 0% 30%, 0% 0%)",
+  "polygon(0% 0%, 65% 0%, 0% 65%, 35% 100%, 0% 35%)",
+  "polygon(0% 0%, 100% 0%, 65% 100%, 0% 100%, 0% 0%)",
+  "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 100%)",
 ];
 
 /**
@@ -55,14 +57,14 @@ function playKindleTactileAudio() {
     tickOsc.start(ctx.currentTime);
     tickOsc.stop(ctx.currentTime + 0.025);
 
-    // 2. Tiếng xào xạc lướt giấy (Swoosh) sau 20ms
-    const duration = 0.16;
+    // 2. Tiếng xào xạc lướt giấy (Swoosh) sau 15ms
+    const duration = 0.18;
     const bufferSize = Math.floor(ctx.sampleRate * duration);
     const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
     const data = buffer.getChannelData(0);
 
     for (let i = 0; i < bufferSize; i++) {
-      const decay = Math.exp(-i / (ctx.sampleRate * 0.042));
+      const decay = Math.exp(-i / (ctx.sampleRate * 0.045));
       data[i] = (Math.random() * 2 - 1) * decay;
     }
 
@@ -86,8 +88,8 @@ function playKindleTactileAudio() {
 }
 
 export function executeKindlePageCurl({
-  event,
   targetTheme,
+  direction,
   onCommit,
 }: PageCurlOptions) {
   const prefersReduced =
@@ -106,29 +108,18 @@ export function executeKindlePageCurl({
 
   playKindleTactileAudio();
 
-  // Tính toán tâm chuyển đổi từ vị trí nút nhấp hoặc góc trên bên phải
-  let x = typeof window !== "undefined" ? window.innerWidth - 60 : 0;
-  let y = 40;
-
-  if (event && "clientX" in event && event.clientX) {
-    x = event.clientX;
-    y = event.clientY;
-  }
-
-  const endRadius = Math.hypot(
-    Math.max(x, typeof window !== "undefined" ? window.innerWidth - x : 1000),
-    Math.max(y, typeof window !== "undefined" ? window.innerHeight - y : 1000)
-  );
-
-  const duration = 460;
+  const isDarkTarget = targetTheme === "dark";
+  const resolvedDirection = direction || (isDarkTarget ? "forward" : "backward");
+  const keyframes = resolvedDirection === "forward" ? FORWARD_CURL_POLYGONS : BACKWARD_CURL_POLYGONS;
+  const duration = 520;
 
   // Tạm thời tắt CSS transitions trên live DOM để chụp ảnh snapshot tức thì, triệt tiêu hoàn toàn flicker
   document.documentElement.classList.add("theme-transitioning");
 
-  // Safety net: luôn cleanup sau 800ms, kể cả khi View Transition bị stuck trên mobile
+  // Safety net: luôn cleanup sau 850ms, kể cả khi View Transition bị stuck trên mobile
   const safetyCleanup = setTimeout(() => {
     document.documentElement.classList.remove("theme-transitioning");
-  }, 800);
+  }, 850);
 
   try {
     const transition = (document as any).startViewTransition(() => {
@@ -138,17 +129,14 @@ export function executeKindlePageCurl({
     if (transition && transition.ready) {
       transition.ready
         .then(() => {
-          // Trang mới mở rộng dạng vầng sáng / loang mực tròn siêu mượt từ nút công tắc
+          // Hoạt ảnh lật trang sách chéo từ góc màn hình (Apple Books / Kindle Page Curl)
           const anim = document.documentElement.animate(
             {
-              clipPath: [
-                `circle(0px at ${x}px ${y}px)`,
-                `circle(${endRadius}px at ${x}px ${y}px)`,
-              ],
+              clipPath: keyframes,
             },
             {
               duration,
-              easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+              easing: "cubic-bezier(0.25, 1, 0.35, 1)",
               pseudoElement: "::view-transition-new(root)",
             }
           );
@@ -172,4 +160,5 @@ export function executeKindlePageCurl({
     onCommit(targetTheme);
   }
 }
+
 
