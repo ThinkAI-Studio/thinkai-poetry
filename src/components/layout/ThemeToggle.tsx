@@ -60,10 +60,22 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
     return (
       <div
         className={cn(
-          "w-10 h-10 rounded-full border border-neutral-200 dark:border-neutral-800 bg-transparent",
+          "w-10 h-10 flex items-center justify-center rounded-full border border-neutral-200/80 bg-white/80 text-amber-500 shadow-xs",
           className
         )}
-      />
+      >
+        <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2">
+          <circle cx="12" cy="12" r="5" fill="currentColor" />
+          <line x1="12" y1="1" x2="12" y2="3" />
+          <line x1="12" y1="21" x2="12" y2="23" />
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+          <line x1="1" y1="12" x2="3" y2="12" />
+          <line x1="21" y1="12" x2="23" y2="12" />
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+        </svg>
+      </div>
     );
   }
 
@@ -125,13 +137,14 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
 
         {/* 1. Các tia nắng hoa thảo xoay tròn & khép cánh */}
         <motion.g
+          initial={{ opacity: 1, scale: 1, rotate: 0 }}
           animate={{
             scale: isDark ? 0 : 1,
             rotate: isDark ? 45 : 0,
             opacity: isDark ? 0 : 1,
           }}
           transition={{ type: "spring", stiffness: 350, damping: 25 }}
-          style={{ transformOrigin: "center" }}
+          style={{ transformOrigin: "center", opacity: 1 }}
         >
           {sunRays.map((deg, i) => (
             <motion.line

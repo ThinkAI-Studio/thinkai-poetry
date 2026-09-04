@@ -9,47 +9,39 @@ export function SiteFooter() {
     <footer className="border-t border-[var(--border-subtle)] bg-[var(--bg-page)]/80 py-12 px-4 sm:px-6 transition-colors">
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
         {/* Brand & Quote */}
-        <div className="flex flex-col items-center md:items-start gap-2">
-          <div className="flex items-center gap-2">
-            <Feather className="w-4 h-4 text-[#2D5A3D] dark:text-[#5BA26B]" />
-            <span className="font-serif font-bold text-base text-neutral-900 dark:text-neutral-100">
-              Ánh Thịnh Thi Quán
-            </span>
-          </div>
-          <p className="font-serif italic text-sm text-neutral-600 dark:text-neutral-400 max-w-sm">
+        <div className="flex flex-col items-center md:items-start gap-1.5">
+          <span className="font-serif font-bold text-lg text-neutral-900 dark:text-[#EAE6DF] tracking-tight">
+            Thịnh và Thơ
+          </span>
+          <p className="font-serif italic text-sm text-neutral-600 dark:text-[#A6A39C] max-w-sm">
             “Thơ là rượu của thế gian, là sự kết tinh của cảm xúc và trí tuệ.”
           </p>
         </div>
 
-        {/* Links */}
-        <div className="flex items-center gap-6 text-xs font-mono uppercase tracking-wider text-neutral-700 dark:text-neutral-300">
-          <Link href="/collections" className="hover:text-[#2D5A3D] dark:hover:text-[#4ade80] transition-colors">
+        {/* Links (Hallmark Gate 49: Wrapping and single-line affordance) */}
+        <div className="flex flex-wrap justify-center items-center gap-4 sm:gap-6 text-xs font-sans uppercase tracking-wider text-neutral-700 dark:text-[#A6A39C]">
+          <Link href="/collections" className="hover:text-[var(--accent-green)] dark:hover:text-[var(--accent-gold)] transition-colors py-1">
             Tuyển Tập
           </Link>
-          <Link href="/authors" className="hover:text-[#2D5A3D] dark:hover:text-[#4ade80] transition-colors">
+          <Link href="/authors" className="hover:text-[var(--accent-green)] dark:hover:text-[var(--accent-gold)] transition-colors py-1">
             Tác Giả
           </Link>
-          <Link href="/forum" className="hover:text-[#2D5A3D] dark:hover:text-[#4ade80] transition-colors">
+          <Link href="/forum" className="hover:text-[var(--accent-green)] dark:hover:text-[var(--accent-gold)] transition-colors py-1">
             Diễn Đàn
           </Link>
-          <Link href="/admin" className="hover:text-[#2D5A3D] dark:hover:text-[#4ade80] transition-colors opacity-80">
+          <Link href="/admin" className="hover:text-[var(--accent-green)] dark:hover:text-[var(--accent-gold)] transition-colors py-1 opacity-80">
             Quản Trị
           </Link>
         </div>
 
-        {/* Credit ThinkAI Studio */}
-        <div className="flex flex-col items-center md:items-end gap-1 text-xs font-mono text-neutral-500 dark:text-neutral-400">
-          <span>© {new Date().getFullYear()} Ánh Thịnh. Mọi quyền được bảo lưu.</span>
+        {/* Credit */}
+        <div className="flex flex-col items-center md:items-end gap-1 text-xs font-sans text-neutral-500 dark:text-[#7E7B74]">
+          <span>© {new Date().getFullYear()} Thịnh và Thơ. Mọi quyền được bảo lưu.</span>
           <span className="flex items-center gap-1">
-            Phát triển bởi{" "}
-            <a
-              href="https://binhminh.thinkai.id.vn"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[#2D5A3D] dark:text-[#4ade80] hover:underline font-bold"
-            >
+            Thiết kế bởi{" "}
+            <span className="text-[var(--accent-green)] dark:text-[var(--accent-gold)] font-medium">
               ThinkAI Studio
-            </a>
+            </span>
           </span>
         </div>
       </div>

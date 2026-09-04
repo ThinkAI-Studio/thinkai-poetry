@@ -1,6 +1,6 @@
 import React from "react";
 import { notFound } from "next/navigation";
-import { mockPoems } from "@/data/mock-poetry";
+import { getPoemBySlug } from "@/lib/data-service";
 import { PoemReaderView } from "@/components/reader/PoemReaderView";
 
 interface PoemPageProps {
@@ -9,17 +9,17 @@ interface PoemPageProps {
 
 export async function generateMetadata({ params }: PoemPageProps) {
   const { slug } = await params;
-  const poem = mockPoems.find((p) => p.slug === slug);
+  const poem = await getPoemBySlug(slug);
   if (!poem) return { title: "Không tìm thấy bài thơ" };
   return {
-    title: `${poem.title} | Ánh Thịnh Thi Quán`,
+    title: `${poem.title} | Thịnh và Thơ`,
     description: poem.excerpt || poem.raw_text.slice(0, 150),
   };
 }
 
 export default async function PoemDetailPage({ params }: PoemPageProps) {
   const { slug } = await params;
-  const poem = mockPoems.find((p) => p.slug === slug);
+  const poem = await getPoemBySlug(slug);
 
   if (!poem) {
     notFound();

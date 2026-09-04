@@ -2,10 +2,10 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { mockCollections, mockPoems } from "@/data/mock-poetry";
+import { getCollectionBySlug } from "@/lib/data-service";
 import { ArrowRoll } from "@/components/tai-ui/ArrowRoll";
 import { TiltCard } from "@/components/tai-ui/TiltCard";
-import { ArrowLeft, BookOpen, Feather, Volume2, Sparkles } from "lucide-react";
+import { ArrowLeft, BookOpen, Feather, Volume2, Wind } from "lucide-react";
 
 interface CollectionDetailPageProps {
   params: Promise<{ slug: string }>;
@@ -13,10 +13,10 @@ interface CollectionDetailPageProps {
 
 export async function generateMetadata({ params }: CollectionDetailPageProps) {
   const { slug } = await params;
-  const col = mockCollections.find((c) => c.slug === slug);
+  const col = await getCollectionBySlug(slug);
   if (!col) return { title: "Không tìm thấy tuyển tập" };
   return {
-    title: `${col.title} | Ánh Thịnh Thi Quán`,
+    title: `${col.title} | Thịnh và Thơ`,
     description: col.description,
   };
 }
@@ -25,13 +25,13 @@ export default async function CollectionDetailPage({
   params,
 }: CollectionDetailPageProps) {
   const { slug } = await params;
-  const collection = mockCollections.find((c) => c.slug === slug);
+  const collection = await getCollectionBySlug(slug);
 
   if (!collection) {
     notFound();
   }
 
-  const poems = mockPoems;
+  const poems = collection.poems || [];
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 md:py-16">
@@ -45,9 +45,9 @@ export default async function CollectionDetailPage({
       </Link>
 
       {/* Header Tuyển Tập */}
-      <div className="tai-card p-8 md:p-10 mb-12 flex flex-col md:flex-row items-center gap-8 border-l-4 border-l-[#2D5A3D] rounded-2xl shadow-sm">
+      <div className="tai-card p-8 md:p-10 mb-12 flex flex-col md:flex-row items-center gap-8 border border-[var(--border-subtle)] rounded-2xl shadow-sm">
         {collection.cover_image_url && (
-          <div className="w-36 h-36 shrink-0 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800 rounded-2xl flex items-center justify-center p-4 shadow-xs">
+          <div className="w-36 h-36 shrink-0 bg-[var(--bg-elevated)] border border-[var(--border-subtle)] rounded-2xl flex items-center justify-center p-4 shadow-xs">
             <Image
               src={collection.cover_image_url}
               alt={collection.title}
@@ -59,16 +59,15 @@ export default async function CollectionDetailPage({
         )}
 
         <div className="flex flex-col gap-3 text-center md:text-left">
-          <div className="inline-flex items-center justify-center md:justify-start gap-2 text-xs font-mono uppercase tracking-wider text-[#2D5A3D] dark:text-[#4ade80]">
-            <BookOpen className="w-3.5 h-3.5" />
+          <div className="inline-flex items-center justify-center md:justify-start text-xs font-mono uppercase tracking-wider text-[var(--accent-green)] dark:text-[var(--accent-gold)]">
             <span>Tuyển Tập Thi Tuyển • {collection.poems_count} Tác phẩm</span>
           </div>
 
-          <h1 className="font-poem-heading text-2xl sm:text-3xl md:text-4xl font-bold text-neutral-900 dark:text-neutral-100">
+          <h1 className="font-poem-heading text-2xl sm:text-3xl md:text-4xl font-bold text-[var(--text-primary)]">
             {collection.title}
           </h1>
 
-          <p className="font-poem-verse text-base text-neutral-600 dark:text-neutral-300 leading-relaxed max-w-xl">
+          <p className="font-poem-verse text-base text-[var(--text-secondary)] leading-relaxed max-w-xl">
             {collection.description}
           </p>
         </div>
@@ -76,39 +75,43 @@ export default async function CollectionDetailPage({
 
       {/* Danh sách các bài thơ trong Tuyển Tập */}
       <div className="flex flex-col gap-4">
-        <h2 className="font-poem-heading text-2xl font-bold text-neutral-900 dark:text-neutral-100 mb-2 flex items-center gap-2">
-          <Feather className="w-4 h-4 text-[#2D5A3D] dark:text-[#4ade80]" />
+        <h2 className="font-poem-heading text-2xl font-bold text-[var(--text-primary)] mb-2">
           <span>Mục lục thi phẩm</span>
         </h2>
 
-        {poems.map((poem, index) => (
+        {poems.length === 0 ? (
+          <div className="tai-card p-8 text-center rounded-2xl border border-[var(--border-subtle)] text-[var(--text-muted)] font-serif text-sm">
+            Tuyển tập này hiện chưa có bài thơ nào.
+          </div>
+        ) : (
+          poems.map((poem, index) => (
           <TiltCard key={poem.id} maxTilt={2} className="p-0 border-0 shadow-none bg-transparent">
             <Link
               href={`/poems/${poem.slug}`}
-              className="tai-card p-5 group flex items-center justify-between hover:border-[#2D5A3D]/50 dark:hover:border-emerald-500/50 hover:shadow-md transition-all rounded-2xl block"
+              className="tai-card p-5 group flex items-center justify-between hover:border-[var(--accent-green)] hover:shadow-md transition-all rounded-2xl block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-green)]"
             >
               <div className="flex items-center gap-4">
-                <span className="font-mono text-sm font-bold text-neutral-400 w-6">
+                <span className="font-mono text-sm font-bold text-[var(--text-muted)] w-6">
                   {(index + 1).toString().padStart(2, "0")}
                 </span>
                 <div className="flex flex-col">
                   <div className="flex items-center gap-2 mb-0.5">
-                    <span className="font-poem-heading font-bold text-lg text-neutral-900 dark:text-neutral-100 group-hover:text-[#2D5A3D] dark:group-hover:text-[#4ade80] transition-colors">
+                    <span className="font-poem-heading font-bold text-lg text-[var(--text-primary)] group-hover:text-[var(--accent-green)] transition-colors">
                       {poem.title}
                     </span>
                     {poem.audio_url ? (
-                      <span className="flex items-center gap-1 text-[10px] font-mono text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/40 px-2 py-0.5 rounded-full">
+                      <span className="flex items-center gap-1 text-[10px] font-mono text-[var(--accent-gold)] bg-[var(--accent-gold)]/10 px-2 py-0.5 rounded-full">
                         <Volume2 className="w-2.5 h-2.5" />
                         <span>Ngâm thơ</span>
                       </span>
                     ) : (
-                      <span className="flex items-center gap-1 text-[10px] font-mono text-[#2D5A3D] dark:text-[#4ade80] bg-[#2D5A3D]/10 px-2 py-0.5 rounded-full">
-                        <Sparkles className="w-2.5 h-2.5" />
+                      <span className="flex items-center gap-1 text-[10px] font-mono text-[var(--accent-green)] bg-[var(--accent-green)]/10 px-2 py-0.5 rounded-full">
+                        <Wind className="w-2.5 h-2.5" />
                         <span>Âm cảnh</span>
                       </span>
                     )}
                   </div>
-                  <span className="text-xs font-mono text-neutral-500 dark:text-neutral-400">
+                  <span className="text-xs font-mono text-[var(--text-muted)]">
                     {poem.form_type === "luc_bat" ? "Thơ Lục Bát" : poem.form_type === "that_ngon" ? "Thơ Đường Luật" : "Thơ Tự Do"} • {poem.view_count} lượt đọc
                   </span>
                 </div>
@@ -122,7 +125,8 @@ export default async function CollectionDetailPage({
               </div>
             </Link>
           </TiltCard>
-        ))}
+        ))
+        )}
       </div>
     </div>
   );

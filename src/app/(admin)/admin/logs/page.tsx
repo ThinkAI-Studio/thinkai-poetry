@@ -43,26 +43,24 @@ export default function AuditLogsPage() {
 
   return (
     <div className="max-w-5xl mx-auto flex flex-col gap-8 pb-16">
-      <div className="pb-4 border-b border-white/10 flex items-center justify-between">
+      <div className="pb-4 border-b border-[var(--border-subtle)] flex items-center justify-between">
         <div>
-          <h1 className="font-serif text-2xl font-bold text-white flex items-center gap-2">
-            <History className="w-6 h-6 text-[#2D5A3D]" />
+          <h1 className="font-serif text-2xl font-bold text-[var(--text-primary)]">
             <span>Nhật Ký Kiểm Toán (Audit Logs)</span>
           </h1>
-          <p className="text-xs font-mono text-neutral-400 mt-1">
+          <p className="text-xs font-mono text-[var(--text-secondary)] mt-1">
             Ghi nhận toàn bộ thao tác quản trị nhằm đảm bảo an ninh tuyệt đối cho hệ thống
           </p>
         </div>
 
-        <span className="text-xs font-mono px-3 py-1 bg-emerald-950 text-emerald-300 border border-emerald-800 flex items-center gap-1.5">
-          <ShieldCheck className="w-3.5 h-3.5" />
+        <span className="text-xs font-mono px-3 py-1 bg-[var(--accent-green)]/15 text-[var(--accent-green)] dark:text-emerald-400 border border-[var(--accent-green)]/30 rounded-full">
           <span>Bất biến (Append-only)</span>
         </span>
       </div>
 
-      <div className="overflow-x-auto border border-white/10 bg-[#0D0D10]">
+      <div className="overflow-x-auto border border-[var(--border-subtle)] bg-[var(--bg-card)] rounded-2xl shadow-xs">
         <table className="w-full text-left text-xs font-mono">
-          <thead className="bg-white/5 border-b border-white/10 uppercase tracking-wider text-neutral-400">
+          <thead className="bg-[var(--text-primary)]/[0.04] border-b border-[var(--border-subtle)] uppercase tracking-wider text-[var(--text-secondary)]">
             <tr>
               <th className="py-3 px-4">Thời gian</th>
               <th className="py-3 px-4">Hành động</th>
@@ -71,25 +69,25 @@ export default function AuditLogsPage() {
               <th className="py-3 px-4 text-right">Địa chỉ IP</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/5">
+          <tbody className="divide-y divide-[var(--border-subtle)]">
             {mockLogs.map((log) => (
-              <tr key={log.id} className="hover:bg-white/[0.02] transition-colors">
-                <td className="py-3.5 px-4 text-neutral-400">
+              <tr key={log.id} className="hover:bg-[var(--text-primary)]/[0.02] transition-colors">
+                <td className="py-3.5 px-4 text-[var(--text-secondary)]">
                   {new Date(log.created_at).toLocaleTimeString("vi-VN")}{" "}
                   {new Date(log.created_at).toLocaleDateString("vi-VN")}
                 </td>
                 <td className="py-3.5 px-4">
-                  <span className="px-2 py-0.5 bg-white/5 border border-white/10 text-[#4ade80] text-[10px]">
+                  <span className="px-2 py-0.5 bg-[var(--text-primary)]/5 border border-[var(--border-subtle)] text-[var(--accent-green)] dark:text-emerald-400 text-[10px] rounded-md font-bold">
                     {log.action}
                   </span>
                 </td>
-                <td className="py-3.5 px-4 font-serif text-sm text-white">
+                <td className="py-3.5 px-4 font-serif text-sm text-[var(--text-primary)]">
                   {log.entity_name}
                 </td>
-                <td className="py-3.5 px-4 text-neutral-300">
+                <td className="py-3.5 px-4 text-[var(--text-secondary)]">
                   {log.user_email}
                 </td>
-                <td className="py-3.5 px-4 text-neutral-500 text-right">
+                <td className="py-3.5 px-4 text-[var(--text-muted)] text-right">
                   {log.ip_address}
                 </td>
               </tr>

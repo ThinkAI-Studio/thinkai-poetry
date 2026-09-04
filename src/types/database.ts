@@ -83,7 +83,26 @@ export interface AuditLog {
   action: string;
   entity_type: string;
   entity_id: string | null;
+  entity_name?: string | null;
   diff_json: any;
   ip_address: string;
+  created_at: string;
+}
+
+export interface SavedPoem {
+  id: string;
+  poem_id: string;
+  user_id?: string | null;
+  device_fingerprint?: string | null;
+  created_at: string;
+}
+
+export interface PoemComment {
+  id: string;
+  poem_id: string;
+  author_name: string;
+  author_email?: string | null;
+  content: string;
+  is_approved: boolean;
   created_at: string;
 }

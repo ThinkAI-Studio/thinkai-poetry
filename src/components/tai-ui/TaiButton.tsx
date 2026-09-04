@@ -9,18 +9,18 @@ import { SPRINGS } from "@/lib/motion";
 import { useMagnetic } from "@/lib/useMagnetic";
 
 export const taiButtonVariants = cva(
-  "relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full font-mono text-xs tracking-wider uppercase transition-colors duration-200 group cursor-pointer select-none outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A3D]/40",
+  "relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full font-mono text-xs tracking-wider uppercase transition-colors duration-200 group cursor-pointer select-none outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus)]/40",
   {
     variants: {
       variant: {
         primary:
-          "bg-[#2D5A3D] text-white hover:bg-[#234730] font-semibold shadow-[0_2px_8px_-2px_rgba(45,90,61,0.3)]",
+          "bg-[var(--accent-green)] text-white hover:bg-[var(--accent-green-hover)] font-semibold shadow-[0_2px_8px_-2px_rgba(45,90,61,0.3)]",
         secondary:
-          "bg-white text-neutral-900 hover:bg-neutral-50 border border-neutral-200 hover:border-neutral-300 font-medium shadow-xs",
+          "bg-[var(--bg-card)] text-[var(--text-primary)] hover:bg-[var(--text-primary)]/5 border border-[var(--border-strong)] font-medium shadow-xs",
         outline:
-          "bg-transparent text-neutral-900 border border-neutral-300 hover:border-neutral-900 hover:bg-black/[0.02] font-medium",
+          "bg-transparent text-[var(--text-primary)] border border-[var(--border-strong)] hover:border-[var(--text-primary)] hover:bg-[var(--text-primary)]/[0.04] font-medium",
         ghost:
-          "bg-transparent text-neutral-600 hover:text-neutral-950 hover:bg-black/[0.04] font-medium",
+          "bg-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--text-primary)]/[0.05] font-medium",
       },
       size: {
         default: "px-5 py-2.5",

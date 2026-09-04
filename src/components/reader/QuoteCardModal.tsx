@@ -2,7 +2,7 @@
 
 import React, { useState, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { X, Download, Sparkles } from "lucide-react";
+import { X, Download, Feather } from "lucide-react";
 import { TaiButton } from "@/components/tai-ui/TaiButton";
 import { Poem } from "@/types/database";
 import { SPRINGS } from "@/lib/motion";
@@ -96,11 +96,11 @@ export function QuoteCardModal({
 
       ctx.font = '16px "Be Vietnam Pro", sans-serif';
       ctx.fillStyle = isDark ? "#A1A1AA" : "#5A5A5A";
-      ctx.fillText(`Tác giả: ${resolvedAuthor} • Ánh Thịnh Thi Quán`, canvas.width / 2, 565);
+      ctx.fillText(`Tác giả: ${resolvedAuthor} • Thịnh và Thơ`, canvas.width / 2, 565);
 
       // Download
       const link = document.createElement("a");
-      link.download = `anh-thinh-tho-${Date.now()}.png`;
+      link.download = `thinh-va-tho-${Date.now()}.png`;
       link.href = canvas.toDataURL("image/png");
       link.click();
     } catch (err) {
@@ -130,20 +130,20 @@ export function QuoteCardModal({
             animate={{ opacity: 1, scale: 1, y: 0, filter: "blur(0px)" }}
             exit={{ opacity: 0, scale: 0.94, y: 15, filter: "blur(3px)" }}
             transition={SPRINGS.bouncy}
-            className="relative z-10 bg-white dark:bg-[#131316] w-full max-w-xl p-6 rounded-2xl border border-neutral-300 dark:border-neutral-800 shadow-2xl flex flex-col gap-5 max-h-[90vh] overflow-y-auto"
+            className="relative z-10 bg-[var(--bg-elevated)] w-full max-w-xl p-6 rounded-2xl border border-[var(--border-subtle)] shadow-2xl flex flex-col gap-5 max-h-[90vh] overflow-y-auto"
           >
             {/* Header Modal */}
-            <div className="flex items-center justify-between pb-3 border-b border-neutral-200 dark:border-neutral-800">
+            <div className="flex items-center justify-between pb-3 border-b border-[var(--border-subtle)]">
               <div className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-[#2D5A3D] dark:text-[#4ade80]" />
-                <h3 className="font-poem-heading text-lg font-bold text-neutral-900 dark:text-neutral-100">
+                <Feather className="w-4 h-4 text-[var(--accent-green)]" />
+                <h3 className="font-poem-heading text-lg font-bold text-[var(--text-primary)]">
                   Tạo Ảnh Trích Dẫn Thi Ca
                 </h3>
               </div>
               <button
                 type="button"
                 onClick={onClose}
-                className="p-1 rounded-full text-neutral-400 hover:text-black dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer"
+                className="p-1 rounded-full text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-subtle)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-green)]"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -160,7 +160,7 @@ export function QuoteCardModal({
                 cardTheme === "botanical" && "bg-emerald-950/20 text-emerald-950 dark:text-emerald-100 border-[#2D5A3D]/30"
               )}
             >
-              <span className="font-poem-heading italic text-4xl text-[#2D5A3D] dark:text-[#4ade80] select-none opacity-40">
+              <span className="font-poem-heading italic text-4xl text-[var(--accent-green)] select-none opacity-40">
                 “
               </span>
               <p className="font-poem-verse italic text-base sm:text-lg leading-relaxed whitespace-pre-line my-3">
@@ -169,7 +169,7 @@ export function QuoteCardModal({
               <div className="mt-4 pt-3 border-t border-current/10 w-full flex flex-col items-center">
                 <span className="font-poem-heading font-bold text-sm">— {resolvedTitle} —</span>
                 <span className="text-[11px] font-mono opacity-70 mt-0.5">
-                  {resolvedAuthor} • Ánh Thịnh Thi Quán
+                  {resolvedAuthor} • Thịnh và Thơ
                 </span>
               </div>
             </div>

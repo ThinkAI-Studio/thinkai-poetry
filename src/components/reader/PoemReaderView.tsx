@@ -14,9 +14,10 @@ import {
   Eye,
   User,
   BookOpen,
-  Sparkles,
+  Feather,
   Quote,
 } from "lucide-react";
+import { usePoeticBook } from "@/context/PoeticBookContext";
 import { cn } from "@/lib/utils";
 
 interface PoemReaderViewProps {
@@ -24,6 +25,7 @@ interface PoemReaderViewProps {
 }
 
 export function PoemReaderView({ poem }: PoemReaderViewProps) {
+  const { openBook } = usePoeticBook();
   const [fontSize, setFontSize] = useState<number>(20);
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
 
@@ -38,19 +40,28 @@ export function PoemReaderView({ poem }: PoemReaderViewProps) {
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 md:py-14">
-      {/* Nút quay lại */}
-      <Link
-        href="/"
-        className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors mb-8 group"
-      >
-        <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1" />
-        <span>Trở về Vườn Thơ</span>
-      </Link>
+      {/* Nút quay lại & Nút Mở Chế Độ Sách 3D */}
+      <div className="flex items-center justify-between flex-wrap gap-3 mb-8">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-green)] rounded-md px-1"
+        >
+          <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1" />
+          <span>Trở về Vườn Thơ</span>
+        </Link>
+
+        <button
+          type="button"
+          onClick={() => openBook(poem.slug)}
+          className="inline-flex items-center justify-center px-4 py-1.5 rounded-full text-xs font-mono uppercase tracking-wider bg-[var(--accent-green)] text-white hover:opacity-90 transition-all shadow-xs cursor-pointer active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-green)] focus-visible:ring-offset-2"
+        >
+          <span>Mở Dạng Sách Mở 3D</span>
+        </button>
+      </div>
 
       {/* Header Bài Thơ */}
       <div className="text-center mb-8">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#2D5A3D]/10 text-[#2D5A3D] dark:text-[#4ade80] text-xs font-mono uppercase tracking-wider mb-4 border border-[#2D5A3D]/20">
-          <BookOpen className="w-3.5 h-3.5" />
+        <div className="inline-flex items-center px-3.5 py-1.5 rounded-full bg-[var(--accent-green)]/10 text-[var(--accent-green)] text-xs font-mono uppercase tracking-wider mb-4 border border-[var(--accent-green)]/20">
           <span>{formTypeName}</span>
         </div>
 
@@ -58,21 +69,16 @@ export function PoemReaderView({ poem }: PoemReaderViewProps) {
           {poem.title}
         </h1>
 
-        <div className="flex items-center justify-center flex-wrap gap-4 text-xs font-mono text-[var(--text-muted)]">
+        <div className="flex items-center justify-center flex-wrap gap-2 sm:gap-3 text-xs font-mono text-[var(--text-muted)]">
           {poem.author && (
-            <span className="flex items-center gap-1.5">
-              <User className="w-3.5 h-3.5" />
+            <>
               <span>{poem.author.name}</span>
-            </span>
+              <span>•</span>
+            </>
           )}
-          <span className="flex items-center gap-1.5">
-            <Eye className="w-3.5 h-3.5" />
-            <span>{poem.view_count} lượt đọc</span>
-          </span>
-          <span className="flex items-center gap-1.5">
-            <Calendar className="w-3.5 h-3.5" />
-            <span>{new Date(poem.created_at).toLocaleDateString("vi-VN")}</span>
-          </span>
+          <span>{poem.view_count} lượt đọc</span>
+          <span>•</span>
+          <span>{new Date(poem.created_at).toLocaleDateString("vi-VN")}</span>
         </div>
       </div>
 
@@ -100,10 +106,10 @@ export function PoemReaderView({ poem }: PoemReaderViewProps) {
           <button
             type="button"
             onClick={() => setIsQuoteModalOpen(true)}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-mono tracking-wider uppercase bg-[var(--bg-page)] border border-[var(--border-subtle)] hover:border-[#2D5A3D] text-[var(--text-primary)] transition-colors rounded-full shadow-xs cursor-pointer"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-mono tracking-wider uppercase bg-[var(--bg-page)] border border-[var(--border-subtle)] hover:border-[var(--accent-green)] text-[var(--text-primary)] transition-colors rounded-full shadow-xs cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-green)]"
             title="Tạo ảnh trích dẫn câu thơ để chia sẻ"
           >
-            <Quote className="w-3.5 h-3.5 text-[#2D5A3D] dark:text-[#4ade80]" />
+            <Quote className="w-3.5 h-3.5 text-[var(--accent-green)]" />
             <span className="hidden sm:inline">Trích dẫn ảnh</span>
           </button>
         </div>
@@ -114,8 +120,7 @@ export function PoemReaderView({ poem }: PoemReaderViewProps) {
         {/* Chú giải từ cổ / Điển cố (nếu có) */}
         {poem.annotations && poem.annotations.length > 0 && (
           <div className="mt-12 pt-6 border-t border-[var(--border-subtle)]">
-            <h4 className="font-poem-heading text-sm font-bold uppercase tracking-wider text-[var(--text-muted)] mb-3 flex items-center gap-2">
-              <Sparkles className="w-3.5 h-3.5 text-[#2D5A3D] dark:text-[#4ade80]" />
+            <h4 className="font-poem-heading text-sm font-bold uppercase tracking-wider text-[var(--text-muted)] mb-3">
               <span>Chú giải từ vựng & Điển cố</span>
             </h4>
             <ul className="flex flex-col gap-2 text-sm font-poem-verse text-[var(--text-secondary)]">
@@ -134,8 +139,8 @@ export function PoemReaderView({ poem }: PoemReaderViewProps) {
 
       {/* THÔNG TIN TÁC GIẢ (CHỈ HIỂN THỊ KHI ADMIN BẬT: show_author_info === true) */}
       {poem.show_author_info && poem.author && (
-        <div className="tai-card rounded-2xl p-6 md:p-8 mt-10 border-l-4 border-l-[#2D5A3D] flex flex-col sm:flex-row items-center sm:items-start gap-5">
-          <div className="w-20 h-20 shrink-0 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-full flex items-center justify-center overflow-hidden shadow-xs">
+        <div className="tai-card rounded-2xl p-6 md:p-8 mt-10 border border-[var(--border-subtle)] flex flex-col sm:flex-row items-center sm:items-start gap-5">
+          <div className="w-20 h-20 shrink-0 bg-[var(--bg-elevated)] border border-[var(--border-subtle)] rounded-full flex items-center justify-center overflow-hidden shadow-xs">
             {poem.author.avatar_url ? (
               <Image
                 src={poem.author.avatar_url}
@@ -145,21 +150,21 @@ export function PoemReaderView({ poem }: PoemReaderViewProps) {
                 className="object-cover rounded-full"
               />
             ) : (
-              <User className="w-8 h-8 text-neutral-400" />
+              <User className="w-8 h-8 text-[var(--text-muted)]" />
             )}
           </div>
 
           <div className="flex flex-col gap-1.5 text-center sm:text-left">
-            <span className="text-xs font-mono uppercase tracking-widest text-[#2D5A3D] dark:text-[#4ade80] font-semibold">
+            <span className="text-xs font-mono uppercase tracking-widest text-[var(--accent-green)] font-semibold">
               Tác giả thi phẩm
             </span>
             <Link
               href="/tac-gia"
-              className="font-poem-heading text-xl font-bold text-neutral-900 dark:text-neutral-100 hover:text-[#2D5A3D] dark:hover:text-[#4ade80] transition-colors"
+              className="font-poem-heading text-xl font-bold text-[var(--text-primary)] hover:text-[var(--accent-green)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-green)] rounded"
             >
               {poem.author.name}
             </Link>
-            <p className="font-poem-verse text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed max-w-xl">
+            <p className="font-poem-verse text-sm text-[var(--text-secondary)] leading-relaxed max-w-xl">
               {poem.author.bio}
             </p>
           </div>

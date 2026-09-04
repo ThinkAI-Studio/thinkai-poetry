@@ -3,6 +3,8 @@ import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SmoothScroll } from "@/components/tai-ui/SmoothScroll";
 import { PageTransition } from "@/components/layout/PageTransition";
+import { PoeticBookProvider } from "@/context/PoeticBookContext";
+import { FloatingBookModal } from "@/components/book/FloatingBookModal";
 
 export default function PublicLayout({
   children,
@@ -10,13 +12,17 @@ export default function PublicLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen flex flex-col bg-[var(--bg-page)] text-[var(--text-primary)]">
-      <SmoothScroll />
-      <SiteHeader />
-      <main className="flex-1 pt-20">
-        <PageTransition>{children}</PageTransition>
-      </main>
-      <SiteFooter />
-    </div>
+    <PoeticBookProvider>
+      <div className="min-h-screen flex flex-col bg-[var(--bg-page)] text-[var(--text-primary)]">
+        <SmoothScroll />
+        <SiteHeader />
+        <main className="flex-1 pt-20">
+          <PageTransition>{children}</PageTransition>
+        </main>
+        <SiteFooter />
+        <FloatingBookModal />
+      </div>
+    </PoeticBookProvider>
   );
 }
+

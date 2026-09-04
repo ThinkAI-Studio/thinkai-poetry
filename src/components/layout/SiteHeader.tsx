@@ -2,13 +2,15 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Feather, Menu, X } from "lucide-react";
-import { ThemeToggle } from "@/components/layout/ThemeToggle";
+import { Menu, X, BookOpen } from "lucide-react";
+import { ThemeSwitch } from "@/components/layout/ThemeSwitch";
+import { usePoeticBook } from "@/context/PoeticBookContext";
 import { cn } from "@/lib/utils";
 
 export function SiteHeader() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { openBook } = usePoeticBook();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -34,46 +36,47 @@ export function SiteHeader() {
           : "bg-transparent py-5"
       )}
     >
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between">
-        {/* Logo matching ThinkAI Thơ reference */}
-        <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="w-8 h-8 flex items-center justify-center bg-[#2D5A3D] text-white rounded-full transition-transform duration-300 group-hover:scale-105 shadow-sm">
-            <Feather className="w-4 h-4" />
-          </div>
-          <div className="flex items-baseline gap-1.5">
-            <span className="font-serif text-xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">
-              ThinkAI Thơ
+      <div className="max-w-6xl mx-auto px-6 sm:px-8 flex items-center justify-between">
+        {/* Logo: Thư pháp tao nhã + Thịnh và Thơ */}
+        <Link href="/" className="flex items-center gap-2.5 group select-none">
+          <span className="w-8 h-8 rounded-full bg-[var(--accent-green)] text-white dark:bg-[var(--accent-gold)] dark:text-[#121211] flex items-center justify-center font-serif font-bold text-lg shadow-sm transition-transform duration-200 group-hover:scale-105">
+            T
+          </span>
+          <div className="flex flex-col">
+            <span className="font-serif text-[22px] font-bold tracking-tight text-neutral-900 dark:text-[#EAE6DF] leading-none">
+              Thịnh và Thơ
             </span>
-            <span className="hidden sm:inline text-xs font-serif italic text-neutral-500">
-              • Ánh Thịnh
+            <span className="font-sans text-[10px] tracking-[0.2em] uppercase text-neutral-500 dark:text-neutral-400 mt-0.5">
+              Thi Quán Đương Đại
             </span>
           </div>
         </Link>
 
-        {/* Desktop Nav matching reference: Tuyển Tập, Tác Giả, Diễn Đàn, Tủ Sách */}
-        <nav className="hidden md:flex items-center gap-8">
+        {/* Desktop Nav: Tuyển Tập, Tác Giả, Diễn Đàn, Tủ Sách */}
+        <nav className="hidden md:flex items-center gap-10">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm font-serif text-neutral-700 dark:text-neutral-300 hover:text-[#2D5A3D] dark:hover:text-[#4ade80] transition-colors"
+              className="text-[15px] font-sans font-medium text-neutral-800 dark:text-[#A6A39C] hover:text-[var(--accent-green)] dark:hover:text-[var(--accent-gold)] transition-colors focus-visible:outline-2 focus-visible:outline-[var(--color-focus)] rounded-sm"
             >
               {link.label}
             </Link>
           ))}
         </nav>
 
-        {/* Desktop CTA & Theme Toggle & Mobile Hamburger */}
+        {/* Desktop CTA & Theme Switch (Dạng công tắc) */}
         <div className="flex items-center gap-3.5">
-          {/* Sora Labs Style Theme Switcher */}
-          <ThemeToggle />
+          {/* Công tắc trượt Light / Dark Mode */}
+          <ThemeSwitch />
 
-          <Link
-            href="/poems/vuon-xua-hoa-no"
-            className="hidden sm:inline-flex items-center justify-center px-5 py-2 text-xs font-mono uppercase tracking-wider text-white bg-[#2D5A3D] hover:bg-[#244831] rounded-full transition-all duration-200 hover:shadow-md active:scale-95 cursor-pointer select-none"
+          <button
+            type="button"
+            onClick={() => openBook()}
+            className="hidden sm:inline-flex items-center justify-center px-6 py-2.5 text-sm font-sans font-medium text-white bg-[var(--accent-green)] hover:bg-[var(--accent-green-hover)] dark:bg-[var(--accent-green)] dark:border dark:border-emerald-500/30 rounded-full transition-all duration-200 shadow-sm hover:shadow active:scale-95 cursor-pointer select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus)]"
           >
-            Bắt Đầu Đọc
-          </Link>
+            <span>Bắt Đầu Đọc</span>
+          </button>
 
           <button
             type="button"
@@ -101,15 +104,18 @@ export function SiteHeader() {
           ))}
           <div className="flex items-center justify-between pt-2">
             <span className="text-xs font-mono text-neutral-500 uppercase">Chế độ hiển thị:</span>
-            <ThemeToggle />
+            <ThemeSwitch />
           </div>
-          <Link
-            href="/poems/vuon-xua-hoa-no"
-            onClick={() => setMobileOpen(false)}
-            className="w-full text-center py-2.5 text-xs font-mono uppercase tracking-wider text-white bg-[#2D5A3D] rounded-full shadow-sm"
+          <button
+            type="button"
+            onClick={() => {
+              setMobileOpen(false);
+              openBook();
+            }}
+            className="w-full text-center py-2.5 text-xs font-mono uppercase tracking-wider text-white bg-[var(--accent-green)] hover:bg-[var(--accent-green-hover)] rounded-full shadow-sm flex items-center justify-center transition-colors cursor-pointer active:scale-98"
           >
-            Bắt Đầu Đọc
-          </Link>
+            <span>Bắt Đầu Đọc</span>
+          </button>
         </div>
       )}
     </header>

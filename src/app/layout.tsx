@@ -30,10 +30,10 @@ const beVietnamPro = Be_Vietnam_Pro({
 });
 
 export const metadata: Metadata = {
-  title: "Ánh Thịnh Thi Quán | Không Gian Thi Ca Đương Đại",
-  description: "Tuyển tập những tác phẩm thi ca đương đại, lắng đọng từng thanh âm và nhịp điệu tâm hồn. Phát triển bởi ThinkAI Studio.",
+  title: "Thịnh và Thơ | Không Gian Thi Ca Đương Đại",
+  description: "Tuyển tập những tác phẩm thi ca đương đại, lắng đọng từng thanh âm và nhịp điệu tâm hồn. Thịnh và Thơ.",
   openGraph: {
-    title: "Ánh Thịnh Thi Quán | Không Gian Thi Ca Đương Đại",
+    title: "Thịnh và Thơ | Không Gian Thi Ca Đương Đại",
     description: "Tuyển tập những tác phẩm thi ca đương đại, lắng đọng từng thanh âm và nhịp điệu tâm hồn.",
     type: "website",
     locale: "vi_VN",
@@ -56,7 +56,9 @@ export default function RootLayout({
                 try {
                   var saved = localStorage.getItem('site-theme') || localStorage.getItem('reader-theme');
                   var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                  if (saved === 'dark' || (!saved && prefersDark)) {
+                  var params = new URLSearchParams(window.location.search);
+                  var urlTheme = params.get('theme');
+                  if (urlTheme === 'dark' || (!urlTheme && saved === 'dark')) {
                     document.documentElement.classList.add('dark');
                     document.documentElement.setAttribute('data-reader-theme', 'dark');
                     document.documentElement.style.colorScheme = 'dark';

@@ -18,26 +18,23 @@ export function PageTransition({ children }: PageTransitionProps) {
   }
 
   return (
-    <AnimatePresence mode="wait">
+    <AnimatePresence mode="wait" initial={false}>
       <motion.div
         key={pathname}
         initial={{
           opacity: 0,
-          y: 12,
-          filter: "blur(4px)",
+          y: 8,
         }}
         animate={{
           opacity: 1,
           y: 0,
-          filter: "blur(0px)",
         }}
         exit={{
           opacity: 0,
-          y: -8,
-          filter: "blur(3px)",
+          y: -6,
         }}
         transition={{
-          duration: 0.38,
+          duration: 0.25,
           ease: EASINGS.inkWash,
         }}
         className="w-full flex-1 flex flex-col"

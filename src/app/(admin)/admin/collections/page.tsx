@@ -38,12 +38,12 @@ export default function AdminCollectionsPage() {
   return (
     <div className="max-w-5xl mx-auto flex flex-col gap-8 pb-16">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-white/10">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-[var(--border-subtle)]">
         <div>
-          <h1 className="font-serif text-2xl font-bold text-white">
+          <h1 className="font-serif text-2xl font-bold text-[var(--text-primary)]">
             Quản Lý Tuyển Tập & Bộ Sưu Tập Thơ
           </h1>
-          <p className="text-xs font-mono text-neutral-400 mt-1">
+          <p className="text-xs font-mono text-[var(--text-secondary)] mt-1">
             Gom nhóm các thi phẩm theo từng chủ đề hoặc giai đoạn sáng tác
           </p>
         </div>
@@ -52,7 +52,6 @@ export default function AdminCollectionsPage() {
           variant="primary"
           size="sm"
           onClick={() => setShowCreateForm(!showCreateForm)}
-          icon={<Plus className="w-3.5 h-3.5" />}
         >
           {showCreateForm ? "Đóng Form" : "Tạo Tuyển Tập Mới"}
         </TaiButton>
@@ -62,15 +61,14 @@ export default function AdminCollectionsPage() {
       {showCreateForm && (
         <form
           onSubmit={handleCreate}
-          className="p-6 bg-[#0D0D10] border border-white/10 rounded-2xl flex flex-col gap-4 shadow-md"
+          className="p-6 bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-2xl flex flex-col gap-4 shadow-md"
         >
-          <h3 className="font-serif font-bold text-base text-white flex items-center gap-2">
-            <BookMarked className="w-4 h-4 text-[#4ade80]" />
+          <h3 className="font-serif font-bold text-base text-[var(--text-primary)]">
             <span>Thêm Tuyển Tập Mới</span>
           </h3>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-mono uppercase tracking-wider text-neutral-400">
+            <label className="text-xs font-mono uppercase tracking-wider text-[var(--text-secondary)]">
               Tên Tuyển Tập *
             </label>
             <input
@@ -79,61 +77,80 @@ export default function AdminCollectionsPage() {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="VD: Tuyển Tập Thơ Ánh Thịnh 2026"
-              className="p-3 bg-[#08080A] border border-white/10 text-white font-serif text-base rounded-xl focus:outline-none focus:border-[#4ade80]"
+              className="p-3 bg-[var(--bg-page)] border border-[var(--border-strong)] text-[var(--text-primary)] font-serif text-base rounded-xl focus:outline-none focus:border-[var(--accent-green)] focus:ring-1 focus:ring-[var(--accent-green)]"
             />
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-mono uppercase tracking-wider text-neutral-400">
+            <label className="text-xs font-mono uppercase tracking-wider text-[var(--text-secondary)]">
               Lời Tựa / Giới Thiệu
             </label>
             <textarea
               rows={3}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Mô tả cảm xúc hoặc bối cảnh ra đời của tập thơ..."
-              className="p-3 bg-[#08080A] border border-white/10 text-white font-serif text-sm rounded-xl focus:outline-none focus:border-[#4ade80]"
+              placeholder="Vài dòng cảm nghĩ mở đầu cho tuyển tập..."
+              className="p-3 bg-[var(--bg-page)] border border-[var(--border-strong)] text-[var(--text-primary)] font-serif text-sm rounded-xl focus:outline-none focus:border-[var(--accent-green)] focus:ring-1 focus:ring-[var(--accent-green)]"
             />
           </div>
 
-          <div className="flex justify-end gap-3 pt-2">
-            <button
+          <div className="flex items-center justify-end gap-3 pt-2">
+            <TaiButton
+              variant="secondary"
+              size="sm"
               type="button"
               onClick={() => setShowCreateForm(false)}
-              className="px-4 py-2 text-xs font-mono text-neutral-400 hover:text-white rounded-full transition-colors"
             >
               Hủy
-            </button>
-            <TaiButton variant="primary" type="submit">
-              Lưu Tuyển Tập
+            </TaiButton>
+            <TaiButton variant="primary" size="sm" type="submit">
+              Xác Nhận Tạo
             </TaiButton>
           </div>
         </form>
       )}
 
       {/* Danh sách Tuyển Tập */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {collections.map((col) => (
+      {collections.length === 0 ? (
+        <div className="p-12 text-center bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-2xl shadow-xs">
+          <BookMarked className="w-10 h-10 mx-auto text-[var(--accent-gold)] mb-3 opacity-80" />
+          <h3 className="font-serif text-lg font-bold text-[var(--text-primary)] mb-1">
+            Chưa có tuyển tập nào
+          </h3>
+          <p className="font-mono text-xs text-[var(--text-muted)] mb-5">
+            Dữ liệu mẫu đã được xóa sạch. Hãy bấm nút phía trên để tạo tuyển tập đầu tiên.
+          </p>
+          <TaiButton
+            variant="primary"
+            size="sm"
+            onClick={() => setShowCreateForm(true)}
+          >
+            Tạo Tuyển Tập Mới
+          </TaiButton>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {collections.map((col) => (
           <div
             key={col.id}
-            className="p-6 bg-[#0D0D10] border border-white/10 rounded-2xl flex flex-col justify-between shadow-sm"
+            className="p-6 bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-2xl flex flex-col justify-between shadow-xs hover:border-[var(--accent-green)]/40 transition-colors"
           >
             <div>
               <div className="flex items-center justify-between mb-4">
-                <span className="text-[11px] font-mono uppercase tracking-wider px-2.5 py-0.5 bg-white/5 border border-white/10 text-neutral-300 rounded-full">
+                <span className="text-[11px] font-mono uppercase tracking-wider px-2.5 py-0.5 bg-[var(--text-primary)]/5 border border-[var(--border-subtle)] text-[var(--text-secondary)] rounded-full font-medium">
                   {col.poems_count} thi phẩm
                 </span>
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
-                    className="p-1.5 text-neutral-400 hover:text-white"
+                    className="p-1.5 text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                     title="Chỉnh sửa"
                   >
                     <Edit className="w-3.5 h-3.5" />
                   </button>
                   <button
                     type="button"
-                    className="p-1.5 text-neutral-400 hover:text-red-400"
+                    className="p-1.5 text-[var(--text-secondary)] hover:text-red-500"
                     title="Xóa"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
@@ -141,21 +158,22 @@ export default function AdminCollectionsPage() {
                 </div>
               </div>
 
-              <h3 className="font-serif font-bold text-xl text-white mb-2 line-clamp-1">
+              <h3 className="font-serif font-bold text-xl text-[var(--text-primary)] mb-2 line-clamp-1">
                 {col.title}
               </h3>
-              <p className="font-serif text-sm text-neutral-400 leading-relaxed line-clamp-3 mb-4">
+              <p className="font-serif text-sm text-[var(--text-secondary)] leading-relaxed line-clamp-3 mb-4">
                 {col.description}
               </p>
             </div>
 
-            <div className="pt-4 border-t border-white/10 flex items-center justify-between text-xs font-mono text-neutral-500">
+            <div className="pt-4 border-t border-[var(--border-subtle)] flex items-center justify-between text-xs font-mono text-[var(--text-muted)]">
               <span>Slug: /{col.slug}</span>
-              <span className="text-emerald-400">Đang hiển thị</span>
+              <span className="text-[var(--accent-green)] dark:text-emerald-400">Đang hiển thị</span>
             </div>
           </div>
         ))}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

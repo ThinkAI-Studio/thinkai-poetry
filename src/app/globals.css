@@ -2,12 +2,15 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* CẤU HÌNH THEME FONTS CHO TAILWIND CSS V4 */
+/* CẤU HÌNH THEME FONTS ĐỒNG BỘ TOÀN HỆ THỐNG CHO TAILWIND CSS V4 */
 @theme {
-  --font-sans: var(--font-sans), system-ui, -apple-system, sans-serif;
-  --font-serif: var(--font-heading), "Times New Roman", Georgia, serif;
-  --font-heading: var(--font-heading), "Times New Roman", Georgia, serif;
-  --font-verse: var(--font-verse), Georgia, serif;
+  --font-sans: var(--font-sans), system-ui, -apple-system, "Be Vietnam Pro", sans-serif;
+  --font-serif: var(--font-heading), "EB Garamond", "Times New Roman", Georgia, serif;
+  --font-heading: var(--font-heading), "EB Garamond", "Times New Roman", Georgia, serif;
+  --font-verse: var(--font-verse), Lora, Georgia, serif;
+  --font-poem-heading: var(--font-heading), "EB Garamond", "Times New Roman", Georgia, serif;
+  --font-poem-verse: var(--font-verse), Lora, Georgia, serif;
+  --font-mono: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, monospace;
 }
 
 @layer base {
@@ -15,26 +18,35 @@
     --bg-page: #FAF8F5;
     --bg-card: #FFFFFF;
     --text-primary: #1A1A1A;
-    --text-secondary: #5A5A5A;
-    --text-muted: #8E8E8E;
-    --border-subtle: rgba(0, 0, 0, 0.08);
+    --text-secondary: #4A4A4A;
+    --text-muted: #5C5852;
+    --border-subtle: rgba(0, 0, 0, 0.09);
     --border-strong: rgba(0, 0, 0, 0.18);
     --accent-green: #2D5A3D;
     --accent-green-hover: #234730;
-    --accent-pink: #F8D7DA;
+    --accent-gold: #916207;
+    --accent-vermilion: #9E2A2B;
+    --color-focus: #2D5A3D;
+    --book-corner-curl: #DFD6BE;
     color-scheme: light;
   }
 
-  /* Toàn trang Dark Mode (Obsidian Dark / Nghiên Mực) */
+  /* Toàn trang Dark Mode (Nghiên Mực & Chu Sa - TasteSkills & Impeccable) */
   .dark,
   [data-reader-theme="dark"] {
-    --bg-page: #08080A;
-    --bg-card: #111114;
-    --text-primary: #F4F4F5;
-    --text-secondary: #A1A1AA;
-    --text-muted: #71717A;
-    --border-subtle: rgba(255, 255, 255, 0.08);
-    --border-strong: rgba(255, 255, 255, 0.18);
+    --bg-page: #121211;
+    --bg-card: #181816;
+    --text-primary: #EAE6DF;
+    --text-secondary: #A6A39C;
+    --text-muted: #8F8B83;
+    --border-subtle: rgba(255, 255, 255, 0.09);
+    --border-strong: rgba(197, 160, 89, 0.32);
+    --accent-green: #3D6A4E;
+    --accent-green-hover: #4D8562;
+    --accent-gold: #C5A059;
+    --accent-vermilion: #B83A3B;
+    --color-focus: #C5A059;
+    --book-corner-curl: #2A2721;
     color-scheme: dark;
   }
 
@@ -44,20 +56,87 @@
     --bg-card: #EFE8E2;
     --text-primary: #2C251E;
     --text-secondary: #5C4F44;
-    --text-muted: #8C7B6D;
+    --text-muted: #6D5C4F;
     --border-subtle: rgba(44, 37, 30, 0.12);
     --border-strong: rgba(44, 37, 30, 0.22);
+    --accent-green: #2D5A3D;
+    --accent-green-hover: #234730;
+    --accent-gold: #B8860B;
+    --accent-vermilion: #9E2A2B;
+    --color-focus: #2D5A3D;
     color-scheme: light;
   }
 
+  html,
   body {
     background-color: var(--bg-page);
     color: var(--text-primary);
     font-family: var(--font-sans);
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
-    overflow-x: hidden;
+    overflow-x: clip;
   }
+
+  h1, h2, h3, h4, h5, h6, .font-poem-heading {
+    overflow-wrap: anywhere;
+    min-width: 0;
+  }
+}
+
+/* ============================================================
+   SORA LATTICE BOTANICAL FLORAL SYSTEM
+   ============================================================ */
+@keyframes floral-sway-rotate {
+  0%, 100% {
+    transform: rotate(0);
+  }
+  50% {
+    transform: rotate(-2.5deg);
+  }
+}
+
+@keyframes floral-sway-translate {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(var(--floral-sway-amount, 6px), calc(var(--floral-sway-amount, 6px) * 0.5));
+  }
+  75% {
+    transform: translate(calc(var(--floral-sway-amount, 6px) * -1), calc(var(--floral-sway-amount, 6px) * -0.5));
+  }
+}
+
+.floral-sway-rotate {
+  width: 100%;
+  height: 100%;
+  animation: floral-sway-rotate var(--floral-sway-duration, 4s) ease-in-out infinite;
+  animation-delay: var(--floral-sway-rotate-delay, 0s);
+  transform-origin: bottom center;
+}
+
+.floral-sway-translate {
+  width: 100%;
+  height: 100%;
+  animation: floral-sway-translate var(--floral-sway-translate-duration, 4.8s) ease-in-out infinite;
+  animation-delay: var(--floral-sway-translate-delay, 0s);
+}
+
+[data-floral-scrolling="true"] .floral-sway-rotate,
+[data-floral-scrolling="true"] .floral-sway-translate,
+[data-floral-past="true"] .floral-sway-rotate,
+[data-floral-past="true"] .floral-sway-translate {
+  animation-play-state: paused;
+}
+
+.floral-hide {
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+[data-floral-past="true"] .floral-hide {
+  opacity: 0;
+  transform: scale(0.85);
+  pointer-events: none;
 }
 
 /* ============================================================
@@ -166,29 +245,54 @@
   }
 }
 
-.floral-sway-rotate {
-  animation: floralSwayRotate var(--sway-duration, 4.5s) ease-in-out infinite;
-  transform-origin: bottom center;
-}
-
-.floral-sway-translate {
-  animation: floralSwayTranslate var(--sway-duration, 5.2s) ease-in-out infinite;
-}
-
-.floating-pill {
-  animation: floatPill var(--float-duration, 4s) ease-in-out infinite;
-}
-
-/* SORA LATTICE SOFT BOTANICAL CARD UTILITIES */
+/* SORA LATTICE SOFT BOTANICAL CARD UTILITIES (IMPECCABLE TECTONIC DEPTH) */
 .tai-card {
   background-color: var(--bg-card);
   color: var(--text-primary);
   border: 1px solid var(--border-subtle);
-  border-radius: 1.25rem;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 1rem;
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.7), 0 4px 20px -4px rgba(0, 0, 0, 0.04);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.dark .tai-card {
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.08), 0 6px 24px -4px rgba(0, 0, 0, 0.5);
 }
 
 .tai-card:hover {
   border-color: var(--border-strong);
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.8), 0 12px 36px -8px rgba(0, 0, 0, 0.08);
+}
+
+.dark .tai-card:hover {
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.12), 0 16px 40px -8px rgba(0, 0, 0, 0.65);
+}
+
+/* 60FPS FLUID EQUALIZER WAVEFORM */
+@keyframes eqBarPulse {
+  0% {
+    transform: scaleY(0.18);
+  }
+  50% {
+    transform: scaleY(0.95);
+  }
+  100% {
+    transform: scaleY(0.3);
+  }
+}
+
+.animate-eq-bar {
+  animation: eqBarPulse 0.85s ease-in-out infinite alternate;
+  transform-origin: bottom;
+}
+
+/* ACCESSIBILITY: PREFERS REDUCED MOTION (HALLMARK GATE 27) */
+@media (prefers-reduced-motion: reduce) {
+  .floral-sway-rotate,
+  .floral-sway-translate,
+  .floating-pill,
+  .animate-eq-bar {
+    animation: none !important;
+    transform: none !important;
+  }
 }

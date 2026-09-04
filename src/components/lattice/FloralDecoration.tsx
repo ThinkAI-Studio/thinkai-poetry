@@ -1,8 +1,21 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo, memo } from "react";
 import Image from "next/image";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, useSpring, useMotionValue, AnimatePresence } from "motion/react";
+
+interface FloralPosition {
+  x: number;
+  y: number;
+  type: "pink" | "yellow" | "leaf1" | "leaf2" | "bubble";
+  scale: number;
+  rotation: number;
+  delay: number;
+  token?: {
+    name: string;
+    color: string;
+  };
+}
 
 interface BurstPetal {
   id: number;
@@ -15,85 +28,304 @@ interface BurstPetal {
   rotation: number;
 }
 
-interface FloralItem {
-  id: string;
-  type: "pink" | "yellow" | "leaf1" | "leaf2";
-  bottom: string;
-  left?: string;
-  right?: string;
-  size: number;
-  initialRotate: number;
-  zIndex: number;
-  duration: number;
+// 41 vị trí hoa & lá bên trái chuẩn xác theo Sora Lattice (lattice.soralabs.studio)
+const leftClusterPositions: FloralPosition[] = [
+  { delay: 0.05, rotation: -10, scale: 0.95, type: "pink", x: 1, y: 98 },
+  { delay: 0.08, rotation: 15, scale: 1.1, type: "yellow", x: 2, y: 88 },
+  { delay: 0.12, rotation: -20, scale: 0.85, type: "pink", x: 0, y: 78 },
+  { delay: 0.15, rotation: 30, scale: 1.05, type: "yellow", x: 3, y: 68 },
+  { delay: 0.18, rotation: -5, scale: 0.9, type: "pink", x: 1, y: 58 },
+  { delay: 0.22, rotation: 10, scale: 0.8, type: "yellow", x: 4, y: 48 },
+  { delay: 0.25, rotation: -15, scale: 0.75, type: "pink", x: 2, y: 38 },
+  { delay: 0.28, rotation: 25, scale: 0.85, type: "yellow", x: 3, y: 32 },
+  { delay: 0.28, rotation: 5, scale: 1.2, type: "pink", x: 8, y: 95 },
+  { delay: 0.31, rotation: -10, scale: 0.9, type: "yellow", x: 7, y: 82 },
+  { delay: 0.34, rotation: 20, scale: 1.15, type: "pink", x: 9, y: 72 },
+  { delay: 0.3, rotation: 10, scale: 0.85, type: "pink", x: 20, y: 60 },
+  { delay: 0.4, rotation: -25, scale: 0.85, type: "yellow", x: 10, y: 52 },
+  { delay: 0.43, rotation: 15, scale: 0.7, type: "pink", x: 11, y: 42 },
+  { delay: 0.46, rotation: -15, scale: 0.75, type: "pink", x: 9, y: 35 },
+  { delay: 0.46, rotation: -15, scale: 1, type: "yellow", x: 18, y: 92 },
+  { delay: 0.49, rotation: 10, scale: 0.85, type: "pink", x: 22, y: 80 },
+  { delay: 0.52, rotation: -5, scale: 1.1, type: "yellow", x: 25, y: 96 },
+  { delay: 0.55, rotation: 25, scale: 0.9, type: "pink", x: 20, y: 70 },
+  { delay: 0.61, rotation: -10, scale: 0.8, type: "yellow", x: 24, y: 55 },
+  { delay: 0.64, rotation: 20, scale: 0.7, type: "pink", x: 21, y: 45 },
+  { delay: 0.64, rotation: 20, scale: 1.2, type: "pink", x: 35, y: 94 },
+  { delay: 0.67, rotation: -5, scale: 0.95, type: "yellow", x: 42, y: 85 },
+  { delay: 0.7, rotation: 15, scale: 1.05, type: "pink", x: 48, y: 98 },
+  { delay: 0.73, rotation: -10, scale: 0.8, type: "yellow", x: 55, y: 88 },
+  { delay: 0.79, rotation: 10, scale: 1.1, type: "pink", x: 65, y: 95 },
+  { delay: 0.82, rotation: -5, scale: 0.9, type: "yellow", x: 75, y: 98 },
+  { delay: 0.85, rotation: 35, scale: 0.75, type: "yellow", x: 15, y: 88 },
+  { delay: 0.88, rotation: -15, scale: 0.8, type: "pink", x: 32, y: 78 },
+  { delay: 0.94, rotation: -20, scale: 0.85, type: "pink", x: 50, y: 92 },
+  { delay: 0.1, rotation: 45, scale: 0.8, type: "leaf1", x: 5, y: 92 },
+  { delay: 0.2, rotation: -10, scale: 0.75, type: "leaf2", x: 12, y: 85 },
+  { delay: 0.3, rotation: 20, scale: 0.9, type: "leaf1", x: 28, y: 96 },
+  { delay: 0.65, rotation: -15, scale: 0.8, type: "pink", x: 60, y: 80 },
+  { delay: 0.55, rotation: -5, scale: 0.85, type: "pink", x: 30, y: 50 },
+  { delay: 0.65, rotation: 15, scale: 0.95, type: "yellow", x: 40, y: 70 },
+  { delay: 0.3, rotation: 10, scale: 0.8, type: "pink", x: 4, y: 45 },
+  { delay: 0.4, rotation: -5, scale: 0.85, type: "yellow", x: 18, y: 52 },
+  { delay: 0.5, rotation: 15, scale: 0.9, type: "pink", x: 32, y: 59 },
+  { delay: 0.6, rotation: -10, scale: 0.8, type: "yellow", x: 46, y: 66 },
+];
+
+// 41 vị trí hoa & lá bên phải chuẩn xác theo Sora Lattice (lattice.soralabs.studio)
+const rightClusterPositions: FloralPosition[] = [
+  { delay: 0.05, rotation: 10, scale: 0.95, type: "yellow", x: 99, y: 98 },
+  { delay: 0.08, rotation: -15, scale: 1.1, type: "pink", x: 98, y: 88 },
+  { delay: 0.12, rotation: 20, scale: 0.85, type: "yellow", x: 100, y: 78 },
+  { delay: 0.15, rotation: -30, scale: 1.05, type: "pink", x: 97, y: 68 },
+  { delay: 0.18, rotation: 5, scale: 0.9, type: "yellow", x: 99, y: 58 },
+  { delay: 0.22, rotation: -10, scale: 0.8, type: "pink", x: 96, y: 48 },
+  { delay: 0.25, rotation: 15, scale: 0.75, type: "pink", x: 98, y: 38 },
+  { delay: 0.28, rotation: -25, scale: 0.85, type: "yellow", x: 97, y: 32 },
+  { delay: 0.28, rotation: -5, scale: 1.2, type: "yellow", x: 92, y: 95 },
+  { delay: 0.31, rotation: 10, scale: 0.9, type: "pink", x: 93, y: 82 },
+  { delay: 0.34, rotation: -20, scale: 1.15, type: "yellow", x: 91, y: 72 },
+  { delay: 0.3, rotation: -10, scale: 0.9, type: "yellow", x: 82, y: 62 },
+  { delay: 0.4, rotation: 25, scale: 0.85, type: "pink", x: 90, y: 52 },
+  { delay: 0.43, rotation: -15, scale: 0.7, type: "yellow", x: 89, y: 42 },
+  { delay: 0.46, rotation: 15, scale: 0.75, type: "pink", x: 91, y: 35 },
+  { delay: 0.46, rotation: 15, scale: 1, type: "pink", x: 82, y: 92 },
+  { delay: 0.49, rotation: -10, scale: 0.85, type: "yellow", x: 78, y: 80 },
+  { delay: 0.52, rotation: 5, scale: 1.1, type: "pink", x: 75, y: 96 },
+  { delay: 0.55, rotation: -25, scale: 0.9, type: "yellow", x: 80, y: 70 },
+  { delay: 0.45, rotation: 15, scale: 0.85, type: "pink", x: 66, y: 90 },
+  { delay: 0.61, rotation: 10, scale: 0.8, type: "pink", x: 76, y: 55 },
+  { delay: 0.64, rotation: -20, scale: 0.7, type: "yellow", x: 79, y: 45 },
+  { delay: 0.64, rotation: -20, scale: 1.2, type: "yellow", x: 65, y: 94 },
+  { delay: 0.67, rotation: 5, scale: 0.95, type: "pink", x: 58, y: 85 },
+  { delay: 0.7, rotation: -15, scale: 1.05, type: "yellow", x: 52, y: 98 },
+  { delay: 0.73, rotation: 10, scale: 0.8, type: "pink", x: 45, y: 88 },
+  { delay: 0.79, rotation: -10, scale: 1.1, type: "yellow", x: 35, y: 95 },
+  { delay: 0.82, rotation: 5, scale: 0.9, type: "pink", x: 25, y: 98 },
+  { delay: 0.85, rotation: -35, scale: 0.75, type: "yellow", x: 85, y: 88 },
+  { delay: 0.88, rotation: 15, scale: 0.8, type: "yellow", x: 68, y: 78 },
+  { delay: 0.94, rotation: 20, scale: 0.85, type: "yellow", x: 50, y: 92 },
+  { delay: 0.1, rotation: -45, scale: 0.8, type: "leaf2", x: 95, y: 92 },
+  { delay: 0.2, rotation: 10, scale: 0.75, type: "leaf1", x: 88, y: 85 },
+  { delay: 0.3, rotation: -20, scale: 0.9, type: "leaf2", x: 72, y: 96 },
+  { delay: 0.65, rotation: 15, scale: 0.8, type: "yellow", x: 40, y: 80 },
+  { delay: 0.45, rotation: -10, scale: 0.9, type: "pink", x: 80, y: 45 },
+  { delay: 0.55, rotation: 5, scale: 0.85, type: "yellow", x: 70, y: 50 },
+  { delay: 0.65, rotation: -15, scale: 0.95, type: "pink", x: 60, y: 70 },
+  { delay: 0.3, rotation: -10, scale: 0.8, type: "yellow", x: 96, y: 45 },
+  { delay: 0.5, rotation: -15, scale: 0.9, type: "yellow", x: 68, y: 59 },
+  { delay: 0.6, rotation: 10, scale: 0.8, type: "pink", x: 54, y: 66 },
+];
+
+const imageMap = {
+  pink: "/floral/flower-pink.png",
+  yellow: "/floral/flower-yellow.png",
+  leaf1: "/floral/leaf-1.png",
+  leaf2: "/floral/leaf-2.png",
+};
+
+interface FloralItemProps {
+  pos: FloralPosition;
+  mouseX: any;
+  mouseY: any;
+  cluster: "left" | "right";
+  onFlowerClick?: (e: React.MouseEvent) => void;
 }
 
-// Cụm hoa góc trái dày dặn phong cách Sora Lattice (như trong ảnh mẫu)
-const leftClusterItems: FloralItem[] = [
-  { id: "l1", type: "pink", bottom: "10px", left: "-20px", size: 120, initialRotate: -15, zIndex: 12, duration: 4.8 },
-  { id: "l2", type: "yellow", bottom: "40px", left: "60px", size: 110, initialRotate: 10, zIndex: 11, duration: 4.2 },
-  { id: "l3", type: "pink", bottom: "110px", left: "10px", size: 95, initialRotate: -25, zIndex: 10, duration: 5.1 },
-  { id: "l4", type: "yellow", bottom: "90px", left: "120px", size: 85, initialRotate: -5, zIndex: 9, duration: 4.4 },
-  { id: "l5", type: "pink", bottom: "160px", left: "50px", size: 75, initialRotate: 20, zIndex: 8, duration: 3.9 },
-  { id: "l6", type: "leaf1", bottom: "5px", left: "150px", size: 90, initialRotate: 30, zIndex: 7, duration: 5.5 },
-  { id: "l7", type: "leaf2", bottom: "130px", left: "-10px", size: 80, initialRotate: -35, zIndex: 6, duration: 4.6 },
-  { id: "l8", type: "yellow", bottom: "200px", left: "10px", size: 65, initialRotate: -15, zIndex: 5, duration: 3.7 },
-  { id: "l9", type: "pink", bottom: "170px", left: "130px", size: 70, initialRotate: 15, zIndex: 7, duration: 4.5 },
-  { id: "l10", type: "leaf1", bottom: "80px", left: "-25px", size: 85, initialRotate: -45, zIndex: 6, duration: 5.0 },
-  { id: "l11", type: "pink", bottom: "-10px", left: "80px", size: 100, initialRotate: 5, zIndex: 10, duration: 4.3 },
-  { id: "l12", type: "yellow", bottom: "230px", left: "70px", size: 55, initialRotate: -10, zIndex: 4, duration: 3.5 },
-];
+const FloralNode = memo(({ pos, mouseX, mouseY, cluster, onFlowerClick }: FloralItemProps) => {
+  const nodeRef = useRef<HTMLDivElement>(null);
+  const centerRef = useRef<{ x: number; y: number } | null>(null);
 
-// Cụm hoa góc phải dày dặn phong cách Sora Lattice (như trong ảnh mẫu)
-const rightClusterItems: FloralItem[] = [
-  { id: "r1", type: "pink", bottom: "15px", right: "-15px", size: 125, initialRotate: 15, zIndex: 12, duration: 4.7 },
-  { id: "r2", type: "yellow", bottom: "45px", right: "70px", size: 105, initialRotate: -10, zIndex: 11, duration: 4.3 },
-  { id: "r3", type: "pink", bottom: "115px", right: "15px", size: 90, initialRotate: 25, zIndex: 10, duration: 5.0 },
-  { id: "r4", type: "yellow", bottom: "95px", right: "130px", size: 85, initialRotate: 10, zIndex: 9, duration: 4.1 },
-  { id: "r5", type: "pink", bottom: "165px", right: "60px", size: 80, initialRotate: -20, zIndex: 8, duration: 3.8 },
-  { id: "r6", type: "leaf1", bottom: "10px", right: "150px", size: 90, initialRotate: -30, zIndex: 7, duration: 5.3 },
-  { id: "r7", type: "leaf2", bottom: "135px", right: "-10px", size: 80, initialRotate: 40, zIndex: 6, duration: 4.9 },
-  { id: "r8", type: "yellow", bottom: "205px", right: "15px", size: 65, initialRotate: 15, zIndex: 5, duration: 3.6 },
-  { id: "r9", type: "pink", bottom: "175px", right: "140px", size: 70, initialRotate: -15, zIndex: 7, duration: 4.4 },
-  { id: "r10", type: "leaf1", bottom: "85px", right: "-25px", size: 85, initialRotate: 35, zIndex: 6, duration: 5.2 },
-  { id: "r11", type: "yellow", bottom: "-10px", right: "75px", size: 95, initialRotate: -8, zIndex: 10, duration: 4.2 },
-  { id: "r12", type: "pink", bottom: "235px", right: "75px", size: 55, initialRotate: 12, zIndex: 4, duration: 3.4 },
-];
+  const springConfig = { damping: 25, stiffness: 200 };
+  const springX = useSpring(0, springConfig);
+  const springY = useSpring(0, springConfig);
 
-export function FloralDecoration() {
-  const [burstPetals, setBurstPetals] = useState<BurstPetal[]>([]);
-  const [windForce, setWindForce] = useState(0);
-  const lastMousePos = useRef({ x: 0, y: 0, time: Date.now() });
+  // Sinh số giả ngẫu nhiên tất định từ tọa độ pos để Server & Client render đồng nhất 100%, triệt tiêu lỗi Hydration Mismatch
+  const seed = useMemo(() => {
+    const val = Math.abs(Math.sin(pos.x * 12.9898 + pos.y * 78.233 + (pos.delay || 0.1) * 43.123));
+    return val - Math.floor(val);
+  }, [pos.x, pos.y, pos.delay]);
 
-  // Lắng nghe tốc độ rê chuột để tạo gió lay động hoa lá tự nhiên
+  const randomTranslateDelay = useMemo(() => seed * Math.PI, [seed]);
+  const swayDuration = useMemo(() => 3.2 + seed * 2, [seed]);
+  const swayTranslateDuration = swayDuration * 1.2;
+  const swayAmount = useMemo(() => 4 + seed * 4, [seed]);
+
+  // Tính tâm phần tử để phản xạ chuột (Mouse repulsion physics)
   useEffect(() => {
-    let timer: NodeJS.Timeout;
-    const handleMouseMove = (e: MouseEvent) => {
-      const now = Date.now();
-      const dt = Math.max(1, now - lastMousePos.current.time);
-      const dx = e.clientX - lastMousePos.current.x;
-      const dy = e.clientY - lastMousePos.current.y;
-      const speed = Math.hypot(dx, dy) / dt; // pixels per ms
-
-      if (speed > 1.0) {
-        const direction = dx > 0 ? 1 : -1;
-        const force = Math.min(14, speed * 4.5 * direction);
-        setWindForce(force);
-
-        clearTimeout(timer);
-        timer = setTimeout(() => setWindForce(0), 400);
-      }
-
-      lastMousePos.current = { x: e.clientX, y: e.clientY, time: now };
+    const updateCenter = () => {
+      if (!nodeRef.current) return;
+      const rect = nodeRef.current.getBoundingClientRect();
+      centerRef.current = {
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2,
+      };
     };
 
-    window.addEventListener("mousemove", handleMouseMove, { passive: true });
+    const animId = requestAnimationFrame(updateCenter);
+    window.addEventListener("resize", updateCenter);
     return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-      clearTimeout(timer);
+      cancelAnimationFrame(animId);
+      window.removeEventListener("resize", updateCenter);
     };
   }, []);
 
-  // Tương tác khi người dùng click vào hoa: Phun cánh hoa màu nước bay nhẹ nhàng
+  // Đẩy nhẹ hoa khi chuột đến gần (< 220px)
+  useEffect(() => {
+    const handleMouseChange = () => {
+      const center = centerRef.current;
+      if (!center) return;
+
+      const mx = mouseX.get();
+      const my = mouseY.get();
+      const dx = mx - center.x;
+      const dy = my - center.y;
+      const dist = Math.hypot(dx, dy);
+
+      if (dist < 220 && dist > 0) {
+        const force = (1 - dist / 220) * 26;
+        const angle = Math.atan2(dy, dx);
+        springX.set(Math.cos(angle) * -force);
+        springY.set(Math.sin(angle) * -force);
+      } else {
+        springX.set(0);
+        springY.set(0);
+      }
+    };
+
+    const unsubX = mouseX.on("change", handleMouseChange);
+    const unsubY = mouseY.on("change", handleMouseChange);
+    return () => {
+      unsubX();
+      unsubY();
+    };
+  }, [mouseX, mouseY, springX, springY]);
+
+  if (pos.type === "bubble" && pos.token) {
+    return (
+      <div
+        ref={nodeRef}
+        suppressHydrationWarning
+        style={{
+          left: `${pos.x}%`,
+          top: `${pos.y}%`,
+          position: "absolute",
+          transform: "translate(-50%, -50%)",
+          zIndex: 25,
+          "--floral-sway-amount": `${swayAmount}px`,
+          "--floral-sway-duration": `${swayDuration}s`,
+          "--floral-sway-translate-duration": `${swayTranslateDuration}s`,
+          "--floral-sway-rotate-delay": `${pos.delay}s`,
+          "--floral-sway-translate-delay": `${randomTranslateDelay}s`,
+        } as any}
+      >
+        <motion.div
+          className="cursor-pointer"
+          initial={{ opacity: 0, scale: 0, rotate: pos.rotation - 15 }}
+          animate={{ opacity: 1, scale: pos.scale, rotate: pos.rotation }}
+          transition={{ delay: pos.delay + 0.3, duration: 0.7, ease: [0.34, 1.56, 0.64, 1] }}
+          style={{ x: springX, y: springY }}
+        >
+          <div className="floral-hide">
+            <div className="floral-sway-rotate">
+              <div className="floral-sway-translate">
+                <div className="inline-flex items-center gap-2 rounded-full border border-neutral-200/80 dark:border-neutral-700/70 bg-white/95 dark:bg-[#18181E]/95 px-3.5 py-1.5 shadow-lg backdrop-blur-md transition-transform duration-300 hover:scale-108 active:scale-95">
+                  <div
+                    className="h-3 w-3 shrink-0 rounded-full border border-black/10"
+                    style={{ backgroundColor: pos.token.color }}
+                  />
+                  <span className="whitespace-nowrap font-mono text-xs tracking-tight text-neutral-800 dark:text-neutral-200">
+                    {pos.token.name}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
+
+  const src = imageMap[pos.type as keyof typeof imageMap];
+  if (!src) return null;
+
+  return (
+    <div
+      ref={nodeRef}
+      suppressHydrationWarning
+      style={{
+        left: `${pos.x}%`,
+        top: `${pos.y}%`,
+        position: "absolute",
+        transform: "translate(-50%, -50%)",
+        zIndex: 10,
+        "--floral-sway-amount": `${swayAmount}px`,
+        "--floral-sway-duration": `${swayDuration}s`,
+        "--floral-sway-translate-duration": `${swayTranslateDuration}s`,
+        "--floral-sway-rotate-delay": `${pos.delay}s`,
+        "--floral-sway-translate-delay": `${randomTranslateDelay}s`,
+      } as any}
+    >
+      <motion.div
+        className="cursor-pointer select-none"
+        initial={{ opacity: 0, scale: 0, rotate: pos.rotation - 20 }}
+        animate={{ opacity: 1, scale: pos.scale, rotate: pos.rotation }}
+        transition={{ delay: pos.delay + 0.2, duration: 0.8, ease: [0.34, 1.56, 0.64, 1] }}
+        style={{
+          height: "clamp(60px, 8vw, 105px)",
+          width: "clamp(60px, 8vw, 105px)",
+          x: springX,
+          y: springY,
+        }}
+        onClick={onFlowerClick}
+      >
+        <div className="floral-hide">
+          <div className="floral-sway-rotate">
+            <div className="floral-sway-translate">
+              <Image
+                src={src}
+                alt="Botanical Flower"
+                width={95}
+                height={91}
+                priority
+                className="h-full w-full select-none object-contain drop-shadow-sm transition-opacity duration-500 dark:opacity-85 dark:brightness-95 hover:scale-110 active:scale-95 transition-transform"
+                style={{ width: "auto", height: "auto" }}
+                draggable={false}
+              />
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    </div>
+  );
+});
+
+FloralNode.displayName = "FloralNode";
+
+export function FloralDecoration() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const [isPast, setIsPast] = useState(false);
+  const [burstPetals, setBurstPetals] = useState<BurstPetal[]>([]);
+
+  // Lắng nghe scroll để ẩn nhẹ hoa khi cuộn xuống dưới (Sora Lattice behavior)
+  useEffect(() => {
+    const handleScroll = () => {
+      const past = window.scrollY > 160;
+      setIsPast(past);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    mouseX.set(e.clientX);
+    mouseY.set(e.clientY);
+  };
+
+  // Click vào hoa bắn cánh hoa bay nhẹ nhàng
   const handleFlowerClick = (e: React.MouseEvent) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
@@ -114,109 +346,96 @@ export function FloralDecoration() {
     setBurstPetals((prev) => [...prev.slice(-18), ...newPetals]);
   };
 
-  const renderFloralItem = (item: FloralItem, corner: "left" | "right") => {
-    const srcMap = {
-      pink: "/floral/flower-pink.png",
-      yellow: "/floral/flower-yellow.png",
-      leaf1: "/floral/leaf-1.png",
-      leaf2: "/floral/leaf-2.png",
-    };
-
-    const isLeaf = item.type.startsWith("leaf");
-
-    return (
-      <motion.div
-        key={item.id}
-        className="absolute pointer-events-auto cursor-pointer select-none group"
-        style={{
-          bottom: item.bottom,
-          ...(item.left ? { left: item.left } : { right: item.right }),
-          zIndex: item.zIndex,
-          transformOrigin: corner === "left" ? "bottom left" : "bottom right",
-        }}
-        animate={{
-          rotate: [
-            item.initialRotate - 4 + windForce,
-            item.initialRotate + 5 + windForce,
-            item.initialRotate - 4,
-          ],
-          y: [0, -6, 0],
-        }}
-        transition={{
-          rotate: windForce !== 0 ? { type: "spring", stiffness: 320, damping: 16 } : { duration: item.duration, repeat: Infinity, ease: "easeInOut" },
-          y: { duration: item.duration * 1.1, repeat: Infinity, ease: "easeInOut" },
-        }}
-        whileHover={{
-          scale: 1.22,
-          rotate: item.initialRotate + (corner === "left" ? -8 : 8),
-          transition: { type: "spring", stiffness: 400, damping: 15 },
-        }}
-        whileTap={{ scale: 0.92 }}
-        onClick={handleFlowerClick}
-        title="Bấm vào hoa để bung tỏa cánh hoa màu nước"
-      >
-        <Image
-          src={srcMap[item.type]}
-          alt="Hoa thi ca Ánh Thịnh"
-          width={item.size}
-          height={item.size}
-          unoptimized
-          className={`object-contain transition-all duration-300 drop-shadow-sm ${
-            isLeaf ? "opacity-75 group-hover:opacity-100" : "opacity-90 group-hover:opacity-100"
-          }`}
-        />
-      </motion.div>
-    );
-  };
-
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-      {/* CÁNH HOA BAY TRÔI TỰ DO TRONG GIÓ (SORA LATTICE AMBIENT PETALS) */}
-      <div className="absolute inset-0 overflow-hidden">
-        {[
-          { id: "p1", top: "18%", left: "8%", size: 14, rotate: 25, duration: 16, delay: 0 },
-          { id: "p2", top: "45%", left: "18%", size: 16, rotate: -40, duration: 20, delay: 3 },
-          { id: "p3", top: "25%", right: "12%", size: 15, rotate: 35, duration: 18, delay: 1.5 },
-          { id: "p4", top: "60%", right: "22%", size: 18, rotate: -15, duration: 22, delay: 4 },
-          { id: "p5", top: "75%", left: "38%", size: 12, rotate: 50, duration: 15, delay: 2 },
-        ].map((petal) => (
-          <motion.div
-            key={petal.id}
-            className="absolute rounded-full opacity-60"
-            style={{
-              top: petal.top,
-              ...(petal.left ? { left: petal.left } : { right: petal.right }),
-              width: petal.size,
-              height: petal.size * 1.3,
-              background: "radial-gradient(ellipse at center, #F8D7DA 0%, #F5C6CB 80%, rgba(248, 215, 218, 0) 100%)",
-              borderRadius: "60% 40% 70% 30% / 50% 60% 40% 50%",
-            }}
-            animate={{
-              y: [0, -18, 0],
-              x: [0, 12, 0],
-              rotate: [petal.rotate, petal.rotate + 25, petal.rotate],
-            }}
-            transition={{
-              duration: petal.duration,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: petal.delay,
-            }}
+    <div
+      ref={containerRef}
+      onMouseMove={handleMouseMove}
+      data-floral-past={isPast ? "true" : "false"}
+      className="floral-root pointer-events-none absolute inset-0 select-none overflow-hidden"
+    >
+      {/* Cụm hoa bên trái (Left Cluster) */}
+      <div className="floral-cluster pointer-events-auto absolute bottom-[60px] left-[-20px] md:left-0 h-[580px] w-[34vw] max-w-[460px]">
+        {leftClusterPositions.map((pos, idx) => (
+          <FloralNode
+            key={`left-${idx}`}
+            pos={pos}
+            cluster="left"
+            mouseX={mouseX}
+            mouseY={mouseY}
+            onFlowerClick={handleFlowerClick}
           />
         ))}
       </div>
 
-      {/* CỤM HOA GÓC DƯỚI BÊN TRÁI (THICK BOTANICAL BUSH) */}
-      <div className="absolute -bottom-6 -left-8 sm:left-0 w-[280px] sm:w-[380px] md:w-[460px] lg:w-[520px] h-[340px] sm:h-[420px] md:h-[480px]">
-        {leftClusterItems.map((item) => renderFloralItem(item, "left"))}
+      {/* Cụm hoa bên phải (Right Cluster) */}
+      <div className="floral-cluster pointer-events-auto absolute right-[-20px] md:right-0 bottom-[60px] h-[580px] w-[34vw] max-w-[460px]">
+        <div className="relative h-full w-full">
+          {rightClusterPositions.map((pos, idx) => (
+            <FloralNode
+              key={`right-${idx}`}
+              pos={pos}
+              cluster="right"
+              mouseX={mouseX}
+              mouseY={mouseY}
+              onFlowerClick={handleFlowerClick}
+            />
+          ))}
+        </div>
       </div>
 
-      {/* CỤM HOA GÓC DƯỚI BÊN PHẢI (THICK BOTANICAL BUSH) */}
-      <div className="absolute -bottom-6 -right-8 sm:right-0 w-[280px] sm:w-[380px] md:w-[460px] lg:w-[520px] h-[340px] sm:h-[420px] md:h-[480px]">
-        {rightClusterItems.map((item) => renderFloralItem(item, "right"))}
-      </div>
+      {/* ĐỊNH NGHĨA GRADIENT CÁNH HOA DUY NHẤT */}
+      <svg width="0" height="0" className="absolute pointer-events-none">
+        <defs>
+          <linearGradient id="driftingCherryPetal" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="#FCE4E8" />
+            <stop offset="60%" stopColor="#F7BAC3" />
+            <stop offset="100%" stopColor="#EE94A2" />
+          </linearGradient>
+        </defs>
+      </svg>
 
-      {/* CÁNH HOA BUNG RA KHI CLICK (BURST PARTICLES) */}
+      {/* 5 Cánh hoa đào trôi lãng mạn trên canvas (Pixel-faithful theo example-1.jpg) */}
+      {[
+        { id: "dp-1", x: "7%", y: "47%", rotate: 25, scale: 1.0, duration: 4.8 },
+        { id: "dp-2", x: "16%", y: "53%", rotate: -18, scale: 1.1, duration: 5.2 },
+        { id: "dp-3", x: "23%", y: "65%", rotate: 32, scale: 0.9, duration: 4.5 },
+        { id: "dp-4", x: "92%", y: "38%", rotate: -22, scale: 1.05, duration: 5.0 },
+        { id: "dp-5", x: "78%", y: "68%", rotate: 20, scale: 0.95, duration: 4.6 },
+      ].map((petal) => (
+        <motion.div
+          key={petal.id}
+          className="pointer-events-none absolute select-none z-20"
+          style={{
+            left: petal.x,
+            top: petal.y,
+          }}
+          initial={{
+            x: "-50%",
+            y: "-50%",
+            rotate: petal.rotate,
+            scale: petal.scale,
+          }}
+          animate={{
+            y: ["-50%", "calc(-50% - 9px)", "-50%"],
+            rotate: [petal.rotate, petal.rotate + 6, petal.rotate],
+          }}
+          transition={{
+            duration: petal.duration,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        >
+          <svg width="26" height="34" viewBox="0 0 28 36" fill="none" className="drop-shadow-xs">
+            <path
+              d="M14 2C8.5 9 1 17 1 25.5C1 31.3 6.8 35 14 35C21.2 35 27 31.3 27 25.5C27 17 19.5 9 14 2Z"
+              fill="url(#driftingCherryPetal)"
+              fillOpacity="0.88"
+            />
+          </svg>
+        </motion.div>
+      ))}
+
+      {/* Cánh hoa bay khi click */}
       <AnimatePresence>
         {burstPetals.map((petal) => (
           <motion.div
@@ -229,6 +448,7 @@ export function FloralDecoration() {
               height: petal.size * 1.25,
               backgroundColor: petal.color,
               borderRadius: "60% 40% 70% 30% / 50% 60% 40% 50%",
+              opacity: 1,
             }}
             initial={{ opacity: 1, scale: 0.6, rotate: petal.rotation }}
             animate={{

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { FloralDecoration } from "@/components/lattice/FloralDecoration";
 import { WipeButton } from "@/components/tai-ui/WipeButton";
 import { ArrowRoll } from "@/components/tai-ui/ArrowRoll";
-import { Bell, Sparkles } from "lucide-react";
+import { Bell, Feather } from "lucide-react";
 
 interface ComingSoonPageProps {
   title: string;
@@ -35,15 +35,14 @@ export function ComingSoonPage({
 
       <div className="relative z-10 max-w-2xl mx-auto flex flex-col items-center gap-6">
         {/* Badge */}
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 dark:bg-[#131316]/90 border border-neutral-200 dark:border-neutral-800 shadow-sm text-xs font-mono tracking-wider uppercase text-[#2D5A3D] dark:text-[#4ade80]">
-          <Sparkles className="w-3.5 h-3.5" />
+        <div className="inline-flex items-center px-3.5 py-1.5 rounded-full bg-white/90 dark:bg-[#181816]/90 border border-neutral-200 dark:border-white/10 shadow-sm text-xs font-serif tracking-wider uppercase text-[var(--accent-green)] dark:text-[var(--accent-gold)]">
           <span>{badge}</span>
         </div>
 
-        {/* Tiêu đề Serif kết hợp Italic */}
-        <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50 leading-tight">
+        {/* Tiêu đề Roman trang nghiêm (Hallmark Gate 38a) */}
+        <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-neutral-900 dark:text-[#EAE6DF] leading-tight">
           Một góc tĩnh lặng <br />
-          <span className="italic font-normal text-[#2D5A3D] dark:text-[#5BA26B]">đang được ươm mầm...</span>
+          <span className="font-normal text-[var(--accent-green)] dark:text-[var(--accent-gold)]">đang được ươm mầm...</span>
         </h1>
 
         {/* Mô tả */}
@@ -67,16 +66,15 @@ export function ComingSoonPage({
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Nhập email của bạn..."
               required
-              className="w-full px-5 py-3 text-sm font-serif bg-white dark:bg-[#131316] border border-neutral-300 dark:border-neutral-700 text-neutral-900 dark:text-neutral-100 rounded-full focus:outline-none focus:border-[#2D5A3D] shadow-xs"
+              className="w-full px-5 py-3 text-sm font-serif bg-white dark:bg-[#131316] border border-neutral-300 dark:border-neutral-700 text-neutral-900 dark:text-neutral-100 rounded-full focus:outline-none focus:border-[var(--accent-green)] shadow-xs"
             />
             <WipeButton
               type="submit"
               wipeColor="#2D5A3D"
               textColor="#ffffff"
               hoverTextColor="#ffffff"
-              className="bg-[#2D5A3D] text-white px-6 py-3 shrink-0 w-full sm:w-auto text-xs"
+              className="bg-[var(--accent-green)] text-white px-6 py-3 shrink-0 w-full sm:w-auto text-xs"
             >
-              <Bell className="w-3.5 h-3.5 mr-1" />
               Đăng ký nhận tin
             </WipeButton>
           </form>

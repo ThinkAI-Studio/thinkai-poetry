@@ -1,22 +1,15 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import Link from "next/link";
-import Image from "next/image";
 import { motion } from "motion/react";
 import { FloralDecoration } from "@/components/lattice/FloralDecoration";
-import { FloatingVersePill } from "@/components/lattice/FloatingVersePill";
-import { TiltCard } from "@/components/tai-ui/TiltCard";
-import { ArrowRoll } from "@/components/tai-ui/ArrowRoll";
-import { mockPoems, mockCollections } from "@/data/mock-poetry";
-import { PoemFormType } from "@/types/database";
-import { Volume2, Play, Pause, Sparkles } from "lucide-react";
-import { SPRINGS } from "@/lib/motion";
+import { Play, Pause, BookOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { usePoeticBook } from "@/context/PoeticBookContext";
+import { PoeticBookSection } from "@/components/book/PoeticBookSection";
 
 export default function HomePage() {
-  const [selectedForm, setSelectedForm] = useState<PoemFormType | "all">("all");
-  const [hoveredTab, setHoveredTab] = useState<string | null>(null);
+  const { openBook } = usePoeticBook();
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -31,15 +24,10 @@ export default function HomePage() {
     }
   };
 
-  const filteredPoems =
-    selectedForm === "all"
-      ? mockPoems
-      : mockPoems.filter((p) => p.form_type === selectedForm);
-
   return (
-    <div className="flex flex-col gap-16 md:gap-24 pb-24 overflow-x-hidden">
+    <div className="flex flex-col gap-16 md:gap-24 pb-24 overflow-x-clip">
       {/* ========================================================= */}
-      {/* 1. HERO SECTION (CHUẨN 100% THEO THIẾT KẾ MẪU)             */}
+      {/* 1. HERO SECTION: KHÔNG GIAN THI CA ĐƯƠNG ĐẠI               */}
       {/* ========================================================= */}
       <section className="relative min-h-[85vh] sm:min-h-[88vh] flex flex-col items-center justify-center px-4 sm:px-6 text-center overflow-hidden pt-4 pb-16">
         {/* Nền hoa lá màu nước đung đưa & cánh hoa tương tác */}
@@ -54,121 +42,132 @@ export default function HomePage() {
         />
 
         {/* Container nội dung Hero */}
-        <div className="relative z-10 max-w-4xl mx-auto flex flex-col items-center w-full">
-          {/* Tiêu đề chính: EB Garamond (Kinh điển thời Thơ Mới) */}
-          <div className="mb-8 select-none">
-            <h1 className="font-poem-heading text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50 leading-tight">
+        <div className="relative z-10 max-w-5xl mx-auto flex flex-col items-center w-full">
+          {/* Tiêu đề chính: Hallmark Gate 38a Purity (EB Garamond Roman) */}
+          <div className="mb-8 select-none text-center">
+            <h1 className="font-poem-heading text-5xl sm:text-6xl md:text-[68px] font-bold tracking-tight text-neutral-900 dark:text-[#EAE6DF] leading-[1.1]">
               Không gian thi ca đương đại
             </h1>
-            <p className="font-poem-heading italic text-3xl sm:text-4xl md:text-5xl text-neutral-900 dark:text-neutral-100 font-normal mt-1.5 tracking-tight">
-              nơi hồn thơ lắng đọng
+            <p className="font-poem-heading text-3xl sm:text-4xl md:text-[46px] text-neutral-700 dark:text-[#A6A39C] font-light mt-3 tracking-tight">
+              Nơi hồn thơ lắng đọng
             </p>
           </div>
 
-          {/* VÙNG KHUNG THƠ TRUNG TÂM VÀ CÁC THẺ FLOATING PILLS */}
-          <div className="relative w-full max-w-lg mx-auto flex items-center justify-center">
-            {/* Floating Pill bên trái */}
-            <div className="absolute -left-12 sm:-left-36 md:-left-44 bottom-14 z-30 hidden sm:block">
-              <FloatingVersePill
-                label="--thể-thơ-lục-bát"
-                iconDotColor="#2D5A3D"
-                delay={0.2}
-                onClick={() => {
-                  setSelectedForm("luc_bat");
-                  document.getElementById("vuon-tho")?.scrollIntoView({ behavior: "smooth" });
-                }}
-              />
-            </div>
-
-            {/* Floating Pills bên phải */}
-            <div className="absolute -right-10 sm:-right-36 md:-right-48 top-12 z-30 hidden sm:block">
-              <FloatingVersePill
-                label="--phong-trào-thơ-mới"
-                iconDotColor="#D97706"
-                delay={0.6}
-                onClick={() => {
-                  setSelectedForm("tu_do");
-                  document.getElementById("vuon-tho")?.scrollIntoView({ behavior: "smooth" });
-                }}
-              />
-            </div>
-
-            <div className="absolute -right-8 sm:-right-28 md:-right-36 bottom-6 z-30 hidden sm:block">
-              <FloatingVersePill
-                label="--ngâm-thơ-audio"
-                iconDotColor="#7C3AED"
-                delay={1.0}
-                onClick={togglePlay}
-              />
-            </div>
-
-            {/* THẺ TRÍCH DẪN THƠ TRUNG TÂM: Lora (Verse Body) */}
-            <motion.div
-              initial={{ opacity: 0, y: 18 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-              className="tai-card w-full p-7 sm:p-9 rounded-2xl shadow-xl backdrop-blur-sm border border-neutral-200/90 dark:border-neutral-800/90 text-left relative z-20"
+          {/* VÙNG KHUNG THƠ TRUNG TÂM VÀ CÁC THẺ PHÂN LOẠI THI CA */}
+          <div className="relative w-full max-w-[410px] mx-auto flex items-center justify-center mt-2">
+            {/* THẺ THỂ LOẠI 1 (TRÁI): Thơ Lục Bát */}
+            <a
+              href="#khong-gian-sach-tho"
+              className="hidden md:flex absolute right-full mr-6 lg:mr-8 top-[71%] -translate-y-1/2 items-center gap-2 rounded-full border border-neutral-200/90 dark:border-white/10 bg-white/95 dark:bg-[#181816]/95 px-4 py-1.5 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.7),0_4px_12px_rgba(0,0,0,0.05)] dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08),0_4px_16px_rgba(0,0,0,0.4)] backdrop-blur-md z-30 transition-all duration-200 hover:scale-105 active:scale-95 select-none whitespace-nowrap group cursor-pointer"
             >
-              {/* Nội dung bài thơ mẫu với chuẩn thụt lề Lục bát 2ch */}
-              <div className="space-y-4 font-poem-verse text-base sm:text-lg leading-relaxed text-neutral-800 dark:text-neutral-200 poem-luc-bat">
+              <div className="h-2.5 w-2.5 shrink-0 rounded-full bg-[var(--accent-green)] dark:bg-[var(--accent-gold)]" />
+              <span className="font-serif text-xs tracking-wider text-neutral-800 dark:text-[#EAE6DF] font-medium group-hover:text-[var(--accent-green)] dark:group-hover:text-[var(--accent-gold)] transition-colors">
+                Thơ Lục Bát
+              </span>
+            </a>
+
+            {/* THẺ THỂ LOẠI 2 (PHẢI TRÊN): Phong Trào Thơ Mới */}
+            <a
+              href="#khong-gian-sach-tho"
+              className="hidden md:flex absolute left-full ml-6 lg:ml-8 top-[28%] -translate-y-1/2 items-center gap-2 rounded-full border border-neutral-200/90 dark:border-white/10 bg-white/95 dark:bg-[#181816]/95 px-4 py-1.5 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.7),0_4px_12px_rgba(0,0,0,0.05)] dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08),0_4px_16px_rgba(0,0,0,0.4)] backdrop-blur-md z-30 transition-all duration-200 hover:scale-105 active:scale-95 select-none whitespace-nowrap group cursor-pointer"
+            >
+              <div className="h-2.5 w-2.5 shrink-0 rounded-full bg-[#C87932]" />
+              <span className="font-serif text-xs tracking-wider text-neutral-800 dark:text-[#EAE6DF] font-medium group-hover:text-[var(--accent-green)] dark:group-hover:text-[var(--accent-gold)] transition-colors">
+                Phong Trào Thơ Mới
+              </span>
+            </a>
+
+            {/* THẺ THỂ LOẠI 3 (PHẢI DƯỚI): Bản Ngâm Diễn Cảm */}
+            <a
+              href="#khong-gian-sach-tho"
+              className="hidden md:flex absolute left-full ml-6 lg:ml-8 top-[78%] -translate-y-1/2 items-center gap-2 rounded-full border border-neutral-200/90 dark:border-white/10 bg-white/95 dark:bg-[#181816]/95 px-4 py-1.5 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.7),0_4px_12px_rgba(0,0,0,0.05)] dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08),0_4px_16px_rgba(0,0,0,0.4)] backdrop-blur-md z-30 transition-all duration-200 hover:scale-105 active:scale-95 select-none whitespace-nowrap group cursor-pointer"
+            >
+              <div className="h-2.5 w-2.5 shrink-0 rounded-full bg-[#756A88]" />
+              <span className="font-serif text-xs tracking-wider text-neutral-800 dark:text-[#EAE6DF] font-medium group-hover:text-[var(--accent-green)] dark:group-hover:text-[var(--accent-gold)] transition-colors">
+                Bản Ngâm Diễn Cảm
+              </span>
+            </a>
+
+            {/* THẺ TRÍCH DẪN THƠ TRUNG TÂM (IMPECCABLE TECTONIC DEPTH) */}
+            <motion.div
+              initial={false}
+              animate={{ opacity: 1, y: 0 }}
+              className="w-full px-8 pt-8 pb-6 sm:px-9 sm:pt-9 sm:pb-7 rounded-2xl bg-white/95 dark:bg-[#181816]/95 text-neutral-900 dark:text-[#EAE6DF] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.8),0_15px_35px_rgba(0,0,0,0.05)] dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08),0_20px_50px_rgba(0,0,0,0.6)] backdrop-blur-md border border-neutral-200/80 dark:border-white/10 text-center relative z-20 transition-all duration-300 hover:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.9),0_20px_45px_rgba(0,0,0,0.08)]"
+            >
+              {/* Nội dung bài thơ */}
+              <div className="space-y-4 font-poem-verse text-[14.5px] sm:text-[15px] leading-[1.8] text-neutral-800 dark:text-[#EAE6DF] select-none">
                 <div className="space-y-1">
-                  <p className="verse-6">Gió xuân thổi nhẹ qua rèm,</p>
-                  <p className="verse-8">Nhành hoa hé nụ dịu êm đón ngày,</p>
-                  <p className="verse-6">Không gian thi ca đương đại.</p>
+                  <p>Gió xuân thổi nhẹ qua rèm,</p>
+                  <p>Nhành hoa hé nụ dịu êm đón ngày,</p>
+                  <p>Không gian thi ca đương đại.</p>
                 </div>
                 <div className="space-y-1">
-                  <p className="verse-6">Dạt dào một tấm lòng son,</p>
-                  <p className="verse-8">Ngàn năm dẫu bước chân mòn nẻo xưa,</p>
-                  <p className="verse-6">Khí thiêng đất Việt ngàn năm.</p>
+                  <p>Dạt dào một tấm lòng son,</p>
+                  <p>Ngàn năm dẫu bước chân mòn nẻo xưa,</p>
+                  <p>Khí thiêng đất Việt ngàn năm.</p>
                 </div>
               </div>
 
-              {/* Tên tác giả ký họa */}
-              <div className="mt-5 text-right font-poem-heading text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+              {/* Tên tác giả */}
+              <div className="mt-5 mb-5 text-right font-poem-heading text-sm font-medium text-neutral-700 dark:text-[#A6A39C] select-none pr-1">
                 Ánh Thịnh
               </div>
 
               {/* TRÌNH PHÁT AUDIO MINI DƯỚI ĐÁY CARD */}
-              <div className="flex items-center gap-3 pt-4 border-t border-neutral-200/70 dark:border-neutral-800/70 mt-4">
+              <div className="flex items-center gap-3 pt-3">
                 <button
                   type="button"
                   onClick={togglePlay}
-                  className="w-7 h-7 flex items-center justify-center bg-neutral-900 dark:bg-white text-white dark:text-neutral-950 rounded-full transition-transform active:scale-90 hover:scale-105 cursor-pointer shadow-xs shrink-0"
+                  className="text-neutral-900 dark:text-[#EAE6DF] transition-transform active:scale-90 hover:scale-110 cursor-pointer shrink-0 p-1 rounded-sm focus-visible:outline-2 focus-visible:outline-[var(--color-focus)]"
                   aria-label={isPlaying ? "Dừng ngâm thơ" : "Phát ngâm thơ"}
                   title={isPlaying ? "Tạm dừng" : "Ngâm thơ diễn cảm"}
                 >
                   {isPlaying ? (
-                    <Pause className="w-3 h-3 fill-current" />
+                    <Pause className="w-3.5 h-3.5 fill-current" />
                   ) : (
-                    <Play className="w-3 h-3 fill-current ml-0.5" />
+                    <Play className="w-3.5 h-3.5 fill-current" />
                   )}
                 </button>
 
-                {/* Sóng âm Equalizer động */}
-                <div className="flex items-center gap-0.5 h-4 px-1 shrink-0">
-                  {[25, 60, 95, 45, 80, 35, 75, 55, 90, 30].map((h, i) => (
+                {/* Sóng âm Equalizer 60fps mượt mà */}
+                <div className="flex items-end gap-[2.5px] h-4 px-1 shrink-0">
+                  {[2, 3, 3, 4, 6, 11, 16, 12, 8, 5, 4, 3, 2, 2].map((h, i) => (
                     <span
                       key={i}
                       className={cn(
-                        "w-0.5 rounded-full transition-all duration-200",
-                        isPlaying ? "bg-[#2D5A3D] dark:bg-[#4ade80]" : "bg-neutral-400 dark:bg-neutral-600"
+                        "w-[2px] rounded-full transition-colors duration-200",
+                        isPlaying
+                          ? "bg-[var(--accent-green)] dark:bg-[var(--accent-gold)] animate-eq-bar"
+                          : "bg-neutral-300 dark:bg-neutral-700"
                       )}
                       style={{
-                        height: isPlaying ? `${Math.max(25, h)}%` : "30%",
+                        height: isPlaying ? "100%" : `${h}px`,
+                        animationDelay: isPlaying ? `${(i % 5) * 0.12}s` : undefined,
                       }}
                     />
                   ))}
                 </div>
 
-                {/* Thanh tiến trình ngâm thơ */}
-                <div className="flex-1 h-1 bg-neutral-200 dark:bg-neutral-800 rounded-full overflow-hidden">
+                {/* Thanh tiến trình ngâm thơ mảnh */}
+                <div className="flex-1 h-[1.5px] bg-neutral-300 dark:bg-neutral-700 rounded-full overflow-hidden ml-1">
                   <div
                     className={cn(
-                      "h-full bg-[#2D5A3D] dark:bg-[#4ade80] rounded-full transition-all duration-300",
+                      "h-full bg-[var(--accent-green)] dark:bg-[var(--accent-gold)] rounded-full transition-all duration-300",
                       isPlaying ? "w-2/5 animate-pulse" : "w-1/12"
                     )}
                   />
                 </div>
+              </div>
+
+              {/* Nút Mở Cuốn Sách Thơ 3D (Rút gọn tên theo Impeccable Distill) */}
+              <div className="mt-4 pt-3 border-t border-neutral-200/60 dark:border-white/10 flex items-center justify-center">
+                <button
+                  type="button"
+                  onClick={() => openBook()}
+                  className="inline-flex items-center justify-center text-xs font-serif tracking-wider text-[var(--accent-green)] dark:text-[var(--accent-gold)] hover:text-black dark:hover:text-white transition-colors cursor-pointer py-1 font-semibold focus-visible:outline-2 focus-visible:outline-[var(--color-focus)] rounded-sm"
+                >
+                  <span>Mở Cuốn Sách Thơ</span>
+                </button>
               </div>
             </motion.div>
           </div>
@@ -176,184 +175,9 @@ export default function HomePage() {
       </section>
 
       {/* ========================================================= */}
-      {/* 2. TUYỂN TẬP THI CA (FEATURED COLLECTIONS VỚI TILT 3D)    */}
+      {/* 2. KHÔNG GIAN CUỐN SÁCH THƠ MỞ 3D                           */}
       {/* ========================================================= */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 w-full">
-        <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-8 gap-4">
-          <div>
-            <span className="text-xs font-mono uppercase tracking-widest text-[#2D5A3D] dark:text-[#4ade80] font-semibold">
-              Tuyển Tập & Bộ Sưu Tập
-            </span>
-            <h2 className="font-poem-heading text-3xl sm:text-4xl font-bold text-neutral-900 dark:text-neutral-100 mt-1">
-              Những miền cảm xúc <span className="italic font-normal">chắt chiu</span>
-            </h2>
-          </div>
-
-          <Link
-            href="/collections"
-            className="group inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-neutral-600 dark:text-neutral-400 hover:text-black dark:hover:text-white"
-          >
-            <span>Xem tất cả tuyển tập</span>
-            <ArrowRoll size="sm" />
-          </Link>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {mockCollections.map((col) => (
-            <TiltCard key={col.id} maxTilt={4} className="p-0 border-0 shadow-none bg-transparent">
-              <Link
-                href={`/collections/${col.slug}`}
-                className="tai-card group p-6 flex flex-col justify-between hover:shadow-lg transition-shadow duration-300 rounded-2xl h-full block"
-              >
-                <div>
-                  <div className="w-full h-36 bg-neutral-100 dark:bg-neutral-900 mb-5 flex items-center justify-center relative overflow-hidden rounded-xl border border-neutral-200/50 dark:border-neutral-800/50">
-                    {col.cover_image_url && (
-                      <Image
-                        src={col.cover_image_url}
-                        alt={col.title}
-                        width={80}
-                        height={80}
-                        className="object-contain group-hover:scale-110 transition-transform duration-300 opacity-85"
-                      />
-                    )}
-                    <span className="absolute top-2.5 right-2.5 text-[10px] font-mono uppercase tracking-wider px-2.5 py-0.5 bg-white/90 dark:bg-black/90 text-neutral-800 dark:text-neutral-200 rounded-full border border-neutral-200 dark:border-neutral-800">
-                      {col.poems_count} bài
-                    </span>
-                  </div>
-
-                  <h3 className="font-poem-heading text-xl font-bold text-neutral-900 dark:text-neutral-100 group-hover:text-[#2D5A3D] dark:group-hover:text-[#4ade80] transition-colors line-clamp-1 mb-2">
-                    {col.title}
-                  </h3>
-                  <p className="font-poem-verse text-sm text-neutral-600 dark:text-neutral-400 line-clamp-2 leading-relaxed mb-4">
-                    {col.description}
-                  </p>
-                </div>
-
-                <div className="pt-3 border-t border-neutral-200/60 dark:border-neutral-800/60 flex items-center justify-between text-xs font-mono text-neutral-500">
-                  <span>Khám phá tuyển tập</span>
-                  <ArrowRoll size="sm" />
-                </div>
-              </Link>
-            </TiltCard>
-          ))}
-        </div>
-      </section>
-
-      {/* ========================================================= */}
-      {/* 3. TẤT CẢ BÀI THƠ MỚI (#VUON-THO) VỚI TABS SLIDING PILL    */}
-      {/* ========================================================= */}
-      <section id="vuon-tho" className="max-w-6xl mx-auto px-4 sm:px-6 w-full scroll-mt-28">
-        <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-8 gap-4">
-          <div>
-            <span className="text-xs font-mono uppercase tracking-widest text-[#2D5A3D] dark:text-[#4ade80] font-semibold">
-              Thi Phẩm Chọn Lọc
-            </span>
-            <h2 className="font-poem-heading text-3xl font-bold text-neutral-900 dark:text-neutral-100 mt-1">
-              Vườn thơ hôm nay
-            </h2>
-          </div>
-
-          {/* Filter tabs với viên thuốc trượt lò xo layoutId */}
-          <div
-            onMouseLeave={() => setHoveredTab(null)}
-            className="relative flex flex-wrap items-center gap-1 p-1.5 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-full select-none shadow-xs"
-          >
-            {[
-              { id: "all", label: "Tất Cả" },
-              { id: "luc_bat", label: "Lục Bát" },
-              { id: "tu_do", label: "Tự Do" },
-              { id: "that_ngon", label: "Đường Luật" },
-            ].map((tab) => {
-              const isActive = selectedForm === tab.id;
-              const isHovered = hoveredTab === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  type="button"
-                  onClick={() => setSelectedForm(tab.id as any)}
-                  onMouseEnter={() => setHoveredTab(tab.id)}
-                  className="relative px-4 py-1.5 text-xs font-mono tracking-wider uppercase transition-colors rounded-full cursor-pointer z-10 outline-none"
-                >
-                  {/* Nền Hover lướt trước */}
-                  {isHovered && !isActive && (
-                    <motion.div
-                      layoutId="hoverFilterTab"
-                      transition={SPRINGS.responsive}
-                      className="absolute inset-0 bg-black/5 dark:bg-white/10 rounded-full -z-10"
-                    />
-                  )}
-
-                  {/* Nền Active màu xanh lá Ánh Thịnh trượt lò xo */}
-                  {isActive && (
-                    <motion.div
-                      layoutId="activeFilterTab"
-                      transition={SPRINGS.responsive}
-                      className="absolute inset-0 bg-[#2D5A3D] rounded-full shadow-xs -z-10"
-                    />
-                  )}
-
-                  <span
-                    className={cn(
-                      "transition-colors duration-200",
-                      isActive
-                        ? "text-white font-bold"
-                        : "text-neutral-600 dark:text-neutral-400 hover:text-black dark:hover:text-white"
-                    )}
-                  >
-                    {tab.label}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Danh sách bài thơ với hiệu ứng nghiêng 3D Tilt */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {filteredPoems.map((poem) => (
-            <TiltCard key={poem.id} maxTilt={3} className="p-0 border-0 shadow-none bg-transparent">
-              <Link
-                href={`/poems/${poem.slug}`}
-                className="tai-card p-6 flex flex-col justify-between group hover:shadow-lg transition-shadow duration-300 rounded-2xl h-full block"
-              >
-                <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-xs font-mono uppercase tracking-wider text-[#2D5A3D] dark:text-[#4ade80]">
-                      {poem.form_type === "luc_bat" ? "Thơ Lục Bát" : poem.form_type === "that_ngon" ? "Thơ Đường Luật" : "Thơ Tự Do"}
-                    </span>
-                    {poem.audio_url ? (
-                      <span className="flex items-center gap-1 text-[11px] font-mono text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/40 px-2.5 py-0.5 rounded-full border border-purple-200 dark:border-purple-800">
-                        <Volume2 className="w-3 h-3" />
-                        <span>Ngâm thơ</span>
-                      </span>
-                    ) : (
-                      <span className="flex items-center gap-1 text-[11px] font-mono text-[#2D5A3D] dark:text-[#4ade80] bg-[#2D5A3D]/10 px-2.5 py-0.5 rounded-full border border-[#2D5A3D]/20">
-                        <Sparkles className="w-3 h-3" />
-                        <span>Âm cảnh đọc</span>
-                      </span>
-                    )}
-                  </div>
-
-                  <h3 className="font-poem-heading text-2xl font-bold text-neutral-900 dark:text-neutral-100 group-hover:text-[#2D5A3D] dark:group-hover:text-[#4ade80] transition-colors mb-3">
-                    {poem.title}
-                  </h3>
-
-                  <p className="font-poem-verse text-base text-neutral-600 dark:text-neutral-400 line-clamp-2 leading-relaxed italic mb-6">
-                    “{poem.excerpt}”
-                  </p>
-                </div>
-
-                <div className="pt-4 border-t border-neutral-200/60 dark:border-neutral-800/60 flex items-center justify-between">
-                  <span className="text-xs font-mono text-neutral-500">
-                    {poem.author?.name} • {poem.view_count} lượt đọc
-                  </span>
-                  <ArrowRoll size="sm" />
-                </div>
-              </Link>
-            </TiltCard>
-          ))}
-        </div>
-      </section>
+      <PoeticBookSection />
     </div>
   );
 }

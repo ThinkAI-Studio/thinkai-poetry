@@ -1,111 +1,67 @@
 import React from "react";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import Link from "next/link";
-import { Feather, BookOpen, BookMarked, User, ShieldCheck, History, ExternalLink } from "lucide-react";
+import { AdminHeaderActions } from "@/components/admin/AdminHeaderActions";
+import { AdminSidebarNav } from "@/components/admin/AdminSidebarNav";
 
 export const metadata = {
-  title: "Admin Studio | Ánh Thịnh Thi Quán",
-  description: "Trung tâm quản trị nội dung thi ca và tuyển tập.",
+  title: "Admin Studio | Thịnh và Thơ",
+  description: "Trung tâm quản trị nội dung thi ca và tuyển tập Thịnh và Thơ.",
 };
 
-export default function AdminLayout({
+export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const cookieStore = await cookies();
+  const session = cookieStore.get("admin_session");
+
+  // Nếu chưa đăng nhập -> Chuyển hướng sang trang Tác giả để mở Hộp Đăng Nhập Nổi
+  if (session?.value !== "authenticated") {
+    redirect("/authors?login=admin");
+  }
+
   return (
-    <div className="min-h-screen bg-[#08080A] text-[#F4F4F5] flex flex-col font-sans selection:bg-[#2D5A3D] selection:text-white">
+    <div className="min-h-screen bg-[var(--bg-page)] text-[var(--text-primary)] flex flex-col font-sans selection:bg-[var(--accent-green)] selection:text-white transition-colors duration-200">
       {/* Top Header Bar */}
-      <header className="h-14 border-b border-white/10 bg-[#0D0D10] px-6 flex items-center justify-between z-30">
+      <header className="h-14 border-b border-[var(--border-subtle)] bg-[var(--bg-card)]/90 px-4 sm:px-6 flex items-center justify-between z-30 sticky top-0 backdrop-blur-md transition-colors duration-200">
         <div className="flex items-center gap-3">
-          <Link href="/admin" className="flex items-center gap-2">
-            <div className="w-7 h-7 bg-[#2D5A3D] flex items-center justify-center text-white">
-              <Feather className="w-4 h-4" />
+          <Link href="/admin" className="flex items-center gap-2.5 group">
+            {/* Con dấu triện son thư pháp */}
+            <div className="w-8 h-8 rounded-lg bg-[var(--accent-vermilion)] text-amber-100 flex items-center justify-center font-serif text-sm font-bold shadow-sm group-hover:scale-105 transition-transform border border-amber-300/30 select-none">
+              T
             </div>
-            <span className="font-serif font-bold text-sm tracking-wide text-white">
-              ÁNH THỊNH • ADMIN STUDIO
-            </span>
+            <div className="flex flex-col">
+              <span className="font-serif font-bold text-sm tracking-wide text-[var(--text-primary)]">
+                THỊNH VÀ THƠ
+              </span>
+              <span className="text-[10px] font-mono text-[var(--text-muted)] -mt-0.5">
+                Admin Studio
+              </span>
+            </div>
           </Link>
-          <span className="text-[10px] font-mono px-2 py-0.5 bg-emerald-950 text-emerald-400 border border-emerald-800 uppercase tracking-wider flex items-center gap-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            2FA Active
+
+          <span className="hidden sm:inline-flex text-[10px] font-mono px-2.5 py-0.5 bg-[var(--accent-green)]/15 text-[var(--accent-green)] dark:text-emerald-400 border border-[var(--accent-green)]/30 rounded-full uppercase tracking-wider items-center gap-1.5 ml-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            Bảo Mật Kép
           </span>
         </div>
 
-        <div className="flex items-center gap-4 text-xs font-mono">
-          <Link
-            href="/"
-            target="_blank"
-            className="flex items-center gap-1 text-neutral-400 hover:text-white transition-colors"
-          >
-            <span>Xem trang web</span>
-            <ExternalLink className="w-3.5 h-3.5" />
-          </Link>
-        </div>
+        {/* Header Actions: Theme switch, Xem web & Đăng xuất */}
+        <AdminHeaderActions />
       </header>
 
       {/* Main Admin Workspace with Sidebar */}
       <div className="flex-1 flex flex-col md:flex-row">
         {/* Sidebar */}
-        <aside className="w-full md:w-60 border-r border-white/10 bg-[#0A0A0D] p-4 flex flex-col justify-between shrink-0">
-          <nav className="flex flex-col gap-1 text-xs font-mono uppercase tracking-wider">
-            <Link
-              href="/admin"
-              className="px-3 py-2.5 flex items-center gap-2.5 text-neutral-300 hover:text-white hover:bg-white/5 transition-colors border border-transparent hover:border-white/10"
-            >
-              <ShieldCheck className="w-4 h-4 text-[#2D5A3D]" />
-              <span>Tổng Quan</span>
-            </Link>
-
-            <Link
-              href="/admin/poems"
-              className="px-3 py-2.5 flex items-center gap-2.5 text-neutral-300 hover:text-white hover:bg-white/5 transition-colors border border-transparent hover:border-white/10"
-            >
-              <BookOpen className="w-4 h-4 text-[#2D5A3D]" />
-              <span>Quản Lý Thơ</span>
-            </Link>
-
-            <Link
-              href="/admin/poems/new"
-              className="px-3 py-2.5 flex items-center gap-2.5 text-white bg-[#2D5A3D]/20 border border-[#2D5A3D]/40 font-bold transition-colors"
-            >
-              <span className="text-[#4ade80]">+</span>
-              <span>Soạn Thơ Mới</span>
-            </Link>
-
-            <Link
-              href="/admin/collections"
-              className="px-3 py-2.5 flex items-center gap-2.5 text-neutral-300 hover:text-white hover:bg-white/5 transition-colors border border-transparent hover:border-white/10"
-            >
-              <BookMarked className="w-4 h-4 text-[#2D5A3D]" />
-              <span>Tuyển Tập Thơ</span>
-            </Link>
-
-            <Link
-              href="/admin/authors"
-              className="px-3 py-2.5 flex items-center gap-2.5 text-neutral-300 hover:text-white hover:bg-white/5 transition-colors border border-transparent hover:border-white/10"
-            >
-              <User className="w-4 h-4 text-[#2D5A3D]" />
-              <span>Hồ Sơ Tác Giả</span>
-            </Link>
-
-            <Link
-              href="/admin/logs"
-              className="px-3 py-2.5 flex items-center gap-2.5 text-neutral-300 hover:text-white hover:bg-white/5 transition-colors border border-transparent hover:border-white/10"
-            >
-              <History className="w-4 h-4 text-[#2D5A3D]" />
-              <span>Nhật Ký Audit</span>
-            </Link>
-          </nav>
-
-          <div className="pt-6 border-t border-white/10 text-[11px] font-mono text-neutral-500">
-            <span>Bảo mật Supabase RLS</span>
-            <br />
-            <span>ThinkAI Studio Ecosystem</span>
-          </div>
+        <aside className="w-full md:w-64 border-b md:border-b-0 md:border-r border-[var(--border-subtle)] bg-[var(--bg-card)]/60 px-4 py-2.5 md:p-4 shrink-0 transition-colors duration-200">
+          <AdminSidebarNav />
         </aside>
 
         {/* Content Area */}
-        <main className="flex-1 p-6 md:p-10 bg-[#08080A] overflow-y-auto">
+        <main className="flex-1 p-4 sm:p-6 md:p-10 bg-[var(--bg-page)] overflow-y-auto overflow-x-clip transition-colors duration-200">
           {children}
         </main>
       </div>

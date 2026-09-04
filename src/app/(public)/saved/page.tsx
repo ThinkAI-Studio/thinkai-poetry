@@ -2,7 +2,7 @@ import React from "react";
 import { ComingSoonPage } from "@/components/lattice/ComingSoonPage";
 
 export const metadata = {
-  title: "Tủ Thơ Yêu Thích | Ánh Thịnh Thi Quán",
+  title: "Tủ Thơ Yêu Thích | Thịnh và Thơ",
   description: "Bộ sưu tập những vần thơ tâm đắc của riêng bạn.",
 };
 
