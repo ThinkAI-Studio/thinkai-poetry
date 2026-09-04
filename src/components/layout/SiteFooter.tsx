@@ -23,16 +23,16 @@ export function SiteFooter() {
 
         {/* Links */}
         <div className="flex items-center gap-6 text-xs font-mono uppercase tracking-wider text-neutral-700 dark:text-neutral-300">
-          <Link href="/tuyen-tap" className="hover:text-[#2D5A3D] dark:hover:text-[#4ade80] transition-colors">
+          <Link href="/collections" className="hover:text-[#2D5A3D] dark:hover:text-[#4ade80] transition-colors">
             Tuyển Tập
           </Link>
-          <Link href="/tac-gia" className="hover:text-[#2D5A3D] dark:hover:text-[#4ade80] transition-colors">
+          <Link href="/authors" className="hover:text-[#2D5A3D] dark:hover:text-[#4ade80] transition-colors">
             Tác Giả
           </Link>
-          <Link href="/dien-dan" className="hover:text-[#2D5A3D] dark:hover:text-[#4ade80] transition-colors">
+          <Link href="/forum" className="hover:text-[#2D5A3D] dark:hover:text-[#4ade80] transition-colors">
             Diễn Đàn
           </Link>
-          <Link href="/khu-vuc-quan-tri" className="hover:text-[#2D5A3D] dark:hover:text-[#4ade80] transition-colors opacity-80">
+          <Link href="/admin" className="hover:text-[#2D5A3D] dark:hover:text-[#4ade80] transition-colors opacity-80">
             Quản Trị
           </Link>
         </div>

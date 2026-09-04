@@ -17,7 +17,7 @@ export default function AdminLayout({
       {/* Top Header Bar */}
       <header className="h-14 border-b border-white/10 bg-[#0D0D10] px-6 flex items-center justify-between z-30">
         <div className="flex items-center gap-3">
-          <Link href="/khu-vuc-quan-tri" className="flex items-center gap-2">
+          <Link href="/admin" className="flex items-center gap-2">
             <div className="w-7 h-7 bg-[#2D5A3D] flex items-center justify-center text-white">
               <Feather className="w-4 h-4" />
             </div>
@@ -49,7 +49,7 @@ export default function AdminLayout({
         <aside className="w-full md:w-60 border-r border-white/10 bg-[#0A0A0D] p-4 flex flex-col justify-between shrink-0">
           <nav className="flex flex-col gap-1 text-xs font-mono uppercase tracking-wider">
             <Link
-              href="/khu-vuc-quan-tri"
+              href="/admin"
               className="px-3 py-2.5 flex items-center gap-2.5 text-neutral-300 hover:text-white hover:bg-white/5 transition-colors border border-transparent hover:border-white/10"
             >
               <ShieldCheck className="w-4 h-4 text-[#2D5A3D]" />
@@ -57,7 +57,7 @@ export default function AdminLayout({
             </Link>
 
             <Link
-              href="/khu-vuc-quan-tri/tho"
+              href="/admin/poems"
               className="px-3 py-2.5 flex items-center gap-2.5 text-neutral-300 hover:text-white hover:bg-white/5 transition-colors border border-transparent hover:border-white/10"
             >
               <BookOpen className="w-4 h-4 text-[#2D5A3D]" />
@@ -65,7 +65,7 @@ export default function AdminLayout({
             </Link>
 
             <Link
-              href="/khu-vuc-quan-tri/tho/moi"
+              href="/admin/poems/new"
               className="px-3 py-2.5 flex items-center gap-2.5 text-white bg-[#2D5A3D]/20 border border-[#2D5A3D]/40 font-bold transition-colors"
             >
               <span className="text-[#4ade80]">+</span>
@@ -73,7 +73,7 @@ export default function AdminLayout({
             </Link>
 
             <Link
-              href="/khu-vuc-quan-tri/tuyen-tap"
+              href="/admin/collections"
               className="px-3 py-2.5 flex items-center gap-2.5 text-neutral-300 hover:text-white hover:bg-white/5 transition-colors border border-transparent hover:border-white/10"
             >
               <BookMarked className="w-4 h-4 text-[#2D5A3D]" />
@@ -81,7 +81,7 @@ export default function AdminLayout({
             </Link>
 
             <Link
-              href="/khu-vuc-quan-tri/tac-gia"
+              href="/admin/authors"
               className="px-3 py-2.5 flex items-center gap-2.5 text-neutral-300 hover:text-white hover:bg-white/5 transition-colors border border-transparent hover:border-white/10"
             >
               <User className="w-4 h-4 text-[#2D5A3D]" />
@@ -89,7 +89,7 @@ export default function AdminLayout({
             </Link>
 
             <Link
-              href="/khu-vuc-quan-tri/nhat-ky"
+              href="/admin/logs"
               className="px-3 py-2.5 flex items-center gap-2.5 text-neutral-300 hover:text-white hover:bg-white/5 transition-colors border border-transparent hover:border-white/10"
             >
               <History className="w-4 h-4 text-[#2D5A3D]" />

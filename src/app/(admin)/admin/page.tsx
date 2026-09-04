@@ -24,12 +24,12 @@ export default function AdminDashboardPage() {
         </div>
 
         <div className="flex items-center gap-3">
-          <Link href="/khu-vuc-quan-tri/tho/moi">
+          <Link href="/admin/poems/new">
             <TaiButton variant="primary" size="sm" icon={<Plus className="w-3.5 h-3.5" />}>
               Soạn Thơ Mới
             </TaiButton>
           </Link>
-          <Link href="/khu-vuc-quan-tri/tuyen-tap">
+          <Link href="/admin/collections">
             <TaiButton variant="secondary" size="sm">
               Tạo Tuyển Tập
             </TaiButton>
@@ -82,7 +82,7 @@ export default function AdminDashboardPage() {
             Các thi phẩm gần đây
           </h2>
           <Link
-            href="/khu-vuc-quan-tri/tho"
+            href="/admin/poems"
             className="text-xs font-mono text-neutral-400 hover:text-white flex items-center gap-1"
           >
             <span>Xem tất cả</span>
@@ -130,14 +130,14 @@ export default function AdminDashboardPage() {
                   </td>
                   <td className="py-3.5 px-4 text-right">
                     <Link
-                      href={`/tho/${poem.slug}`}
+                      href={`/poems/${poem.slug}`}
                       target="_blank"
                       className="text-neutral-400 hover:text-white mr-3"
                     >
                       Xem
                     </Link>
                     <Link
-                      href={`/khu-vuc-quan-tri/tho`}
+                      href={`/admin/poems`}
                       className="text-[#4ade80] hover:underline"
                     >
                       Sửa

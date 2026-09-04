@@ -33,7 +33,7 @@ export default function CollectionsPage() {
         {mockCollections.map((col) => (
           <TiltCard key={col.id} maxTilt={4} className="p-0 border-0 shadow-none bg-transparent">
             <Link
-              href={`/tuyen-tap/${col.slug}`}
+              href={`/collections/${col.slug}`}
               className="tai-card group flex flex-col justify-between overflow-hidden p-6 hover:shadow-xl transition-all duration-300 rounded-2xl h-full block"
             >
               <div>

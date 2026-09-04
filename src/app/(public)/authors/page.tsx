@@ -58,7 +58,7 @@ export default function AuthorsPage() {
         {mockPoems.map((poem, index) => (
           <TiltCard key={poem.id} maxTilt={2} className="p-0 border-0 shadow-none bg-transparent">
             <Link
-              href={`/tho/${poem.slug}`}
+              href={`/poems/${poem.slug}`}
               className="tai-card p-6 flex items-center justify-between group hover:border-[#2D5A3D]/50 dark:hover:border-emerald-500/50 hover:shadow-md transition-all rounded-2xl block"
             >
               <div className="flex items-center gap-5">

@@ -46,7 +46,7 @@ export default function NewPoemPage() {
       <div className="flex items-center justify-between pb-4 border-b border-white/10">
         <div className="flex items-center gap-3">
           <Link
-            href="/khu-vuc-quan-tri/tho"
+            href="/admin/poems"
             className="p-2 text-neutral-400 hover:text-white border border-white/10"
           >
             <ArrowLeft className="w-4 h-4" />

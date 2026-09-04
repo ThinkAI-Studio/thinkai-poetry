@@ -37,7 +37,7 @@ export default async function CollectionDetailPage({
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 md:py-16">
       {/* Back button */}
       <Link
-        href="/tuyen-tap"
+        href="/collections"
         className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-neutral-500 hover:text-black dark:hover:text-white transition-colors mb-8 group"
       >
         <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1" />
@@ -84,7 +84,7 @@ export default async function CollectionDetailPage({
         {poems.map((poem, index) => (
           <TiltCard key={poem.id} maxTilt={2} className="p-0 border-0 shadow-none bg-transparent">
             <Link
-              href={`/tho/${poem.slug}`}
+              href={`/poems/${poem.slug}`}
               className="tai-card p-5 group flex items-center justify-between hover:border-[#2D5A3D]/50 dark:hover:border-emerald-500/50 hover:shadow-md transition-all rounded-2xl block"
             >
               <div className="flex items-center gap-4">

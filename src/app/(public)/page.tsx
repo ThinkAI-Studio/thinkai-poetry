@@ -190,7 +190,7 @@ export default function HomePage() {
           </div>
 
           <Link
-            href="/tuyen-tap"
+            href="/collections"
             className="group inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-neutral-600 dark:text-neutral-400 hover:text-black dark:hover:text-white"
           >
             <span>Xem tất cả tuyển tập</span>
@@ -202,7 +202,7 @@ export default function HomePage() {
           {mockCollections.map((col) => (
             <TiltCard key={col.id} maxTilt={4} className="p-0 border-0 shadow-none bg-transparent">
               <Link
-                href={`/tuyen-tap/${col.slug}`}
+                href={`/collections/${col.slug}`}
                 className="tai-card group p-6 flex flex-col justify-between hover:shadow-lg transition-shadow duration-300 rounded-2xl h-full block"
               >
                 <div>
@@ -313,7 +313,7 @@ export default function HomePage() {
           {filteredPoems.map((poem) => (
             <TiltCard key={poem.id} maxTilt={3} className="p-0 border-0 shadow-none bg-transparent">
               <Link
-                href={`/tho/${poem.slug}`}
+                href={`/poems/${poem.slug}`}
                 className="tai-card p-6 flex flex-col justify-between group hover:shadow-lg transition-shadow duration-300 rounded-2xl h-full block"
               >
                 <div>

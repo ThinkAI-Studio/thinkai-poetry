@@ -26,7 +26,7 @@ export default function AdminLoginPage() {
 
       const data = await res.json();
       if (data.success) {
-        router.push("/khu-vuc-quan-tri");
+        router.push("/admin");
         router.refresh();
       } else {
         setError(data.error || "Mật khẩu không đúng");
@@ -35,7 +35,7 @@ export default function AdminLoginPage() {
       // Client-side fallback if fetch fails
       if (password === "anhthinh") {
         document.cookie = "admin_session=authenticated; path=/; max-age=604800";
-        router.push("/khu-vuc-quan-tri");
+        router.push("/admin");
       } else {
         setError("Mật khẩu không đúng");
       }

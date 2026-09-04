@@ -19,10 +19,10 @@ export function SiteHeader() {
   }, []);
 
   const navLinks = [
-    { href: "/tuyen-tap", label: "Tuyển Tập" },
-    { href: "/tac-gia", label: "Tác Giả" },
-    { href: "/dien-dan", label: "Diễn Đàn" },
-    { href: "/yeu-thich", label: "Tủ Sách" },
+    { href: "/collections", label: "Tuyển Tập" },
+    { href: "/authors", label: "Tác Giả" },
+    { href: "/forum", label: "Diễn Đàn" },
+    { href: "/saved", label: "Tủ Sách" },
   ];
 
   return (
@@ -69,7 +69,7 @@ export function SiteHeader() {
           <ThemeToggle />
 
           <Link
-            href="/tho/vuon-xua-hoa-no"
+            href="/poems/vuon-xua-hoa-no"
             className="hidden sm:inline-flex items-center justify-center px-5 py-2 text-xs font-mono uppercase tracking-wider text-white bg-[#2D5A3D] hover:bg-[#244831] rounded-full transition-all duration-200 hover:shadow-md active:scale-95 cursor-pointer select-none"
           >
             Bắt Đầu Đọc
@@ -104,7 +104,7 @@ export function SiteHeader() {
             <ThemeToggle />
           </div>
           <Link
-            href="/tho/vuon-xua-hoa-no"
+            href="/poems/vuon-xua-hoa-no"
             onClick={() => setMobileOpen(false)}
             className="w-full text-center py-2.5 text-xs font-mono uppercase tracking-wider text-white bg-[#2D5A3D] rounded-full shadow-sm"
           >

@@ -35,7 +35,7 @@ export default function AdminPoemsListPage() {
           </p>
         </div>
 
-        <Link href="/khu-vuc-quan-tri/tho/moi">
+        <Link href="/admin/poems/new">
           <TaiButton variant="primary" size="sm" icon={<Plus className="w-3.5 h-3.5" />}>
             Soạn Thơ Mới
           </TaiButton>
@@ -110,7 +110,7 @@ export default function AdminPoemsListPage() {
                 <td className="py-3.5 px-4 text-right">
                   <div className="flex items-center justify-end gap-3">
                     <Link
-                      href={`/tho/${poem.slug}`}
+                      href={`/poems/${poem.slug}`}
                       target="_blank"
                       className="text-neutral-400 hover:text-white"
                       title="Xem bài đăng"
@@ -118,7 +118,7 @@ export default function AdminPoemsListPage() {
                       <ExternalLink className="w-3.5 h-3.5" />
                     </Link>
                     <Link
-                      href="/khu-vuc-quan-tri/tho/moi"
+                      href="/admin/poems/new"
                       className="text-[#4ade80] hover:text-white"
                       title="Sửa bài thơ"
                     >
