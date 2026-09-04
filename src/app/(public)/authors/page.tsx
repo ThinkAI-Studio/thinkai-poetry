@@ -1,9 +1,9 @@
-import React from "react";
+import React, { Suspense } from "react";
 import Link from "next/link";
 import { getAuthors, getPoems } from "@/lib/data-service";
 import { ArrowRoll } from "@/components/tai-ui/ArrowRoll";
 import { TiltCard } from "@/components/tai-ui/TiltCard";
-import { BookOpen, Volume2, Wind } from "lucide-react";
+import { Volume2, Wind } from "lucide-react";
 import { AuthorHeroWithAdminAccess } from "@/components/author/AuthorHeroWithAdminAccess";
 
 export const metadata = {
@@ -19,7 +19,9 @@ export default async function AuthorsPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 md:py-16">
       {/* Header Hồ sơ tác giả tích hợp Cổng Quản Trị qua Đóa Hoa */}
-      <AuthorHeroWithAdminAccess author={author} />
+      <Suspense fallback={<div className="h-64 animate-pulse rounded-3xl bg-[var(--bg-card)]/50" />}>
+        <AuthorHeroWithAdminAccess author={author} />
+      </Suspense>
 
       {/* Danh sách các tác phẩm của Tác giả */}
       <div className="flex flex-col gap-4">

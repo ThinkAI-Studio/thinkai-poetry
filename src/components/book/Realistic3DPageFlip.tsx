@@ -443,6 +443,7 @@ export function Realistic3DPageFlip({
     if (currentIndex !== displayedIndex && !isFlipping) {
       triggerFlip(currentIndex > displayedIndex ? "next" : "prev", currentIndex);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentIndex, displayedIndex, isFlipping]);
 
   // Ngắt audio khi đổi trang

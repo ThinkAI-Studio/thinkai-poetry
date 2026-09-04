@@ -43,9 +43,9 @@ function getAllFallbackPoems(): Poem[] {
 }
 
 // In-memory runtime cache
-let localCollections: Collection[] = [...mockCollections];
-let localAuthors: Author[] = [...mockAuthors];
-let localCategories: Category[] = [...mockCategories];
+const localCollections: Collection[] = [...mockCollections];
+const localAuthors: Author[] = [...mockAuthors];
+const localCategories: Category[] = [...mockCategories];
 
 /**
  * Kiểm tra xem Supabase đã được cấu hình khóa API thực tế hay chưa
@@ -53,7 +53,6 @@ let localCategories: Category[] = [...mockCategories];
 export function isSupabaseConfigured(): boolean {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   if (!url || !url.startsWith("https://")) return false;
   if (!anonKey || anonKey.includes("placeholder") || anonKey.length < 25) return false;
