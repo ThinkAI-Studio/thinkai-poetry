@@ -131,7 +131,7 @@ function spawnStickmanPusher(pushDirection: "left" | "right", duration: number) 
 
   document.body.appendChild(overlay);
 
-  // Animate người que di chuyển đồng bộ cùng bức tường màn hình trượt đi
+  // Animate người que di chuyển đồng bộ cùng bức tường màn hình trượt đi (Chậm đầu, tăng tốc về sau)
   const anim = overlay.animate(
     isPushLeft
       ? [
@@ -144,7 +144,7 @@ function spawnStickmanPusher(pushDirection: "left" | "right", duration: number) 
         ],
     {
       duration,
-      easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+      easing: "cubic-bezier(0.5, 0, 0.75, 0.1)",
     }
   );
 
@@ -200,7 +200,7 @@ export function executeKindlePageCurl({
           // Bật người que gồng người đẩy màn hình
           spawnStickmanPusher(pushDirection, duration);
 
-          // 1. ANIMATE MÀN HÌNH THEME CŨ (::view-transition-old): Trượt hoàn toàn khỏi màn hình
+          // 1. ANIMATE MÀN HÌNH THEME CŨ (::view-transition-old): Trượt gia tốc rời khỏi màn hình
           const oldAnim = document.documentElement.animate(
             {
               transform: pushDirection === "left"
@@ -209,7 +209,7 @@ export function executeKindlePageCurl({
             },
             {
               duration,
-              easing: "cubic-bezier(0.3, 1, 0.35, 1)",
+              easing: "cubic-bezier(0.5, 0, 0.75, 0.1)",
               pseudoElement: "::view-transition-old(root)",
             }
           );
@@ -222,10 +222,11 @@ export function executeKindlePageCurl({
             },
             {
               duration,
-              easing: "cubic-bezier(0.3, 1, 0.35, 1)",
+              easing: "cubic-bezier(0.5, 0, 0.75, 0.1)",
               pseudoElement: "::view-transition-new(root)",
             }
           );
+
 
           oldAnim.finished.finally(() => {
             clearTimeout(safetyCleanup);
