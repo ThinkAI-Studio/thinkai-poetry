@@ -18,12 +18,12 @@ export function PageTransition({ children }: PageTransitionProps) {
   }
 
   return (
-    <AnimatePresence mode="wait" initial={false}>
+    <AnimatePresence mode="popLayout" initial={false}>
       <motion.div
         key={pathname}
         initial={{
           opacity: 0,
-          y: 8,
+          y: 6,
         }}
         animate={{
           opacity: 1,
@@ -31,16 +31,17 @@ export function PageTransition({ children }: PageTransitionProps) {
         }}
         exit={{
           opacity: 0,
-          y: -6,
+          y: -4,
         }}
         transition={{
-          duration: 0.25,
+          duration: 0.22,
           ease: EASINGS.inkWash,
         }}
-        className="w-full flex-1 flex flex-col"
+        className="w-full flex-1 flex flex-col min-h-[50vh]"
       >
         {children}
       </motion.div>
     </AnimatePresence>
   );
 }
+

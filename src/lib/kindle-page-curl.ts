@@ -125,6 +125,11 @@ export function executeKindlePageCurl({
   // Tạm thời tắt CSS transitions trên live DOM để chụp ảnh snapshot tức thì, triệt tiêu hoàn toàn flicker
   document.documentElement.classList.add("theme-transitioning");
 
+  // Safety net: luôn cleanup sau 800ms, kể cả khi View Transition bị stuck trên mobile
+  const safetyCleanup = setTimeout(() => {
+    document.documentElement.classList.remove("theme-transitioning");
+  }, 800);
+
   try {
     const transition = (document as any).startViewTransition(() => {
       onCommit(targetTheme);
@@ -149,17 +154,22 @@ export function executeKindlePageCurl({
           );
 
           anim.finished.finally(() => {
+            clearTimeout(safetyCleanup);
             document.documentElement.classList.remove("theme-transitioning");
           });
         })
         .catch(() => {
+          clearTimeout(safetyCleanup);
           document.documentElement.classList.remove("theme-transitioning");
         });
     } else {
+      clearTimeout(safetyCleanup);
       document.documentElement.classList.remove("theme-transitioning");
     }
   } catch {
+    clearTimeout(safetyCleanup);
     document.documentElement.classList.remove("theme-transitioning");
     onCommit(targetTheme);
   }
 }
+

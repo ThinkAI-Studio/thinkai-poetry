@@ -27,31 +27,28 @@ export function SiteHeader() {
   // Xử lý motion back cuộn mượt mà khi nhấp vào Logo từ bất kỳ đâu trên website
   const handleLogoClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    if (pathname === "/") {
+    // Đóng mobile drawer nếu đang mở
+    setMobileOpen(false);
+
+    const scrollToTop = () => {
       const lenis = (window as unknown as { __lenis?: any }).__lenis;
       if (lenis) {
         lenis.scrollTo(0, {
           offset: 0,
-          duration: 1.2,
+          duration: 1.0,
           easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
         });
       } else {
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
+    };
+
+    if (pathname === "/") {
+      scrollToTop();
     } else {
       router.push("/");
-      setTimeout(() => {
-        const lenis = (window as unknown as { __lenis?: any }).__lenis;
-        if (lenis) {
-          lenis.scrollTo(0, {
-            offset: 0,
-            duration: 1.0,
-            easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-          });
-        } else {
-          window.scrollTo({ top: 0, behavior: "smooth" });
-        }
-      }, 80);
+      // Đợi route + paint xong mới scroll — 350ms đủ cho cả mobile
+      setTimeout(scrollToTop, 350);
     }
   };
 
