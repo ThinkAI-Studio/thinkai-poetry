@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { ThemeSwitch } from "@/components/layout/ThemeSwitch";
@@ -71,16 +72,22 @@ export function SiteHeader() {
       )}
     >
       <div className="max-w-6xl mx-auto px-6 sm:px-8 flex items-center justify-between">
-        {/* Logo: Thư pháp tao nhã + Thịnh và Thơ (Motion SmoothScroll to top) */}
+        {/* Logo: Biểu tượng Thịnh và Thơ + Tên thương hiệu (Motion SmoothScroll to top) */}
         <Link
           href="/"
           onClick={handleLogoClick}
-          className="flex items-center gap-2.5 group select-none cursor-pointer"
+          className="flex items-center gap-3 group select-none cursor-pointer"
           title="Trở về đầu trang Thịnh và Thơ"
         >
-          <span className="w-8 h-8 rounded-full bg-[var(--accent-green)] text-white dark:bg-[var(--accent-gold)] dark:text-[#121211] flex items-center justify-center font-serif font-bold text-lg shadow-sm transition-transform duration-200 group-hover:scale-105 active:scale-95">
-            T
-          </span>
+          <div className="relative w-9 h-9 sm:w-10 sm:h-10 shrink-0 transition-transform duration-200 group-hover:scale-105 active:scale-95 drop-shadow-xs">
+            <Image
+              src="/thinh-va-tho-symbol.png"
+              alt="Thịnh và Thơ Logo"
+              fill
+              priority
+              className="object-contain"
+            />
+          </div>
           <div className="flex flex-col">
             <span className="font-serif text-[22px] font-bold tracking-tight text-neutral-900 dark:text-[#EAE6DF] leading-none group-hover:text-[var(--accent-green)] dark:group-hover:text-[var(--accent-gold)] transition-colors">
               Thịnh và Thơ

@@ -2,17 +2,27 @@
 
 import React from "react";
 import Link from "next/link";
-import { Feather } from "lucide-react";
+import Image from "next/image";
 
 export function SiteFooter() {
   return (
     <footer className="border-t border-[var(--border-subtle)] bg-[var(--bg-page)]/80 py-12 px-4 sm:px-6 transition-colors">
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
         {/* Brand & Quote */}
-        <div className="flex flex-col items-center md:items-start gap-1.5">
-          <span className="font-serif font-bold text-lg text-neutral-900 dark:text-[#EAE6DF] tracking-tight">
-            Thịnh và Thơ
-          </span>
+        <div className="flex flex-col items-center md:items-start gap-2">
+          <div className="flex items-center gap-2.5">
+            <div className="relative w-7 h-7 shrink-0">
+              <Image
+                src="/thinh-va-tho-symbol.png"
+                alt="Thịnh và Thơ Logo"
+                fill
+                className="object-contain"
+              />
+            </div>
+            <span className="font-serif font-bold text-lg text-neutral-900 dark:text-[#EAE6DF] tracking-tight">
+              Thịnh và Thơ
+            </span>
+          </div>
           <p className="font-serif italic text-sm text-neutral-600 dark:text-[#A6A39C] max-w-sm">
             “Thơ là rượu của thế gian, là sự kết tinh của cảm xúc và trí tuệ.”
           </p>

@@ -2,6 +2,7 @@ import React from "react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { AdminHeaderActions } from "@/components/admin/AdminHeaderActions";
 import { AdminSidebarNav } from "@/components/admin/AdminSidebarNav";
 
@@ -29,9 +30,14 @@ export default async function AdminLayout({
       <header className="h-14 border-b border-[var(--border-subtle)] bg-[var(--bg-card)]/90 px-4 sm:px-6 flex items-center justify-between z-30 sticky top-0 backdrop-blur-md transition-colors duration-200">
         <div className="flex items-center gap-3">
           <Link href="/admin" className="flex items-center gap-2.5 group">
-            {/* Con dấu triện son thư pháp */}
-            <div className="w-8 h-8 rounded-lg bg-[var(--accent-vermilion)] text-amber-100 flex items-center justify-center font-serif text-sm font-bold shadow-sm group-hover:scale-105 transition-transform border border-amber-300/30 select-none">
-              T
+            {/* Logo Biểu tượng Thịnh và Thơ */}
+            <div className="relative w-8 h-8 rounded-lg overflow-hidden shrink-0 group-hover:scale-105 transition-transform select-none">
+              <Image
+                src="/thinh-va-tho-symbol.png"
+                alt="Thịnh và Thơ Logo"
+                fill
+                className="object-contain"
+              />
             </div>
             <div className="flex flex-col">
               <span className="font-serif font-bold text-sm tracking-wide text-[var(--text-primary)]">

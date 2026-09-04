@@ -2,6 +2,7 @@
 
 import React, { Suspense } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { ThemeSwitch } from "@/components/layout/ThemeSwitch";
 import { PoeticBookshelf, DEFAULT_BOOKSHELF_ITEMS } from "@/components/bookshelf/PoeticBookshelf";
@@ -40,8 +41,15 @@ export default function PreviewBookshelfPage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
           {/* Logo & Tên Thương Hiệu Thịnh và Thơ */}
           <Link href="/" className="flex items-center gap-3.5 group">
-            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#1E3F2E] to-[#12261C] dark:from-[#2D5A3D] dark:to-[#172D1E] flex items-center justify-center text-amber-200 shadow-md border border-amber-500/20 group-hover:scale-105 transition-transform">
-              <Feather className="w-5 h-5 text-amber-300" />
+            <div className="relative w-10 h-10 shrink-0 group-hover:scale-105 transition-transform">
+              <Image
+                src="/thinh-va-tho-symbol.png"
+                alt="Thịnh và Thơ Logo"
+                fill
+                sizes="40px"
+                className="object-contain"
+                priority
+              />
             </div>
             <div className="flex flex-col">
               <div className="flex items-center gap-2">
