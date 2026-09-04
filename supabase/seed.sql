@@ -1,17 +1,17 @@
 -- ==============================================================================
--- ÁNH THỊNH THI QUÁN (THỊNH VÀ THƠ) — SUPABASE INITIAL SETUP
+-- HỮU THỊNH THI QUÁN (THỊNH VÀ THƠ) — SUPABASE INITIAL SETUP
 -- Organization: ThinkAI Studio
--- Tác giả: Ánh Thịnh
+-- Tác giả: Hữu Thịnh
 -- ==============================================================================
 
--- 1. SEED TÁC GIẢ (AUTHORS) — DUY NHẤT ÁNH THỊNH
+-- 1. SEED TÁC GIẢ (AUTHORS) — DUY NHẤT HỮU THỊNH
 INSERT INTO public.authors (id, name, pen_name, slug, period, bio, avatar_url)
 VALUES
   (
     'a0000000-0000-0000-0000-000000000001',
-    'Ánh Thịnh',
-    'Ánh Thịnh',
-    'anh-thinh',
+    'Hữu Thịnh',
+    'Hữu Thịnh',
+    'huu-thinh',
     'Văn học đương đại',
     'Người gieo vần cho những miền ký ức. Tác giả của nhiều thi phẩm trữ tình đương đại, gắn liền với tình yêu thiên nhiên, triết lý nhân sinh và vẻ đẹp sâu lắng của tâm hồn người Việt.',
     '/floral/flower-pink.png'

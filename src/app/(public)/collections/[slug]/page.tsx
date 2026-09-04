@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { getCollectionBySlug } from "@/lib/data-service";
 import { ArrowRoll } from "@/components/tai-ui/ArrowRoll";
 import { TiltCard } from "@/components/tai-ui/TiltCard";
-import { ArrowLeft, BookOpen, Feather, Volume2, Wind } from "lucide-react";
+import { ArrowLeft, BookOpen, Feather } from "lucide-react";
 
 interface CollectionDetailPageProps {
   params: Promise<{ slug: string }>;
@@ -95,24 +95,20 @@ export default async function CollectionDetailPage({
                   {(index + 1).toString().padStart(2, "0")}
                 </span>
                 <div className="flex flex-col">
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <span className="font-poem-heading font-bold text-lg text-[var(--text-primary)] group-hover:text-[var(--accent-green)] transition-colors">
-                      {poem.title}
-                    </span>
-                    {poem.audio_url ? (
-                      <span className="flex items-center gap-1 text-[10px] font-mono text-[var(--accent-gold)] bg-[var(--accent-gold)]/10 px-2 py-0.5 rounded-full">
-                        <Volume2 className="w-2.5 h-2.5" />
-                        <span>Ngâm thơ</span>
-                      </span>
-                    ) : (
-                      <span className="flex items-center gap-1 text-[10px] font-mono text-[var(--accent-green)] bg-[var(--accent-green)]/10 px-2 py-0.5 rounded-full">
-                        <Wind className="w-2.5 h-2.5" />
-                        <span>Âm cảnh</span>
-                      </span>
-                    )}
-                  </div>
+                  <span className="font-poem-heading font-bold text-lg text-[var(--text-primary)] group-hover:text-[var(--accent-green)] transition-colors mb-0.5">
+                    {poem.title}
+                  </span>
                   <span className="text-xs font-mono text-[var(--text-muted)]">
-                    {poem.form_type === "luc_bat" ? "Thơ Lục Bát" : poem.form_type === "that_ngon" ? "Thơ Đường Luật" : "Thơ Tự Do"} • {poem.view_count} lượt đọc
+                    {poem.form_type === "luc_bat"
+                      ? "Thơ Lục Bát"
+                      : poem.form_type === "that_ngon"
+                      ? "Thơ Đường Luật"
+                      : poem.form_type === "song_that_luc_bat"
+                      ? "Song Thất Lục Bát"
+                      : poem.form_type === "tu_do"
+                      ? "Thơ Tự Do"
+                      : poem.category?.name || poem.form_type}{" "}
+                    • {poem.view_count} lượt đọc
                   </span>
                 </div>
               </div>

@@ -1,14 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-  Volume2,
-  VolumeX,
-  Maximize2,
-  BookOpen,
-  Library,
-  Feather,
-} from "lucide-react";
 import { Realistic3DPageFlip } from "./Realistic3DPageFlip";
 import { BookSearchBar } from "./BookSearchBar";
 import { usePoeticBook } from "@/context/PoeticBookContext";
@@ -23,8 +15,6 @@ export function PoeticBookSection({ className }: { className?: string }) {
     currentPageIndex,
     goToPage,
     highlightedText,
-    soundEnabled,
-    toggleSound,
     openBook,
   } = usePoeticBook();
 
@@ -65,24 +55,10 @@ export function PoeticBookSection({ className }: { className?: string }) {
           </p>
         </div>
 
-        {/* Cụm công cụ: Thanh Tìm Kiếm, Tabs Thể Thơ, Âm Thanh & Phóng To */}
+        {/* Cụm công cụ: Thanh Tìm Kiếm & Phóng To */}
         <div className="flex flex-wrap items-center gap-3">
           {/* Thanh kẹp tìm kiếm thi ca tự động lật trang */}
           <BookSearchBar />
-
-          {/* Nút bật/tắt âm thanh lật giấy */}
-          <button
-            type="button"
-            onClick={toggleSound}
-            title={soundEnabled ? "Tắt âm thanh lật giấy" : "Bật âm thanh lật giấy"}
-            className="p-2 rounded-full bg-neutral-100 dark:bg-neutral-800/80 border border-neutral-200 dark:border-white/10 text-neutral-600 dark:text-neutral-300 hover:text-black dark:hover:text-white transition-colors cursor-pointer shadow-xs focus-visible:outline-2 focus-visible:outline-[var(--color-focus)]"
-          >
-            {soundEnabled ? (
-              <Volume2 className="w-4 h-4 text-[var(--accent-green)] dark:text-[var(--accent-gold)]" />
-            ) : (
-              <VolumeX className="w-4 h-4 text-neutral-400" />
-            )}
-          </button>
 
           {/* Nút mở dạng nổi Float & Blur Background */}
           <button

@@ -1,14 +1,11 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "motion/react";
 import {
   ChevronLeft,
   ChevronRight,
-  Play,
-  Pause,
-  Volume2,
   Feather,
   Paperclip,
 } from "lucide-react";
@@ -25,28 +22,6 @@ export function FloatingPoemNote({ className }: { className?: string }) {
     goToNextPage,
     goToPrevPage,
   } = usePoeticBook();
-
-  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-
-  // Dừng audio khi đổi bài
-  useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.pause();
-      setIsPlayingAudio(false);
-    }
-  }, [currentPageIndex]);
-
-  const togglePlayAudio = () => {
-    if (!audioRef.current) return;
-    if (isPlayingAudio) {
-      audioRef.current.pause();
-      setIsPlayingAudio(false);
-    } else {
-      audioRef.current.play().catch(() => {});
-      setIsPlayingAudio(true);
-    }
-  };
 
   const stanzas = currentPoem?.raw_text
     ? currentPoem.raw_text.split(/\n\s*\n/).filter(Boolean)
@@ -65,16 +40,6 @@ export function FloatingPoemNote({ className }: { className?: string }) {
 
   return (
     <div className={cn("relative w-full max-w-2xl mx-auto select-none", className)}>
-      {/* Audio Element */}
-      {currentPoem?.audio_url && (
-        <audio
-          ref={audioRef}
-          src={currentPoem.audio_url}
-          preload="none"
-          onEnded={() => setIsPlayingAudio(false)}
-        />
-      )}
-
       {/* TỜ GIẤY NOTE THƠ NỔI (IMPECCABLE PAPER CRAFT) */}
       <motion.div
         key={currentPoem.id}
@@ -148,31 +113,8 @@ export function FloatingPoemNote({ className }: { className?: string }) {
 
         {/* Ký tên tác giả */}
         <div className="mt-8 text-right font-poem-heading italic text-base text-neutral-700 dark:text-neutral-300 pr-2">
-          — {currentPoem.author?.name || "Ánh Thịnh"}
+          — {currentPoem.author?.name || "Hữu Thịnh"}
         </div>
-
-        {/* Trình phát ngâm thơ mini */}
-        {currentPoem.audio_url && (
-          <div className="mt-6 p-3 rounded-xl bg-amber-900/5 dark:bg-white/5 border border-amber-900/10 dark:border-white/10 flex items-center gap-3">
-            <button
-              type="button"
-              onClick={togglePlayAudio}
-              className="w-8 h-8 rounded-full bg-[#1E3F2E] text-white hover:bg-[#152e21] transition-all flex items-center justify-center shrink-0 cursor-pointer shadow-xs active:scale-95"
-            >
-              {isPlayingAudio ? (
-                <Pause className="w-3.5 h-3.5 fill-current" />
-              ) : (
-                <Play className="w-3.5 h-3.5 fill-current translate-x-0.5" />
-              )}
-            </button>
-            <div className="flex-1 text-left">
-              <span className="text-[11px] font-mono uppercase tracking-wider text-[#1E3F2E] dark:text-[#4ade80] font-medium flex items-center gap-1.5">
-                <Volume2 className="w-3 h-3" />
-                <span>Ngâm thơ diễn cảm</span>
-              </span>
-            </div>
-          </div>
-        )}
 
         {/* Chân Tờ Note: Nút lùi / tới */}
         <div className="mt-8 pt-4 border-t border-dashed border-amber-900/15 dark:border-white/10 flex items-center justify-between text-xs font-mono">

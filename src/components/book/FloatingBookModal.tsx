@@ -6,8 +6,6 @@ import {
   X,
   BookOpen,
   StickyNote,
-  Volume2,
-  VolumeX,
 } from "lucide-react";
 import { usePoeticBook } from "@/context/PoeticBookContext";
 import { PoeticOpenBook } from "./PoeticOpenBook";
@@ -22,8 +20,6 @@ export function FloatingBookModal() {
     closeBook,
     readingMode,
     setReadingMode,
-    soundEnabled,
-    toggleSound,
     currentPoem,
   } = usePoeticBook();
 
@@ -108,32 +104,15 @@ export function FloatingBookModal() {
               {/* Thanh kẹp Tìm Kiếm Tự Động Lật Trang */}
               <BookSearchBar />
 
-              {/* Nhóm Nút Âm thanh & Nút Đóng */}
-              <div className="flex items-center gap-2">
-                {/* Nút Bật/Tắt âm thanh lật trang */}
-                <button
-                  type="button"
-                  onClick={toggleSound}
-                  title={soundEnabled ? "Tắt âm thanh lật giấy" : "Bật âm thanh lật giấy"}
-                  className="p-2 rounded-full bg-white/90 dark:bg-[#1C1B18]/90 backdrop-blur-md border border-amber-900/20 dark:border-amber-500/20 text-neutral-600 dark:text-neutral-300 hover:text-black dark:hover:text-white transition-colors cursor-pointer shadow-lg"
-                >
-                  {soundEnabled ? (
-                    <Volume2 className="w-4 h-4 text-[var(--accent-green)] dark:text-[var(--accent-gold)]" />
-                  ) : (
-                    <VolumeX className="w-4 h-4 text-neutral-400" />
-                  )}
-                </button>
-
-                {/* Nút Đóng Sách */}
-                <button
-                  type="button"
-                  onClick={closeBook}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/90 dark:bg-[#1C1B18]/90 backdrop-blur-md border border-amber-900/20 dark:border-amber-500/20 text-neutral-600 dark:text-neutral-300 hover:text-black dark:hover:text-white transition-colors cursor-pointer shadow-lg text-xs font-mono"
-                >
-                  <X className="w-4 h-4" />
-                  <span className="hidden sm:inline">Gập Sách (Esc)</span>
-                </button>
-              </div>
+              {/* Nút Đóng Sách */}
+              <button
+                type="button"
+                onClick={closeBook}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/90 dark:bg-[#1C1B18]/90 backdrop-blur-md border border-amber-900/20 dark:border-amber-500/20 text-neutral-600 dark:text-neutral-300 hover:text-black dark:hover:text-white transition-colors cursor-pointer shadow-lg text-xs font-mono"
+              >
+                <X className="w-4 h-4" />
+                <span className="hidden sm:inline">Gập Sách (Esc)</span>
+              </button>
             </div>
 
             {/* NỘI DUNG HIỂN THỊ CHÍNH (THEO CHẾ ĐỘ ĐỌC ĐÃ CHỌN) */}

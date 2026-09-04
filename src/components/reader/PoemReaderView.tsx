@@ -5,16 +5,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { Poem } from "@/types/database";
 import { FloatingReaderBar } from "./FloatingReaderBar";
-import { PoetryAudioZone } from "./PoetryAudioZone";
 import { InkVerseReader } from "./InkVerseReader";
 import { QuoteCardModal } from "./QuoteCardModal";
 import {
   ArrowLeft,
-  Calendar,
-  Eye,
   User,
-  BookOpen,
-  Feather,
   Quote,
 } from "lucide-react";
 import { usePoeticBook } from "@/context/PoeticBookContext";
@@ -36,7 +31,9 @@ export function PoemReaderView({ poem }: PoemReaderViewProps) {
       ? "Song Thất Lục Bát"
       : poem.form_type === "that_ngon"
       ? "Thất Ngôn Bát Cú"
-      : "Thơ Tự Do";
+      : poem.form_type === "tu_do"
+      ? "Thơ Tự Do"
+      : poem.category?.name || poem.form_type;
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 md:py-14">
@@ -81,17 +78,6 @@ export function PoemReaderView({ poem }: PoemReaderViewProps) {
           <span>{new Date(poem.created_at).toLocaleDateString("vi-VN")}</span>
         </div>
       </div>
-
-      {/* VÙNG ÂM THANH THI CA (POETRY SOUNDZONE):
-          - Nếu có audio: Hiện thanh ngâm thơ chính thức
-          - Nếu chưa có audio: Hiện thanh 4 âm cảnh thư giãn đọc thơ */}
-      <PoetryAudioZone
-        poemId={poem.id}
-        poemTitle={poem.title}
-        poemSlug={poem.slug}
-        audioUrl={poem.audio_url}
-        className="my-6"
-      />
 
       {/* Thân Bài Thơ (Poem Body) */}
       <div

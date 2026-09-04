@@ -363,3 +363,56 @@ export async function getCategories(): Promise<Category[]> {
 
   return localCategories;
 }
+
+export async function createCategory(
+  catData: Partial<Category>
+): Promise<{ data: Category | null; error: string | null }> {
+  const name = catData.name?.trim() || "Thể loại mới";
+  const slug =
+    catData.slug ||
+    name
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[đĐ]/g, "d")
+      .replace(/[^a-z0-9\s-]/g, "")
+      .trim()
+      .replace(/\s+/g, "-");
+
+  const newCat: Category = {
+    id: catData.id || `cat-${Date.now()}`,
+    name,
+    slug,
+    description: catData.description || null,
+    sort_order: catData.sort_order || localCategories.length + 1,
+    created_at: new Date().toISOString(),
+  };
+
+  if (isSupabaseConfigured()) {
+    try {
+      const supabase = getSupabaseClient(true);
+      const { data, error } = await supabase
+        .from("categories")
+        .insert({
+          name: newCat.name,
+          slug: newCat.slug,
+          description: newCat.description,
+          sort_order: newCat.sort_order,
+        })
+        .select()
+        .single();
+
+      if (!error && data) {
+        localCategories.push(data as Category);
+        return { data: data as Category, error: null };
+      } else if (error) {
+        console.warn("Lỗi createCategory từ Supabase:", error.message);
+      }
+    } catch (e: any) {
+      console.warn("Lỗi kết nối Supabase:", e.message);
+    }
+  }
+
+  localCategories.push(newCat);
+  return { data: newCat, error: null };
+}

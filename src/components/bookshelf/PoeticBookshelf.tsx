@@ -6,7 +6,6 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "motion/react";
 import { 
   BookOpen, 
-  Volume2, 
   X, 
   ChevronRight, 
   Bookmark, 
@@ -64,12 +63,12 @@ export const DEFAULT_BOOKSHELF_ITEMS: PoeticBookItem[] = [
     id: "col-gio-dau-mua",
     title: "Gió Đầu Mùa",
     volumeLabel: "Tập I",
-    slug: "tuyen-tap-anh-thinh-gio-dau-mua",
-    author: "Ánh Thịnh",
+    slug: "tuyen-tap-huu-thinh-gio-dau-mua",
+    author: "Hữu Thịnh",
     year: "2024",
     description: "Tập thơ tập hợp những sáng tác tiêu biểu về tình người, nỗi nhớ và những giao cảm tinh tế với đất trời lúc giao mùa chớm lạnh.",
     poemsCount: 8,
-    hasAudioNgamTho: true,
+    hasAudioNgamTho: false,
     coverImageUrl: "/floral/flower-pink.png",
     sampleExcerpt: {
       verse1: "Gió xuân thổi nhẹ qua rèm,",
@@ -98,11 +97,11 @@ export const DEFAULT_BOOKSHELF_ITEMS: PoeticBookItem[] = [
     title: "Hương Sắc Mùa Thu",
     volumeLabel: "Tập II",
     slug: "huong-sac-mua-thu",
-    author: "Ánh Thịnh",
+    author: "Hữu Thịnh",
     year: "2024",
     description: "Những câu thơ dệt nên từ heo may se lạnh, hoa cúc vàng rực và những chiều sương bảng lảng bên hồ nước phẳng lặng.",
     poemsCount: 6,
-    hasAudioNgamTho: true,
+    hasAudioNgamTho: false,
     coverImageUrl: "/floral/flower-yellow.png",
     sampleExcerpt: {
       verse1: "Có chiếc lá chạm vào hoàng hôn,",
@@ -130,7 +129,7 @@ export const DEFAULT_BOOKSHELF_ITEMS: PoeticBookItem[] = [
     title: "Thiền Trà & Chiêm Nghiệm",
     volumeLabel: "Tập III",
     slug: "thien-tra-va-chiem-nghiem",
-    author: "Ánh Thịnh",
+    author: "Hữu Thịnh",
     year: "2025",
     description: "Nhấp ngụm trà sớm bên thềm hoa, lắng nghe tiếng chuông chiều buông nhẹ ngân nga giữa cõi trần thế an nhiên.",
     poemsCount: 5,
@@ -454,10 +453,10 @@ function BookSpineItem({
               {book.author}
             </span>
             
-            {/* Triện son đỏ Ánh Thịnh */}
+            {/* Triện son đỏ Hữu Thịnh */}
             <div className="w-4 h-4 rounded-[2px] bg-[#9E2A2B] border border-amber-300/40 flex items-center justify-center shadow-xs">
               <span className="text-[7px] font-serif text-amber-100 font-bold leading-none">
-                ÁT
+                HT
               </span>
             </div>
           </div>
@@ -572,13 +571,6 @@ function BookPreviewCard({ book, onClose }: BookPreviewProps) {
                   <Bookmark className="w-3 h-3" />
                   <span>{book.poemsCount} thi phẩm</span>
                 </span>
-
-                {book.hasAudioNgamTho && (
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-medium bg-purple-500/10 text-purple-700 dark:text-purple-300 border border-purple-500/20">
-                    <Volume2 className="w-3 h-3" />
-                    <span>Có ngâm thơ audio</span>
-                  </span>
-                )}
               </div>
 
               {/* Tiêu đề & Giới thiệu */}

@@ -1,25 +1,63 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowLeft, Save, Volume2, UserCheck, Eye } from "lucide-react";
+import { ArrowLeft, Plus, Check } from "lucide-react";
 import { TaiButton } from "@/components/tai-ui/TaiButton";
-import { WipeButton } from "@/components/tai-ui/WipeButton";
-import { PoemFormType } from "@/types/database";
 import { mockCollections } from "@/data/mock-poetry";
+import { cn } from "@/lib/utils";
+
+interface CategoryOption {
+  id: string;
+  name: string;
+  slug: string;
+}
+
+const DEFAULT_CATEGORY_OPTIONS: CategoryOption[] = [
+  { id: "luc_bat", name: "Thơ Lục Bát (6 - 8)", slug: "luc_bat" },
+  { id: "tu_do", name: "Thơ Tự Do", slug: "tu_do" },
+  { id: "that_ngon", name: "Thơ Đường Luật (Thất ngôn)", slug: "that_ngon" },
+  { id: "song_that_luc_bat", name: "Song Thất Lục Bát", slug: "song_that_luc_bat" },
+  { id: "tho_thien", name: "Thơ Thiền & Tĩnh Tâm", slug: "tho_thien" },
+  { id: "tho_4_5_chu", name: "Thơ 4 chữ / 5 chữ", slug: "tho_4_5_chu" },
+  { id: "tho_7_chu", name: "Thơ 7 chữ", slug: "tho_7_chu" },
+];
 
 export default function NewPoemPage() {
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
-  const [formType, setFormType] = useState<PoemFormType>("luc_bat");
+  const [categories, setCategories] = useState<CategoryOption[]>(DEFAULT_CATEGORY_OPTIONS);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(["luc_bat"]);
+  const [newCategoryName, setNewCategoryName] = useState("");
+  const [isCreatingCategory, setIsCreatingCategory] = useState(false);
   const [collectionId, setCollectionId] = useState(mockCollections[0]?.id || "");
   const [excerpt, setExcerpt] = useState("");
   const [poemText, setPoemText] = useState("");
-  const [audioUrl, setAudioUrl] = useState("");
-  const [showAuthorInfo, setShowAuthorInfo] = useState(true); // Toggle per user requirement!
+  const [showAuthorInfo, setShowAuthorInfo] = useState(true);
   const [isSaved, setIsSaved] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  // Load existing categories from backend
+  useEffect(() => {
+    fetch("/api/categories")
+      .then((res) => res.json())
+      .then((json) => {
+        if (json.success && json.data && json.data.length > 0) {
+          const existingSlugs = new Set(json.data.map((c: any) => c.slug));
+          const combined = [
+            ...json.data.map((c: any) => ({
+              id: c.id,
+              name: c.name,
+              slug: c.slug,
+            })),
+            ...DEFAULT_CATEGORY_OPTIONS.filter((d) => !existingSlugs.has(d.slug)),
+          ];
+          setCategories(combined);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
@@ -36,6 +74,64 @@ export default function NewPoemPage() {
     setSlug(generatedSlug);
   };
 
+  const toggleCategory = (catSlug: string) => {
+    setSelectedCategories((prev) => {
+      if (prev.includes(catSlug)) {
+        if (prev.length === 1) return prev; // Giữ ít nhất 1 thể loại
+        return prev.filter((s) => s !== catSlug);
+      } else {
+        return [...prev, catSlug];
+      }
+    });
+  };
+
+  const handleAddNewCategory = async () => {
+    const trimmed = newCategoryName.trim();
+    if (!trimmed) return;
+
+    const catSlug = trimmed
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[đĐ]/g, "d")
+      .replace(/[^a-z0-9\s-]/g, "")
+      .trim()
+      .replace(/\s+/g, "-");
+
+    // Nếu đã có thể loại này thì chỉ việc chọn nó
+    if (categories.some((c) => c.slug === catSlug)) {
+      if (!selectedCategories.includes(catSlug)) {
+        setSelectedCategories((prev) => [...prev, catSlug]);
+      }
+      setNewCategoryName("");
+      setIsCreatingCategory(false);
+      return;
+    }
+
+    const newOption: CategoryOption = {
+      id: `cat-${Date.now()}`,
+      name: trimmed,
+      slug: catSlug,
+    };
+
+    setCategories((prev) => [...prev, newOption]);
+    setSelectedCategories((prev) => [...prev, catSlug]);
+    setNewCategoryName("");
+    setIsCreatingCategory(false);
+
+    // Đồng bộ lên API categories
+    try {
+      await fetch("/api/categories", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: trimmed }),
+      });
+    } catch {}
+  };
+
+  const primaryFormType = selectedCategories[0] || "luc_bat";
+  const primaryCategory = categories.find((c) => c.slug === primaryFormType);
+
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -50,7 +146,7 @@ export default function NewPoemPage() {
             .split("\n")
             .map((line) => line.trim())
             .filter(Boolean);
-          if (formType === "luc_bat") {
+          if (primaryFormType === "luc_bat") {
             const verses = lines
               .map((l, i) => `<p class="verse ${i % 2 === 0 ? "verse-6" : "verse-8"}">${l}</p>`)
               .join("");
@@ -67,12 +163,14 @@ export default function NewPoemPage() {
         body: JSON.stringify({
           title,
           slug,
-          form_type: formType,
+          form_type: primaryFormType,
+          category_id: primaryCategory?.id,
           excerpt: excerpt || poemText.slice(0, 120),
           content_html: stanzas,
           raw_text: poemText,
-          audio_url: audioUrl || null,
+          audio_url: null,
           show_author_info: showAuthorInfo,
+          collection_id: collectionId || null,
         }),
       });
 
@@ -106,7 +204,7 @@ export default function NewPoemPage() {
               Soạn Thảo Thi Phẩm Mới
             </h1>
             <p className="text-xs font-mono text-[var(--text-secondary)]">
-              Biên tập bài thơ, điều chỉnh niêm luật và cấu hình hiển thị
+              Biên tập bài thơ, chọn thể loại linh hoạt và xuất bản lên vườn thơ Hữu Thịnh
             </p>
           </div>
         </div>
@@ -124,7 +222,7 @@ export default function NewPoemPage() {
 
       {isSaved && (
         <div className="p-4 bg-emerald-500/15 border border-emerald-500/40 text-emerald-800 dark:text-emerald-200 font-mono text-xs flex items-center gap-2 rounded-xl">
-          <span>✓</span>
+          <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
           <span>
             Thi phẩm đã được lưu và đồng bộ lên cơ sở dữ liệu thành công!
           </span>
@@ -170,41 +268,113 @@ export default function NewPoemPage() {
           </div>
         </div>
 
-        {/* Row 2: Thể loại & Tuyển tập */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-mono uppercase tracking-wider text-[var(--text-secondary)]">
-              Thể loại thơ
-            </label>
-            <select
-              value={formType}
-              onChange={(e) => setFormType(e.target.value as any)}
-              className="p-3 bg-[var(--bg-card)] border border-[var(--border-strong)] text-[var(--text-primary)] font-mono text-xs rounded-xl focus:outline-none focus:border-[var(--accent-green)] focus:ring-1 focus:ring-[var(--accent-green)]"
-            >
-              <option value="luc_bat" className="bg-[var(--bg-card)] text-[var(--text-primary)]">Thơ Lục Bát (6 - 8)</option>
-              <option value="tu_do" className="bg-[var(--bg-card)] text-[var(--text-primary)]">Thơ Tự Do</option>
-              <option value="that_ngon" className="bg-[var(--bg-card)] text-[var(--text-primary)]">Thơ Đường Luật (Thất ngôn)</option>
-              <option value="song_that_luc_bat" className="bg-[var(--bg-card)] text-[var(--text-primary)]">Song Thất Lục Bát</option>
-            </select>
+        {/* Row 2: Thể loại thơ (Checkbox & Thêm thể loại mới theo yêu cầu của Thịnh) */}
+        <div className="flex flex-col gap-3 p-4 bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-2xl shadow-xs">
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <div>
+              <label className="text-xs font-mono uppercase tracking-wider text-[var(--text-secondary)] font-semibold">
+                Thể loại thơ (Chọn một hoặc nhiều thể loại) *
+              </label>
+              <p className="text-[11px] font-mono text-[var(--text-muted)] mt-0.5">
+                Đánh dấu thể loại phù hợp, hoặc tự tạo thêm nếu chưa có trong danh sách
+              </p>
+            </div>
+
+            {!isCreatingCategory && (
+              <button
+                type="button"
+                onClick={() => setIsCreatingCategory(true)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono bg-[var(--accent-green)]/10 text-[var(--accent-green)] dark:text-emerald-300 hover:bg-[var(--accent-green)]/20 border border-[var(--accent-green)]/30 transition-colors cursor-pointer"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>+ Thêm thể loại mới</span>
+              </button>
+            )}
           </div>
 
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-mono uppercase tracking-wider text-[var(--text-secondary)]">
-              Thuộc Tuyển Tập
-            </label>
-            <select
-              value={collectionId}
-              onChange={(e) => setCollectionId(e.target.value)}
-              className="p-3 bg-[var(--bg-card)] border border-[var(--border-strong)] text-[var(--text-primary)] font-mono text-xs rounded-xl focus:outline-none focus:border-[var(--accent-green)] focus:ring-1 focus:ring-[var(--accent-green)]"
-            >
-              <option value="" className="bg-[var(--bg-card)] text-[var(--text-primary)]">-- Không thuộc tuyển tập nào (Độc lập) --</option>
-              {mockCollections.map((c) => (
-                <option key={c.id} value={c.id} className="bg-[var(--bg-card)] text-[var(--text-primary)]">
-                  {c.title}
-                </option>
-              ))}
-            </select>
+          {/* Danh sách Checkbox Thể loại */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5 pt-1">
+            {categories.map((cat) => {
+              const isChecked = selectedCategories.includes(cat.slug);
+              return (
+                <label
+                  key={cat.slug || cat.id}
+                  className={cn(
+                    "flex items-center gap-2.5 p-3 rounded-xl border text-xs font-mono cursor-pointer transition-all select-none",
+                    isChecked
+                      ? "bg-[var(--accent-green)]/10 border-[var(--accent-green)] text-[var(--text-primary)] font-semibold shadow-xs"
+                      : "bg-[var(--bg-page)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:border-[var(--border-strong)] hover:text-[var(--text-primary)]"
+                  )}
+                >
+                  <input
+                    type="checkbox"
+                    checked={isChecked}
+                    onChange={() => toggleCategory(cat.slug)}
+                    className="w-4 h-4 rounded border-neutral-300 text-[var(--accent-green)] focus:ring-[var(--accent-green)] accent-[var(--accent-green)] cursor-pointer shrink-0"
+                  />
+                  <span className="truncate">{cat.name}</span>
+                </label>
+              );
+            })}
           </div>
+
+          {/* Ô nhập tạo thể loại mới khi bấm nút */}
+          {isCreatingCategory && (
+            <div className="flex items-center gap-2 mt-2 pt-3 border-t border-[var(--border-subtle)]">
+              <input
+                type="text"
+                autoFocus
+                value={newCategoryName}
+                onChange={(e) => setNewCategoryName(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    handleAddNewCategory();
+                  } else if (e.key === "Escape") {
+                    setIsCreatingCategory(false);
+                  }
+                }}
+                placeholder="Nhập tên thể loại mới (VD: Thơ Văn Xuôi, Thơ Haiku...)"
+                className="p-2.5 px-3 bg-[var(--bg-page)] border border-[var(--border-strong)] text-[var(--text-primary)] font-mono text-xs rounded-xl focus:outline-none focus:border-[var(--accent-green)] focus:ring-1 focus:ring-[var(--accent-green)] flex-1 max-w-md"
+              />
+              <button
+                type="button"
+                onClick={handleAddNewCategory}
+                className="px-4 py-2.5 bg-[var(--accent-green)] text-white text-xs font-mono rounded-xl hover:opacity-90 active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer shrink-0"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Thêm ngay</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsCreatingCategory(false)}
+                className="px-3 py-2.5 text-xs font-mono text-[var(--text-secondary)] hover:text-[var(--text-primary)] cursor-pointer"
+              >
+                Hủy
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Row 3: Tuyển tập */}
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-mono uppercase tracking-wider text-[var(--text-secondary)]">
+            Thuộc Tuyển Tập
+          </label>
+          <select
+            value={collectionId}
+            onChange={(e) => setCollectionId(e.target.value)}
+            className="p-3 bg-[var(--bg-card)] border border-[var(--border-strong)] text-[var(--text-primary)] font-mono text-xs rounded-xl focus:outline-none focus:border-[var(--accent-green)] focus:ring-1 focus:ring-[var(--accent-green)]"
+          >
+            <option value="" className="bg-[var(--bg-card)] text-[var(--text-primary)]">
+              -- Không thuộc tuyển tập nào (Bài thơ độc lập) --
+            </option>
+            {mockCollections.map((c) => (
+              <option key={c.id} value={c.id} className="bg-[var(--bg-card)] text-[var(--text-primary)]">
+                {c.title}
+              </option>
+            ))}
+          </select>
         </div>
 
         {/* Trích dẫn ngắn */}
@@ -228,7 +398,7 @@ export default function NewPoemPage() {
               Nội dung bài thơ (Mỗi dòng một câu, ngắt khổ bằng 2 lần Enter) *
             </label>
             <span className="text-[11px] font-mono text-[var(--text-muted)]">
-              {formType === "luc_bat" ? "Hệ thống sẽ tự động căn lề nhịp 6-8" : "Căn dòng tự do"}
+              {primaryFormType === "luc_bat" ? "Hệ thống tự động căn lề nhịp 6-8" : "Căn dòng tiêu chuẩn"}
             </span>
           </div>
           <textarea
@@ -241,30 +411,14 @@ export default function NewPoemPage() {
           />
         </div>
 
-        {/* Audio URL */}
-        <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-mono uppercase tracking-wider text-[var(--text-secondary)]">
-            <span>Đường dẫn file âm thanh ngâm thơ (Audio MP3)</span>
-          </label>
-          <input
-            type="url"
-            value={audioUrl}
-            onChange={(e) => setAudioUrl(e.target.value)}
-            placeholder="https://... hoặc tải lên Supabase Storage"
-            className="p-3 bg-[var(--bg-card)] border border-[var(--border-strong)] text-[var(--text-primary)] font-mono text-xs rounded-xl focus:outline-none focus:border-[var(--accent-green)] focus:ring-1 focus:ring-[var(--accent-green)]"
-          />
-        </div>
-
-        {/* ========================================================= */}
-        {/* CÔNG TẮC BẬT / TẮT THÔNG TIN TÁC GIẢ (USER REQUIREMENT)   */}
-        {/* ========================================================= */}
+        {/* CÔNG TẮC BẬT / TẮT THÔNG TIN TÁC GIẢ */}
         <div className="p-4 bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-2xl flex items-center justify-between shadow-xs">
           <div className="flex flex-col">
             <span className="text-sm font-serif font-bold text-[var(--text-primary)]">
-              Hiển thị thẻ thông tin tác giả ở cuối bài thơ
+              Hiển thị thẻ tác giả Hữu Thịnh ở cuối bài thơ
             </span>
             <span className="text-xs font-mono text-[var(--text-secondary)]">
-              Nếu tắt, bài thơ sẽ ẩn thẻ tác giả để người đọc tập trung vào con chữ
+              Nếu tắt, bài thơ sẽ ẩn thẻ tác giả để người đọc tập trung hoàn toàn vào câu từ
             </span>
           </div>
 

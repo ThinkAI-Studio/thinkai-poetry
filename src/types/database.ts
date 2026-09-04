@@ -1,4 +1,4 @@
-export type PoemFormType = 'luc_bat' | 'song_that_luc_bat' | 'that_ngon' | 'tu_do';
+export type PoemFormType = 'luc_bat' | 'song_that_luc_bat' | 'that_ngon' | 'tu_do' | string;
 export type PoemStatus = 'draft' | 'published' | 'archived';
 
 export interface Author {

@@ -1,5 +1,5 @@
 /**
- * Ánh Thịnh Thi Quán - Kindle-Style Poetic Theme Transition Coordinator
+ * Hữu Thịnh Thi Quán - Kindle-Style Poetic Theme Transition Coordinator
  * Tích hợp hiệu ứng lật trang sách từ góc lên (Kindle / Apple Books Corner Page Curl).
  */
 

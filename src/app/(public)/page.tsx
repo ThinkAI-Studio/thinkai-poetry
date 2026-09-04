@@ -1,28 +1,13 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React from "react";
 import { motion } from "motion/react";
 import { FloralDecoration } from "@/components/lattice/FloralDecoration";
-import { Play, Pause, BookOpen } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { usePoeticBook } from "@/context/PoeticBookContext";
 import { PoeticBookSection } from "@/components/book/PoeticBookSection";
 
 export default function HomePage() {
   const { openBook } = usePoeticBook();
-  const [isPlaying, setIsPlaying] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-
-  const togglePlay = () => {
-    if (!audioRef.current) return;
-    if (isPlaying) {
-      audioRef.current.pause();
-      setIsPlaying(false);
-    } else {
-      audioRef.current.play().catch(() => {});
-      setIsPlaying(true);
-    }
-  };
 
   return (
     <div className="flex flex-col gap-16 md:gap-24 pb-24 overflow-x-clip">
@@ -32,14 +17,6 @@ export default function HomePage() {
       <section className="relative min-h-[85vh] sm:min-h-[88vh] flex flex-col items-center justify-center px-4 sm:px-6 text-center overflow-hidden pt-4 pb-16">
         {/* Nền hoa lá màu nước đung đưa & cánh hoa tương tác */}
         <FloralDecoration />
-
-        {/* Audio Element cho bản ngâm thơ mẫu */}
-        <audio
-          ref={audioRef}
-          src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
-          preload="none"
-          onEnded={() => setIsPlaying(false)}
-        />
 
         {/* Container nội dung Hero */}
         <div className="relative z-10 max-w-5xl mx-auto flex flex-col items-center w-full">
@@ -66,25 +43,25 @@ export default function HomePage() {
               </span>
             </a>
 
-            {/* THẺ THỂ LOẠI 2 (PHẢI TRÊN): Phong Trào Thơ Mới */}
+            {/* THẺ THỂ LOẠI 2 (PHẢI TRÊN): Thơ Tự Do */}
             <a
               href="#khong-gian-sach-tho"
               className="hidden md:flex absolute left-full ml-6 lg:ml-8 top-[28%] -translate-y-1/2 items-center gap-2 rounded-full border border-neutral-200/90 dark:border-white/10 bg-white/95 dark:bg-[#181816]/95 px-4 py-1.5 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.7),0_4px_12px_rgba(0,0,0,0.05)] dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08),0_4px_16px_rgba(0,0,0,0.4)] backdrop-blur-md z-30 transition-all duration-200 hover:scale-105 active:scale-95 select-none whitespace-nowrap group cursor-pointer"
             >
               <div className="h-2.5 w-2.5 shrink-0 rounded-full bg-[#C87932]" />
               <span className="font-serif text-xs tracking-wider text-neutral-800 dark:text-[#EAE6DF] font-medium group-hover:text-[var(--accent-green)] dark:group-hover:text-[var(--accent-gold)] transition-colors">
-                Phong Trào Thơ Mới
+                Thơ Tự Do
               </span>
             </a>
 
-            {/* THẺ THỂ LOẠI 3 (PHẢI DƯỚI): Bản Ngâm Diễn Cảm */}
+            {/* THẺ THỂ LOẠI 3 (PHẢI DƯỚI): Thơ Đường Luật */}
             <a
               href="#khong-gian-sach-tho"
               className="hidden md:flex absolute left-full ml-6 lg:ml-8 top-[78%] -translate-y-1/2 items-center gap-2 rounded-full border border-neutral-200/90 dark:border-white/10 bg-white/95 dark:bg-[#181816]/95 px-4 py-1.5 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.7),0_4px_12px_rgba(0,0,0,0.05)] dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08),0_4px_16px_rgba(0,0,0,0.4)] backdrop-blur-md z-30 transition-all duration-200 hover:scale-105 active:scale-95 select-none whitespace-nowrap group cursor-pointer"
             >
               <div className="h-2.5 w-2.5 shrink-0 rounded-full bg-[#756A88]" />
               <span className="font-serif text-xs tracking-wider text-neutral-800 dark:text-[#EAE6DF] font-medium group-hover:text-[var(--accent-green)] dark:group-hover:text-[var(--accent-gold)] transition-colors">
-                Bản Ngâm Diễn Cảm
+                Thơ Đường Luật
               </span>
             </a>
 
@@ -108,59 +85,13 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* Tên tác giả */}
+              {/* Tên tác giả: Hữu Thịnh */}
               <div className="mt-5 mb-5 text-right font-poem-heading text-sm font-medium text-neutral-700 dark:text-[#A6A39C] select-none pr-1">
-                Ánh Thịnh
+                Hữu Thịnh
               </div>
 
-              {/* TRÌNH PHÁT AUDIO MINI DƯỚI ĐÁY CARD */}
-              <div className="flex items-center gap-3 pt-3">
-                <button
-                  type="button"
-                  onClick={togglePlay}
-                  className="text-neutral-900 dark:text-[#EAE6DF] transition-transform active:scale-90 hover:scale-110 cursor-pointer shrink-0 p-1 rounded-sm focus-visible:outline-2 focus-visible:outline-[var(--color-focus)]"
-                  aria-label={isPlaying ? "Dừng ngâm thơ" : "Phát ngâm thơ"}
-                  title={isPlaying ? "Tạm dừng" : "Ngâm thơ diễn cảm"}
-                >
-                  {isPlaying ? (
-                    <Pause className="w-3.5 h-3.5 fill-current" />
-                  ) : (
-                    <Play className="w-3.5 h-3.5 fill-current" />
-                  )}
-                </button>
-
-                {/* Sóng âm Equalizer 60fps mượt mà */}
-                <div className="flex items-end gap-[2.5px] h-4 px-1 shrink-0">
-                  {[2, 3, 3, 4, 6, 11, 16, 12, 8, 5, 4, 3, 2, 2].map((h, i) => (
-                    <span
-                      key={i}
-                      className={cn(
-                        "w-[2px] rounded-full transition-colors duration-200",
-                        isPlaying
-                          ? "bg-[var(--accent-green)] dark:bg-[var(--accent-gold)] animate-eq-bar"
-                          : "bg-neutral-300 dark:bg-neutral-700"
-                      )}
-                      style={{
-                        height: isPlaying ? "100%" : `${h}px`,
-                        animationDelay: isPlaying ? `${(i % 5) * 0.12}s` : undefined,
-                      }}
-                    />
-                  ))}
-                </div>
-
-                {/* Thanh tiến trình ngâm thơ mảnh */}
-                <div className="flex-1 h-[1.5px] bg-neutral-300 dark:bg-neutral-700 rounded-full overflow-hidden ml-1">
-                  <div
-                    className={cn(
-                      "h-full bg-[var(--accent-green)] dark:bg-[var(--accent-gold)] rounded-full transition-all duration-300",
-                      isPlaying ? "w-2/5 animate-pulse" : "w-1/12"
-                    )}
-                  />
-                </div>
-              </div>
-
-              {/* Nút Mở Cuốn Sách Thơ 3D (Rút gọn tên theo Impeccable Distill) */}
-              <div className="mt-4 pt-3 border-t border-neutral-200/60 dark:border-white/10 flex items-center justify-center">
+              {/* Nút Mở Cuốn Sách Thơ 3D */}
+              <div className="mt-4 pt-4 border-t border-neutral-200/60 dark:border-white/10 flex items-center justify-center">
                 <button
                   type="button"
                   onClick={() => openBook()}

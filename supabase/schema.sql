@@ -1,6 +1,6 @@
 -- ==============================================================================
 -- THỊNH VÀ THƠ — SUPABASE DATABASE SCHEMA DDL
--- Tác giả: Ánh Thịnh
+-- Tác giả: Hữu Thịnh
 -- Nền tảng: ThinkAI Studio / Next.js + Supabase PostgreSQL
 -- ==============================================================================
 
@@ -100,7 +100,7 @@ CREATE TABLE IF NOT EXISTS public.poems (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   title TEXT NOT NULL,
   slug TEXT UNIQUE NOT NULL,
-  form_type TEXT NOT NULL CHECK (form_type IN ('luc_bat', 'song_that_luc_bat', 'that_ngon', 'tu_do')),
+  form_type TEXT NOT NULL DEFAULT 'luc_bat',
   excerpt TEXT,
   content_json JSONB NOT NULL DEFAULT '{}'::jsonb,
   content_html TEXT NOT NULL,

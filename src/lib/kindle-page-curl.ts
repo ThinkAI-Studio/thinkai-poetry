@@ -1,5 +1,5 @@
 /**
- * Ánh Thịnh Thi Quán - Masterpiece Kindle & Apple Books Page Curl Engine
+ * Hữu Thịnh Thi Quán - Masterpiece Kindle & Apple Books Page Curl Engine
  * Chuyển động lật trang sách thơ chuẩn xác, tự nhiên, không vết cắt lỗi:
  * - 26-frame continuous perimeter polygon interpolation (Không nhảy đỉnh, không cắt chéo màn hình)
  * - Đổ bóng trang sách tự nhiên bằng GPU (Natural Page Shadow via CSS filter)

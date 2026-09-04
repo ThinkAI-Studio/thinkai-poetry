@@ -1,6 +1,6 @@
 -- ==============================================================================
 -- THỊNH VÀ THƠ — SUPABASE DATABASE SCHEMA DDL
--- Tác giả: Ánh Thịnh
+-- Tác giả: Hữu Thịnh
 -- Nền tảng: ThinkAI Studio / Next.js + Supabase PostgreSQL
 -- ==============================================================================
 
@@ -100,7 +100,7 @@ CREATE TABLE IF NOT EXISTS public.poems (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   title TEXT NOT NULL,
   slug TEXT UNIQUE NOT NULL,
-  form_type TEXT NOT NULL CHECK (form_type IN ('luc_bat', 'song_that_luc_bat', 'that_ngon', 'tu_do')),
+  form_type TEXT NOT NULL DEFAULT 'luc_bat',
   excerpt TEXT,
   content_json JSONB NOT NULL DEFAULT '{}'::jsonb,
   content_html TEXT NOT NULL,
@@ -336,19 +336,19 @@ CREATE POLICY "Admin Upload Avatars" ON storage.objects FOR INSERT WITH CHECK (
 -- 6. DỮ LIỆU KHỞI TẠO HỆ THỐNG CỐT LÕI (MASTER INITIALIZATION - KHÔNG CÓ THƠ GIẢ)
 -- ==============================================================================
 -- ==============================================================================
--- ÁNH THỊNH THI QUÁN (THỊNH VÀ THƠ) — SUPABASE INITIAL SETUP
+-- HỮU THỊNH THI QUÁN (THỊNH VÀ THƠ) — SUPABASE INITIAL SETUP
 -- Organization: ThinkAI Studio
--- Tác giả: Ánh Thịnh
+-- Tác giả: Hữu Thịnh
 -- ==============================================================================
 
--- 1. SEED TÁC GIẢ (AUTHORS) — DUY NHẤT ÁNH THỊNH
+-- 1. SEED TÁC GIẢ (AUTHORS) — DUY NHẤT HỮU THỊNH
 INSERT INTO public.authors (id, name, pen_name, slug, period, bio, avatar_url)
 VALUES
   (
     'a0000000-0000-0000-0000-000000000001',
-    'Ánh Thịnh',
-    'Ánh Thịnh',
-    'anh-thinh',
+    'Hữu Thịnh',
+    'Hữu Thịnh',
+    'huu-thinh',
     'Văn học đương đại',
     'Người gieo vần cho những miền ký ức. Tác giả của nhiều thi phẩm trữ tình đương đại, gắn liền với tình yêu thiên nhiên, triết lý nhân sinh và vẻ đẹp sâu lắng của tâm hồn người Việt.',
     '/floral/flower-pink.png'

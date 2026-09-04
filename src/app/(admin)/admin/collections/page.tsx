@@ -76,7 +76,7 @@ export default function AdminCollectionsPage() {
               required
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="VD: Tuyển Tập Thơ Ánh Thịnh 2026"
+              placeholder="VD: Tuyển Tập Thơ Hữu Thịnh 2026"
               className="p-3 bg-[var(--bg-page)] border border-[var(--border-strong)] text-[var(--text-primary)] font-serif text-base rounded-xl focus:outline-none focus:border-[var(--accent-green)] focus:ring-1 focus:ring-[var(--accent-green)]"
             />
           </div>

@@ -27,7 +27,7 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || env.NEXT_PUBLIC_SUPA
 const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || env.SUPABASE_SERVICE_ROLE_KEY;
 
 console.log("\n=======================================================");
-console.log("  ÁNH THỊNH THI QUÁN — KHỞI TẠO DỮ LIỆU DATABASE");
+console.log("  HỮU THỊNH THI QUÁN — KHỞI TẠO DỮ LIỆU DATABASE");
 console.log("  ThinkAI Studio • Poetry Platform");
 console.log("=======================================================\n");
 
@@ -66,9 +66,9 @@ async function runSeed() {
     const { error: errAuthors } = await supabase.from("authors").upsert([
       {
         id: "a0000000-0000-0000-0000-000000000001",
-        name: "Ánh Thịnh",
-        pen_name: "Ánh Thịnh",
-        slug: "anh-thinh",
+        name: "Hữu Thịnh",
+        pen_name: "Hữu Thịnh",
+        slug: "huu-thinh",
         period: "Văn học đương đại",
         bio: "Người gieo vần cho những miền ký ức. Tác giả của nhiều thi phẩm trữ tình đương đại.",
         avatar_url: "/floral/flower-pink.png",

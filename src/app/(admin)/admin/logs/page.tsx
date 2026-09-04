@@ -17,7 +17,7 @@ export default function AuditLogsPage() {
       user_email: "admin@thinkai.id.vn",
       action: "CREATE_COLLECTION",
       entity_type: "COLLECTION",
-      entity_name: "Tuyển Tập Ánh Thịnh — Gió Đầu Mùa",
+      entity_name: "Tuyển Tập Hữu Thịnh — Gió Đầu Mùa",
       ip_address: "14.232.208.10",
       created_at: new Date(Date.now() - 3600000).toISOString(),
     },

@@ -7,9 +7,6 @@ import { motion } from "motion/react";
 import {
   ChevronLeft,
   ChevronRight,
-  Play,
-  Pause,
-  Volume2,
   Feather,
   BookOpen,
 } from "lucide-react";
@@ -140,14 +137,10 @@ function PageRight({
   poem,
   pageNumber,
   highlightedText,
-  isPlayingAudio,
-  onToggleAudio,
 }: {
   poem: Poem;
   pageNumber: number;
   highlightedText?: string | null;
-  isPlayingAudio: boolean;
-  onToggleAudio: () => void;
 }) {
   const stanzas = poem.raw_text ? poem.raw_text.split(/\n\s*\n/).filter(Boolean) : [poem.excerpt || ""];
   const rightStanzas = stanzas.slice(Math.max(1, Math.ceil(stanzas.length / 2)));
@@ -202,7 +195,7 @@ function PageRight({
         <div className="mt-8 flex items-center justify-end gap-3 select-none">
           <div className="text-right">
             <span className="block font-poem-heading text-sm font-semibold text-neutral-800 dark:text-[#EAE6DF]">
-              Ánh Thịnh
+              Hữu Thịnh
             </span>
             <span className="text-[11px] font-sans text-neutral-500 dark:text-neutral-400">
               Chép trong vườn thiền
@@ -211,56 +204,18 @@ function PageRight({
 
           <div
             className="w-11 h-11 rounded-lg border-2 border-[#9E2A2B] bg-[#9E2A2B]/10 dark:bg-[#9E2A2B]/15 p-0.5 shadow-xs relative flex items-center justify-center"
-            title="Dấu ấn thi phẩm Ánh Thịnh"
+            title="Dấu ấn thi phẩm Hữu Thịnh"
           >
             {/* Viền đôi thư pháp ấn triện */}
             <div className="w-full h-full border border-[#9E2A2B]/50 rounded-sm flex items-center justify-center">
               <span className="font-serif text-[11px] font-bold text-[#9E2A2B] tracking-tighter leading-tight text-center select-none">
-                Ánh
+                Hữu
                 <br />
                 Thịnh
               </span>
             </div>
           </div>
         </div>
-
-        {/* Trình phát ngâm thơ mini */}
-        {poem.audio_url && (
-          <div className="mt-5 p-3 rounded-2xl bg-amber-900/5 dark:bg-white/5 border border-amber-900/10 dark:border-white/10 flex items-center gap-3 backdrop-blur-xs">
-            <button
-              type="button"
-              onClick={onToggleAudio}
-              className="w-8 h-8 rounded-full bg-[var(--accent-green)] dark:bg-[var(--accent-gold)] text-white dark:text-[#121211] hover:opacity-90 transition-all flex items-center justify-center shrink-0 cursor-pointer shadow-xs active:scale-95 focus-visible:outline-2 focus-visible:outline-[var(--color-focus)]"
-              aria-label={isPlayingAudio ? "Tạm dừng ngâm thơ" : "Phát ngâm thơ"}
-            >
-              {isPlayingAudio ? (
-                <Pause className="w-3.5 h-3.5 fill-current" />
-              ) : (
-                <Play className="w-3.5 h-3.5 fill-current translate-x-0.5" />
-              )}
-            </button>
-
-            <div className="flex-1 flex flex-col gap-1">
-              <div className="flex items-center justify-between text-[11px]">
-                <span className="font-serif uppercase tracking-wider text-[var(--accent-green)] dark:text-[var(--accent-gold)] font-semibold flex items-center gap-1.5">
-                  <Volume2 className="w-3.5 h-3.5" />
-                  <span>Bản ngâm diễn cảm</span>
-                </span>
-                <span className="font-mono text-[10px] text-neutral-400">
-                  {isPlayingAudio ? "Đang phát..." : "Nhấn để nghe"}
-                </span>
-              </div>
-              <div className="h-1.5 bg-neutral-200/80 dark:bg-neutral-800 rounded-full overflow-hidden">
-                <div
-                  className={cn(
-                    "h-full bg-[var(--accent-green)] dark:bg-[var(--accent-gold)] rounded-full transition-all duration-300",
-                    isPlayingAudio ? "w-3/4 animate-pulse" : "w-1/6"
-                  )}
-                />
-              </div>
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Footer trang phải */}
@@ -278,8 +233,6 @@ function PageMobile({
   pageIndex,
   totalPages,
   highlightedText,
-  isPlayingAudio,
-  onToggleAudio,
   onPrev,
   onNext,
 }: {
@@ -287,8 +240,6 @@ function PageMobile({
   pageIndex: number;
   totalPages: number;
   highlightedText?: string | null;
-  isPlayingAudio: boolean;
-  onToggleAudio: () => void;
   onPrev: () => void;
   onNext: () => void;
 }) {
@@ -350,38 +301,6 @@ function PageMobile({
             );
           })}
         </div>
-
-        {/* Audio Player Mobile */}
-        {poem.audio_url && (
-          <div className="mt-6 p-3 rounded-xl bg-amber-950/5 dark:bg-white/5 border border-amber-950/10 dark:border-white/10 flex items-center gap-3">
-            <button
-              type="button"
-              onClick={onToggleAudio}
-              className="w-8 h-8 rounded-full bg-[var(--accent-green)] dark:bg-[var(--accent-gold)] text-white dark:text-[#121211] flex items-center justify-center shrink-0 active:scale-90 transition-transform shadow-xs"
-              aria-label={isPlayingAudio ? "Tạm dừng ngâm thơ" : "Phát ngâm thơ"}
-            >
-              {isPlayingAudio ? (
-                <Pause className="w-3.5 h-3.5 fill-current" />
-              ) : (
-                <Play className="w-3.5 h-3.5 fill-current ml-0.5" />
-              )}
-            </button>
-            <div className="flex-1 flex flex-col gap-0.5">
-              <span className="text-[10px] font-serif uppercase tracking-wider text-[var(--accent-green)] dark:text-[var(--accent-gold)] font-medium flex items-center gap-1">
-                <Volume2 className="w-3 h-3" />
-                <span>Bản ngâm diễn cảm</span>
-              </span>
-              <div className="h-1 bg-neutral-200 dark:bg-neutral-800 rounded-full overflow-hidden">
-                <div
-                  className={cn(
-                    "h-full bg-[var(--accent-green)] dark:bg-[var(--accent-gold)] rounded-full transition-all duration-300",
-                    isPlayingAudio ? "w-3/4 animate-pulse" : "w-1/6"
-                  )}
-                />
-              </div>
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Điều hướng bài trước / sau Mobile & Chỉ dẫn vuốt */}
@@ -435,9 +354,6 @@ export function Realistic3DPageFlip({
   const [flipDirection, setFlipDirection] = useState<"next" | "prev">("next");
   const [targetIndex, setTargetIndex] = useState(currentIndex);
 
-  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-
   // Đồng bộ khi currentIndex từ props thay đổi (ví dụ do search hoặc context)
   useEffect(() => {
     if (currentIndex !== displayedIndex && !isFlipping) {
@@ -445,25 +361,6 @@ export function Realistic3DPageFlip({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentIndex, displayedIndex, isFlipping]);
-
-  // Ngắt audio khi đổi trang
-  useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.pause();
-      setIsPlayingAudio(false);
-    }
-  }, [displayedIndex]);
-
-  const togglePlayAudio = () => {
-    if (!audioRef.current) return;
-    if (isPlayingAudio) {
-      audioRef.current.pause();
-      setIsPlayingAudio(false);
-    } else {
-      audioRef.current.play().catch(() => {});
-      setIsPlayingAudio(true);
-    }
-  };
 
   // Kích hoạt chuỗi lật trang thật 3D (rotateY 0 -> -180 hoặc 0 -> 180)
   const triggerFlip = (dir: "next" | "prev", toIdx: number) => {
@@ -572,16 +469,6 @@ export function Realistic3DPageFlip({
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      {/* Audio Element */}
-      {currentPoem?.audio_url && (
-        <audio
-          ref={audioRef}
-          src={currentPoem.audio_url}
-          preload="none"
-          onEnded={() => setIsPlayingAudio(false)}
-        />
-      )}
-
       {/* ===================================================================== */}
       {/* KHUNG BÌA CỨNG 3D (HARDCOVER BOUND SLAB) VỚI ĐỘ SÂU QUANG HỌC          */}
       {/* ===================================================================== */}
@@ -646,8 +533,6 @@ export function Realistic3DPageFlip({
               pageIndex={displayedIndex}
               totalPages={poems.length}
               highlightedText={highlightedText}
-              isPlayingAudio={isPlayingAudio}
-              onToggleAudio={togglePlayAudio}
               onPrev={handlePrev}
               onNext={handleNext}
             />
@@ -678,8 +563,6 @@ export function Realistic3DPageFlip({
                 poem={isFlipping && flipDirection === "next" ? targetPoem : currentPoem}
                 pageNumber={((isFlipping && flipDirection === "next" ? targetIndex : displayedIndex) + 1) * 2}
                 highlightedText={highlightedText}
-                isPlayingAudio={isPlayingAudio}
-                onToggleAudio={togglePlayAudio}
               />
             </div>
 
@@ -716,8 +599,6 @@ export function Realistic3DPageFlip({
                     poem={currentPoem}
                     pageNumber={(displayedIndex + 1) * 2}
                     highlightedText={highlightedText}
-                    isPlayingAudio={false}
-                    onToggleAudio={() => {}}
                   />
                   {/* Bóng đổ uốn cong khi trang bắt đầu dựng lên 90 độ */}
                   <div
@@ -806,8 +687,6 @@ export function Realistic3DPageFlip({
                     poem={targetPoem}
                     pageNumber={(targetIndex + 1) * 2}
                     highlightedText={highlightedText}
-                    isPlayingAudio={false}
-                    onToggleAudio={() => {}}
                   />
                   <div
                     className="absolute inset-0 pointer-events-none"

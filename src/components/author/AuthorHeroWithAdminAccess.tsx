@@ -175,7 +175,7 @@ export function AuthorHeroWithAdminAccess({ author }: AuthorHeroProps) {
           </p>
 
           <div className="pt-2 flex items-center justify-center md:justify-start gap-3 text-xs font-mono text-[var(--text-muted)]">
-            <span>Chủ Quán & Tác Quyền: Ánh Thịnh</span>
+            <span>Chủ Quán & Tác Quyền: Hữu Thịnh</span>
           </div>
         </div>
       </div>
