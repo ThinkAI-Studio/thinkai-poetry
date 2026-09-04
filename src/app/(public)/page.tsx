@@ -3,6 +3,7 @@
 import React from "react";
 import { motion } from "motion/react";
 import { FloralDecoration } from "@/components/lattice/FloralDecoration";
+import { CornerFloralBranches } from "@/components/effects/CornerFloralBranches";
 import { usePoeticBook } from "@/context/PoeticBookContext";
 import { PoeticBookSection } from "@/components/book/PoeticBookSection";
 
@@ -11,6 +12,9 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col gap-16 md:gap-24 pb-24 overflow-x-clip">
+      {/* Cành hoa lá phong & hoa đào rủ từ góc header khi cuộn tới phần sách */}
+      <CornerFloralBranches />
+
       {/* ========================================================= */}
       {/* 1. HERO SECTION: KHÔNG GIAN THI CA ĐƯƠNG ĐẠI               */}
       {/* ========================================================= */}
