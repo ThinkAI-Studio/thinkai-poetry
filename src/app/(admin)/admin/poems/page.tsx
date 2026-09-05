@@ -66,11 +66,11 @@ export default function AdminPoemsListPage() {
       </div>
 
       {/* Bảng Thi phẩm */}
-      <div className="overflow-x-auto border border-[var(--border-subtle)] bg-[var(--bg-card)] rounded-2xl shadow-xs">
-        <table className="w-full text-left text-xs font-mono">
-          <thead className="bg-[var(--text-primary)]/[0.04] border-b border-[var(--border-subtle)] uppercase tracking-wider text-[var(--text-secondary)]">
+      <div className="overflow-x-auto no-scrollbar border border-[var(--border-subtle)] bg-[var(--bg-card)] rounded-2xl shadow-xs">
+        <table className="w-full text-left text-xs font-mono min-w-[640px]">
+          <thead className="bg-[var(--text-primary)]/[0.04] border-b border-[var(--border-subtle)] uppercase tracking-wider text-[var(--text-secondary)] whitespace-nowrap">
             <tr>
-              <th className="py-3 px-4">Bài thơ</th>
+              <th className="py-3 px-4 min-w-[200px]">Bài thơ</th>
               <th className="py-3 px-4">Thể loại</th>
               <th className="py-3 px-4">Tác giả</th>
               <th className="py-3 px-4">Hiện thẻ tác giả</th>
@@ -78,7 +78,7 @@ export default function AdminPoemsListPage() {
               <th className="py-3 px-4 text-right">Thao tác</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[var(--border-subtle)]">
+          <tbody className="divide-y divide-[var(--border-subtle)] whitespace-nowrap">
             {filteredPoems.length === 0 ? (
               <tr>
                 <td colSpan={6} className="py-12 text-center text-[var(--text-muted)]">
@@ -94,7 +94,7 @@ export default function AdminPoemsListPage() {
             ) : (
               filteredPoems.map((poem) => (
               <tr key={poem.id} className="hover:bg-[var(--text-primary)]/[0.02] transition-colors">
-                <td className="py-3.5 px-4">
+                <td className="py-3.5 px-4 min-w-[200px] whitespace-normal">
                   <div className="flex flex-col">
                     <span className="font-serif font-bold text-base text-[var(--text-primary)]">
                       {poem.title}

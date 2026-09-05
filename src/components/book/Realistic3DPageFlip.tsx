@@ -315,17 +315,19 @@ function PageMobile({
   onPrev: () => void;
   onNext: () => void;
 }) {
-  const { poem, leftPage } = spread;
+  const { poem, leftPage, rightPage } = spread;
+  const hasRightParas = rightPage.paragraphs && rightPage.paragraphs.length > 0;
+  const isLastPageOfPoem = rightPage.pageNumberInPoem === rightPage.totalPagesInPoem;
 
   return (
-    <div className="w-full p-5 sm:p-7 flex flex-col justify-between bg-[#FBF8F2] dark:bg-[#181816] relative overflow-hidden select-none min-h-[520px]">
-      {/* Header */}
+    <div className="w-full p-4 sm:p-7 flex flex-col justify-between bg-[#FBF8F2] dark:bg-[#181816] relative overflow-hidden select-none min-h-[500px]">
+      {/* Header Mobile */}
       <div className="flex items-center justify-between pb-3 border-b border-amber-900/10 dark:border-white/5 text-[11px] font-sans uppercase tracking-widest text-amber-900/60 dark:text-amber-200/50">
         <span className="font-serif font-bold text-neutral-800 dark:text-[#EAE6DF]">
           <span>Thịnh và Thơ</span>
         </span>
-        <span className="font-mono text-xs">
-          Trang {currentSpreadIndex + 1}/{totalSpreads}
+        <span className="font-mono text-xs font-semibold text-neutral-600 dark:text-neutral-300">
+          Trang {(currentSpreadIndex + 1).toString().padStart(2, "0")}/{totalSpreads.toString().padStart(2, "0")}
         </span>
       </div>
 
@@ -344,53 +346,163 @@ function PageMobile({
               : "Thơ Tự Do"}
           </span>
 
-          <div className="w-8 h-8 rounded-md border-2 border-[#9E2A2B] bg-[#9E2A2B]/10 p-0.5 shadow-xs flex items-center justify-center">
-            <div className="w-full h-full border border-[#9E2A2B]/50 rounded-xs flex items-center justify-center font-serif text-[10px] font-bold text-[#9E2A2B]">
+          <div className="w-7 h-7 rounded-md border-2 border-[#9E2A2B] bg-[#9E2A2B]/10 p-0.5 shadow-xs flex items-center justify-center">
+            <div className="w-full h-full border border-[#9E2A2B]/50 rounded-xs flex items-center justify-center font-serif text-[9px] font-bold text-[#9E2A2B]">
               Thơ
             </div>
           </div>
         </div>
 
-        <h2 className="font-poem-heading text-2xl font-bold text-neutral-900 dark:text-[#EAE6DF] mb-4 tracking-tight leading-tight">
+        <h2 className="font-poem-heading text-xl sm:text-2xl font-bold text-neutral-900 dark:text-[#EAE6DF] mb-4 tracking-tight leading-tight">
           {poem.title}
         </h2>
 
-        <div className="space-y-4 font-poem-verse text-[15px] leading-[2.1] text-neutral-800 dark:text-[#EAE6DF]">
-          {leftPage.paragraphs.map((pText, sIdx) => (
-            <p key={sIdx}>
-              <HighlightText text={pText} query={highlightedText} />
-            </p>
-          ))}
-        </div>
+        {/* Khổ thơ / Đoạn văn trang trái */}
+        {leftPage.isProse ? (
+          <div className="space-y-3 font-poem-verse text-[14.5px] leading-[1.9] text-neutral-800 dark:text-[#EAE6DF] text-justify">
+            {leftPage.paragraphs.map((para, pIdx) => {
+              const isFirstPara = leftPage.pageNumberInPoem === 1 && pIdx === 0;
+              if (isFirstPara && para.length > 0) {
+                const firstChar = para.charAt(0);
+                const restText = para.slice(1);
+                return (
+                  <p key={pIdx} className="indent-4 leading-[1.9]">
+                    <span className="float-left font-poem-heading text-4xl font-bold leading-none pr-2 pt-1 text-[var(--accent-green)] dark:text-[var(--accent-gold)]">
+                      {firstChar}
+                    </span>
+                    <HighlightText text={restText} query={highlightedText} />
+                  </p>
+                );
+              }
+              return (
+                <p key={pIdx} className="indent-4">
+                  <HighlightText text={para} query={highlightedText} />
+                </p>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="space-y-3.5 font-poem-verse text-[14.5px] leading-[2.0] text-neutral-800 dark:text-[#EAE6DF]">
+            {leftPage.paragraphs.map((stanza, sIdx) => {
+              const lines = stanza.split("\n").filter(Boolean);
+              return (
+                <div key={sIdx} className="space-y-1">
+                  {lines.map((line, lIdx) => (
+                    <p
+                      key={lIdx}
+                      className={cn(
+                        poem.form_type === "luc_bat" && lIdx % 2 === 0 && "pl-3"
+                      )}
+                    >
+                      <HighlightText text={line} query={highlightedText} />
+                    </p>
+                  ))}
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Khổ thơ / Đoạn văn trang phải (nếu có) */}
+        {hasRightParas && (
+          <div className="mt-5 pt-4 border-t border-dashed border-amber-900/10 dark:border-white/10">
+            {rightPage.isProse ? (
+              <div className="space-y-3 font-poem-verse text-[14.5px] leading-[1.9] text-neutral-800 dark:text-[#EAE6DF] text-justify">
+                {rightPage.paragraphs.map((para, pIdx) => (
+                  <p key={pIdx} className="indent-4">
+                    <HighlightText text={para} query={highlightedText} />
+                  </p>
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-3.5 font-poem-verse text-[14.5px] leading-[2.0] text-neutral-800 dark:text-[#EAE6DF]">
+                {rightPage.paragraphs.map((stanza, sIdx) => {
+                  const lines = stanza.split("\n").filter(Boolean);
+                  return (
+                    <div key={sIdx} className="space-y-1">
+                      {lines.map((line, lIdx) => (
+                        <p
+                          key={lIdx}
+                          className={cn(
+                            poem.form_type === "luc_bat" && lIdx % 2 === 0 && "pl-3"
+                          )}
+                        >
+                          <HighlightText text={line} query={highlightedText} />
+                        </p>
+                      ))}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Con dấu triện son tác giả ở cuối bài */}
+        {isLastPageOfPoem && (
+          <div className="mt-6 flex items-center justify-end gap-3 select-none">
+            <div className="text-right">
+              <span className="block font-poem-heading text-sm font-semibold text-neutral-800 dark:text-[#EAE6DF]">
+                {poem.author?.name || "Hữu Thịnh"}
+              </span>
+              <span className="text-[11px] font-sans text-neutral-500 dark:text-neutral-400">
+                {poem.author?.period || "Chép trong vườn thiền"}
+              </span>
+            </div>
+            <div
+              className="w-10 h-10 rounded-lg border-2 border-[#9E2A2B] bg-[#9E2A2B]/10 dark:bg-[#9E2A2B]/15 p-0.5 shadow-xs flex items-center justify-center shrink-0"
+              title={`Dấu ấn thi phẩm ${poem.author?.name || "Hữu Thịnh"}`}
+            >
+              <div className="w-full h-full border border-[#9E2A2B]/50 rounded-sm flex items-center justify-center">
+                <span className="font-serif text-[10px] font-bold text-[#9E2A2B] tracking-tighter leading-tight text-center">
+                  Hữu
+                  <br />
+                  Thịnh
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Điều hướng bài trước / sau Mobile */}
-      <div className="pt-3 border-t border-amber-900/10 dark:border-white/5 flex flex-col gap-2">
-        <div className="flex items-center justify-between text-xs font-sans text-neutral-600 dark:text-neutral-400">
+      {/* Điều hướng bài trước / sau Mobile - Responsive & Impeccable Craft */}
+      <div className="pt-3.5 border-t border-amber-900/10 dark:border-white/10 flex flex-col gap-2">
+        <div className="flex items-center justify-between text-xs font-sans gap-1.5">
           <button
             type="button"
             onClick={onPrev}
             disabled={currentSpreadIndex === 0}
             className={cn(
-              "flex items-center gap-1 py-1.5 px-3 rounded-lg border border-neutral-300/80 dark:border-white/10 transition-colors",
-              currentSpreadIndex === 0 ? "opacity-30 cursor-not-allowed" : "hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer active:scale-95"
+              "flex items-center justify-center gap-1 py-1.5 px-2.5 sm:px-3.5 rounded-full border border-neutral-300/80 dark:border-white/15 bg-white/70 dark:bg-white/5 font-medium text-xs text-neutral-800 dark:text-[#EAE6DF] transition-all shadow-2xs shrink-0 select-none whitespace-nowrap",
+              currentSpreadIndex === 0
+                ? "opacity-30 cursor-not-allowed"
+                : "hover:bg-black/5 dark:hover:bg-white/10 cursor-pointer active:scale-95"
             )}
+            title="Lật về trang trước"
           >
-            <ChevronLeft className="w-4 h-4" />
-            <span>Trang trước</span>
+            <ChevronLeft className="w-3.5 h-3.5 shrink-0" />
+            <span className="whitespace-nowrap">Trang trước</span>
           </button>
-          <span className="text-[11px] font-serif italic text-neutral-500">Thịnh và Thơ</span>
+
+          {/* Chỉ số trang đọc hiện tại */}
+          <div className="flex items-center justify-center font-mono text-[11px] font-semibold text-neutral-700 dark:text-[#EAE6DF] shrink-0 px-2 py-1 rounded-full bg-amber-900/5 dark:bg-white/5 border border-amber-900/10 dark:border-white/10">
+            <span>{(currentSpreadIndex + 1).toString().padStart(2, "0")} / {totalSpreads.toString().padStart(2, "0")}</span>
+          </div>
+
           <button
             type="button"
             onClick={onNext}
             disabled={currentSpreadIndex === totalSpreads - 1}
             className={cn(
-              "flex items-center gap-1 py-1.5 px-3 rounded-lg border border-neutral-300/80 dark:border-white/10 transition-colors",
-              currentSpreadIndex === totalSpreads - 1 ? "opacity-30 cursor-not-allowed" : "hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer active:scale-95"
+              "flex items-center justify-center gap-1 py-1.5 px-2.5 sm:px-3.5 rounded-full border border-neutral-300/80 dark:border-white/15 bg-white/70 dark:bg-white/5 font-medium text-xs text-neutral-800 dark:text-[#EAE6DF] transition-all shadow-2xs shrink-0 select-none whitespace-nowrap",
+              currentSpreadIndex === totalSpreads - 1
+                ? "opacity-30 cursor-not-allowed"
+                : "hover:bg-black/5 dark:hover:bg-white/10 cursor-pointer active:scale-95"
             )}
+            title="Lật sang trang tiếp"
           >
-            <span>Trang tiếp</span>
-            <ChevronRight className="w-4 h-4" />
+            <span className="whitespace-nowrap">Trang tiếp</span>
+            <ChevronRight className="w-3.5 h-3.5 shrink-0" />
           </button>
         </div>
 
@@ -681,19 +793,21 @@ export function Realistic3DPageFlip({
                 initial={{ rotateY: 0 }}
                 animate={{ rotateY: -180 }}
                 transition={{
-                  duration: 0.65,
+                  duration: 0.62,
                   ease: [0.645, 0.045, 0.355, 1.0],
                 }}
                 style={{
                   transformStyle: "preserve-3d",
                   transformOrigin: "left center",
+                  willChange: "transform",
                 }}
-                className="hidden md:block absolute top-0 bottom-0 left-1/2 w-1/2 z-30 shadow-2xl pointer-events-none preserve-3d"
+                className="hidden md:block absolute top-0 bottom-0 left-1/2 w-1/2 z-30 shadow-2xl pointer-events-none preserve-3d transform-gpu"
               >
                 {/* MẶT TRƯỚC TỜ GIẤY (Trang phải hiện tại lật lên) */}
                 <div
                   style={{
                     transform: "rotateY(0deg)",
+                    willChange: "transform",
                   }}
                   className="absolute inset-0 w-full h-full overflow-hidden backface-hidden"
                 >
@@ -713,6 +827,7 @@ export function Realistic3DPageFlip({
                 <div
                   style={{
                     transform: "rotateY(180deg)",
+                    willChange: "transform",
                   }}
                   className="absolute inset-0 w-full h-full overflow-hidden backface-hidden"
                 >
@@ -736,19 +851,21 @@ export function Realistic3DPageFlip({
                 initial={{ rotateY: 0 }}
                 animate={{ rotateY: 180 }}
                 transition={{
-                  duration: 0.65,
+                  duration: 0.62,
                   ease: [0.645, 0.045, 0.355, 1.0],
                 }}
                 style={{
                   transformStyle: "preserve-3d",
                   transformOrigin: "right center",
+                  willChange: "transform",
                 }}
-                className="hidden md:block absolute top-0 bottom-0 left-0 w-1/2 z-30 shadow-2xl pointer-events-none preserve-3d"
+                className="hidden md:block absolute top-0 bottom-0 left-0 w-1/2 z-30 shadow-2xl pointer-events-none preserve-3d transform-gpu"
               >
                 {/* MẶT TRƯỚC TỜ GIẤY (Trang trái hiện tại lật qua) */}
                 <div
                   style={{
                     transform: "rotateY(0deg)",
+                    willChange: "transform",
                   }}
                   className="absolute inset-0 w-full h-full overflow-hidden backface-hidden"
                 >
@@ -768,6 +885,7 @@ export function Realistic3DPageFlip({
                 <div
                   style={{
                     transform: "rotateY(-180deg)",
+                    willChange: "transform",
                   }}
                   className="absolute inset-0 w-full h-full overflow-hidden backface-hidden"
                 >

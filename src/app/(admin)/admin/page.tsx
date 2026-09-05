@@ -91,11 +91,11 @@ export default async function AdminDashboardPage() {
           </Link>
         </div>
 
-        <div className="overflow-x-auto border border-[var(--border-subtle)] bg-[var(--bg-card)] rounded-2xl shadow-xs">
-          <table className="w-full text-left text-xs font-mono">
-            <thead className="bg-[var(--text-primary)]/[0.04] border-b border-[var(--border-subtle)] uppercase tracking-wider text-[var(--text-secondary)]">
+        <div className="overflow-x-auto no-scrollbar border border-[var(--border-subtle)] bg-[var(--bg-card)] rounded-2xl shadow-xs">
+          <table className="w-full text-left text-xs font-mono min-w-[600px]">
+            <thead className="bg-[var(--text-primary)]/[0.04] border-b border-[var(--border-subtle)] uppercase tracking-wider text-[var(--text-secondary)] whitespace-nowrap">
               <tr>
-                <th className="py-3 px-4">Tiêu đề bài thơ</th>
+                <th className="py-3 px-4 min-w-[180px]">Tiêu đề bài thơ</th>
                 <th className="py-3 px-4">Thể loại</th>
                 <th className="py-3 px-4">Hiện tác giả</th>
                 <th className="py-3 px-4">Lượt đọc</th>
@@ -103,7 +103,7 @@ export default async function AdminDashboardPage() {
                 <th className="py-3 px-4 text-right">Thao tác</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[var(--border-subtle)]">
+            <tbody className="divide-y divide-[var(--border-subtle)] whitespace-nowrap">
               {poems.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="py-8 text-center text-[var(--text-muted)] font-serif">
@@ -113,7 +113,7 @@ export default async function AdminDashboardPage() {
               ) : (
                 poems.map((poem) => (
                 <tr key={poem.id} className="hover:bg-[var(--text-primary)]/[0.02] transition-colors">
-                  <td className="py-3.5 px-4 font-serif font-bold text-sm text-[var(--text-primary)]">
+                  <td className="py-3.5 px-4 font-serif font-bold text-sm text-[var(--text-primary)] whitespace-normal min-w-[180px]">
                     {poem.title}
                   </td>
                   <td className="py-3.5 px-4 text-[var(--text-secondary)]">

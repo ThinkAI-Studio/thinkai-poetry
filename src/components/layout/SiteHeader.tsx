@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { Menu, X } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
 import { ThemeSwitch } from "@/components/layout/ThemeSwitch";
 import { BookSearchBar } from "@/components/book/BookSearchBar";
 import { usePoeticBook } from "@/context/PoeticBookContext";
@@ -156,49 +157,91 @@ export function SiteHeader() {
             <span>Bắt Đầu Đọc</span>
           </button>
 
+          {/* Nút Menu Burger Mobile có xoay icon 3D */}
           <button
             type="button"
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="lg:hidden p-2 text-neutral-800 dark:text-neutral-200 hover:bg-black/5 dark:hover:bg-white/5 rounded-full"
+            className="lg:hidden p-2 text-neutral-800 dark:text-neutral-200 hover:bg-black/5 dark:hover:bg-white/5 rounded-full transition-transform active:scale-90 cursor-pointer"
             aria-label="Toggle Navigation"
           >
-            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            <motion.div
+              key={mobileOpen ? "close" : "menu"}
+              initial={{ rotate: -90, opacity: 0, scale: 0.8 }}
+              animate={{ rotate: 0, opacity: 1, scale: 1 }}
+              transition={{ duration: 0.2 }}
+            >
+              {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </motion.div>
           </button>
         </div>
       </div>
 
-      {/* Mobile Drawer */}
-      {mobileOpen && (
-        <div className="lg:hidden bg-[var(--bg-page)] border-b border-[var(--border-subtle)] rounded-b-2xl shadow-xl px-6 py-6 flex flex-col gap-4 animate-in slide-in-from-top-2">
-          {/* Thanh tìm kiếm mobile */}
-          <BookSearchBar className="w-full sm:hidden mb-2" />
-
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              onClick={() => setMobileOpen(false)}
-              className="font-serif text-base text-neutral-800 dark:text-neutral-200 py-1.5 border-b border-neutral-200/50 dark:border-neutral-800/50"
-            >
-              {link.label}
-            </Link>
-          ))}
-          <div className="flex items-center justify-between pt-2">
-            <span className="text-xs font-mono text-neutral-500 uppercase">Chế độ hiển thị:</span>
-            <ThemeSwitch />
-          </div>
-          <button
-            type="button"
-            onClick={() => {
-              setMobileOpen(false);
-              openBook();
+      {/* Mobile Drawer với Motion Expand & Collapse mượt mà */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0, y: -10 }}
+            animate={{ opacity: 1, height: "auto", y: 0 }}
+            exit={{ opacity: 0, height: 0, y: -10 }}
+            transition={{
+              duration: 0.35,
+              ease: [0.16, 1, 0.3, 1],
             }}
-            className="w-full text-center py-2.5 text-xs font-mono uppercase tracking-wider text-white bg-[var(--accent-green)] hover:bg-[var(--accent-green-hover)] rounded-full shadow-sm flex items-center justify-center transition-colors cursor-pointer active:scale-98"
+            className="lg:hidden overflow-hidden bg-[var(--bg-page)]/95 backdrop-blur-xl border-b border-[var(--border-subtle)] rounded-b-2xl shadow-2xl px-6 py-6 flex flex-col gap-3.5"
           >
-            <span>Bắt Đầu Đọc</span>
-          </button>
-        </div>
-      )}
+            {/* Thanh tìm kiếm mobile */}
+            <motion.div
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.05, duration: 0.25 }}
+            >
+              <BookSearchBar className="w-full sm:hidden mb-2" />
+            </motion.div>
+
+            {navLinks.map((link, idx) => (
+              <motion.div
+                key={link.href}
+                initial={{ opacity: 0, x: -12 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.08 + idx * 0.04, duration: 0.25 }}
+              >
+                <Link
+                  href={link.href}
+                  onClick={() => setMobileOpen(false)}
+                  className="font-serif text-base text-neutral-800 dark:text-[#EAE6DF] hover:text-[var(--accent-green)] dark:hover:text-[var(--accent-gold)] py-2 border-b border-neutral-200/50 dark:border-white/10 flex items-center justify-between transition-colors"
+                >
+                  <span>{link.label}</span>
+                  <span className="font-mono text-xs opacity-40">→</span>
+                </Link>
+              </motion.div>
+            ))}
+
+            <motion.div
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.24, duration: 0.25 }}
+              className="flex items-center justify-between pt-2"
+            >
+              <span className="text-xs font-mono text-neutral-500 uppercase tracking-wider">Chế độ hiển thị:</span>
+              <ThemeSwitch />
+            </motion.div>
+
+            <motion.button
+              type="button"
+              initial={{ opacity: 0, y: 10, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ delay: 0.28, duration: 0.25 }}
+              onClick={() => {
+                setMobileOpen(false);
+                openBook();
+              }}
+              className="w-full text-center py-2.5 text-xs font-mono uppercase tracking-wider text-white bg-[var(--accent-green)] hover:bg-[var(--accent-green-hover)] rounded-full shadow-sm flex items-center justify-center transition-all cursor-pointer active:scale-98"
+            >
+              <span>Bắt Đầu Đọc</span>
+            </motion.button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 }
