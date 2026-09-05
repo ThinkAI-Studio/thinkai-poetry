@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import { createPoem, getPoems } from "@/lib/data-service";
 
 export async function GET(request: NextRequest) {
@@ -19,6 +20,15 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const cookieStore = await cookies();
+    const session = cookieStore.get("admin_session");
+    if (session?.value !== "authenticated") {
+      return NextResponse.json(
+        { success: false, error: "Yêu cầu quyền đăng nhập Admin" },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
 
     if (!body.title || !body.raw_text) {

@@ -56,9 +56,9 @@ export function PoeticBookSection({ className }: { className?: string }) {
         </div>
 
         {/* Cụm công cụ: Thanh Tìm Kiếm & Phóng To */}
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3 relative z-20">
           {/* Thanh kẹp tìm kiếm thi ca tự động lật trang */}
-          <BookSearchBar />
+          <BookSearchBar className="relative z-20" />
 
           {/* Nút mở dạng nổi Float & Blur Background */}
           <button

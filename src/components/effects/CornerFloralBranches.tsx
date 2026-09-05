@@ -443,9 +443,9 @@ const SharedBranchDefs = memo(() => (
         <feDropShadow dx="0" dy="1.4" stdDeviation="2" floodColor="#3B0505" floodOpacity="0.32" />
       </filter>
 
-      {/* Đổ bóng tự nhiên nhiều tầng cho thân cành */}
+      {/* Đổ bóng tự nhiên dịu nhẹ cho thân cành */}
       <filter id="branchDepthShadow" x="-25%" y="-25%" width="150%" height="150%">
-        <feDropShadow dx="1.5" dy="3.5" stdDeviation="4.5" floodColor="#000" floodOpacity="0.42" />
+        <feDropShadow dx="1" dy="2.5" stdDeviation="3.5" floodColor="#180C06" floodOpacity="0.22" />
       </filter>
     </defs>
   </svg>
@@ -1011,10 +1011,10 @@ export function CornerFloralBranches() {
 
       if (bookElem) {
         const rect = bookElem.getBoundingClientRect();
-        // Vào phần sách: rect.top tiến sát viewport hoặc scroll đã vượt 280px
-        const inBookZone = rect.top < window.innerHeight * 0.82 || currentScroll > 280;
-        // Trở về đầu trang top giới thiệu: scroll < 180px và rect.top nằm cách xa viewport
-        const atTopIntro = currentScroll < 180 && rect.top >= window.innerHeight * 0.8;
+        // Lướt tới phần sách -> Vươn cành hoa ra
+        const inBookZone = rect.top <= 140 || currentScroll > 380;
+        // Lướt ngược lên đầu trang hero/intro -> Thu cành hoa lại
+        const atTopIntro = currentScroll < 200 && rect.top > 140;
 
         if (atTopIntro) {
           setIsActive(false);
@@ -1022,9 +1022,10 @@ export function CornerFloralBranches() {
           setIsActive(true);
         }
       } else {
-        if (currentScroll < 180) {
+        // Trên các trang khác không chứa id khong-gian-sach-tho
+        if (currentScroll < 200) {
           setIsActive(false);
-        } else if (currentScroll > 280) {
+        } else if (currentScroll > 380) {
           setIsActive(true);
         }
       }
@@ -1077,16 +1078,19 @@ export function CornerFloralBranches() {
           }
         }
 
-        /* Chuyển động gió thoảng đa hài (Multi-harmonic Natural Breeze) */
+        /* Chuyển động gió thoảng đa hài tự nhiên (Multi-harmonic Natural Breeze) */
         @keyframes organicBranchBreezeLeft {
           0%, 100% {
             transform: rotate(0deg) translate3d(0, 0, 0);
           }
-          33% {
-            transform: rotate(1.2deg) translate3d(2px, 1.5px, 0);
+          25% {
+            transform: rotate(0.8deg) translate3d(1.5px, 1px, 0);
           }
-          66% {
-            transform: rotate(-0.6deg) translate3d(-1px, 0.8px, 0);
+          50% {
+            transform: rotate(-0.4deg) translate3d(-0.8px, 0.5px, 0);
+          }
+          75% {
+            transform: rotate(0.5deg) translate3d(1px, -0.4px, 0);
           }
         }
 
@@ -1094,21 +1098,24 @@ export function CornerFloralBranches() {
           0%, 100% {
             transform: rotate(0deg) translate3d(0, 0, 0);
           }
-          33% {
-            transform: rotate(-1.2deg) translate3d(-2px, 1.5px, 0);
+          25% {
+            transform: rotate(-0.8deg) translate3d(-1.5px, 1px, 0);
           }
-          66% {
-            transform: rotate(0.6deg) translate3d(1px, 0.8px, 0);
+          50% {
+            transform: rotate(0.4deg) translate3d(0.8px, 0.5px, 0);
+          }
+          75% {
+            transform: rotate(-0.5deg) translate3d(-1px, -0.4px, 0);
           }
         }
 
         .branch-organic-sway-left {
-          animation: organicBranchBreezeLeft 8.4s ease-in-out infinite;
+          animation: organicBranchBreezeLeft 12.6s ease-in-out infinite;
           transform-origin: 0% 0%;
         }
 
         .branch-organic-sway-right {
-          animation: organicBranchBreezeRight 8.8s ease-in-out infinite;
+          animation: organicBranchBreezeRight 13.2s ease-in-out infinite;
           transform-origin: 100% 0%;
         }
       `}</style>
@@ -1125,19 +1132,19 @@ export function CornerFloralBranches() {
               initial={
                 prefersReduced
                   ? { opacity: 0 }
-                  : { opacity: 0, x: -85, y: -55, scale: 0.84, rotate: -9 }
+                  : { opacity: 0, x: -110, y: -70, scale: 0.78, rotate: -12 }
               }
               animate={{ opacity: 1, x: 0, y: 0, scale: 1, rotate: 0 }}
               exit={
                 prefersReduced
                   ? { opacity: 0 }
-                  : { opacity: 0, x: -75, y: -45, scale: 0.86, rotate: -7 }
+                  : { opacity: 0, x: -100, y: -60, scale: 0.8, rotate: -10 }
               }
               transition={{
                 duration: 0.85,
                 ease: [0.16, 1, 0.3, 1], // Spring-like natural ease
               }}
-              className="absolute top-0 left-[-4px] sm:left-0 w-[160px] xs:w-[190px] sm:w-[285px] md:w-[365px] lg:w-[435px] xl:w-[490px] max-w-[46vw] h-[135px] xs:h-[160px] sm:h-[240px] md:h-[305px] lg:h-[365px] xl:h-[410px] pointer-events-none origin-top-left"
+              className="absolute top-[-15px] sm:top-[-20px] left-[-20px] sm:left-[-35px] md:left-[-45px] w-[140px] xs:w-[170px] sm:w-[250px] md:w-[320px] lg:w-[380px] xl:w-[430px] max-w-[40vw] h-[120px] xs:h-[140px] sm:h-[210px] md:h-[265px] lg:h-[315px] xl:h-[355px] pointer-events-none origin-top-left"
             >
               <div className="w-full h-full branch-organic-sway-left">
                 <LeftCornerBranchSvg />
@@ -1149,19 +1156,19 @@ export function CornerFloralBranches() {
               initial={
                 prefersReduced
                   ? { opacity: 0 }
-                  : { opacity: 0, x: 85, y: -55, scale: 0.84, rotate: 9 }
+                  : { opacity: 0, x: 110, y: -70, scale: 0.78, rotate: 12 }
               }
               animate={{ opacity: 1, x: 0, y: 0, scale: 1, rotate: 0 }}
               exit={
                 prefersReduced
                   ? { opacity: 0 }
-                  : { opacity: 0, x: 75, y: -45, scale: 0.86, rotate: 7 }
+                  : { opacity: 0, x: 100, y: -60, scale: 0.8, rotate: 10 }
               }
               transition={{
                 duration: 0.85,
                 ease: [0.16, 1, 0.3, 1],
               }}
-              className="absolute top-0 right-[-4px] sm:right-0 w-[160px] xs:w-[190px] sm:w-[285px] md:w-[365px] lg:w-[435px] xl:w-[490px] max-w-[46vw] h-[135px] xs:h-[160px] sm:h-[240px] md:h-[305px] lg:h-[365px] xl:h-[410px] pointer-events-none origin-top-right"
+              className="absolute top-[-15px] sm:top-[-20px] right-[-20px] sm:right-[-35px] md:right-[-45px] w-[140px] xs:w-[170px] sm:w-[250px] md:w-[320px] lg:w-[380px] xl:w-[430px] max-w-[40vw] h-[120px] xs:h-[140px] sm:h-[210px] md:h-[265px] lg:h-[315px] xl:h-[355px] pointer-events-none origin-top-right"
             >
               <div className="w-full h-full branch-organic-sway-right">
                 <RightCornerBranchSvg />

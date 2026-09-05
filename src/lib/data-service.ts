@@ -51,11 +51,11 @@ const localCategories: Category[] = [...mockCategories];
  * Kiểm tra xem Supabase đã được cấu hình khóa API thực tế hay chưa
  */
 export function isSupabaseConfigured(): boolean {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_PUBLISHABLE_KEY;
 
   if (!url || !url.startsWith("https://")) return false;
-  if (!anonKey || anonKey.includes("placeholder") || anonKey.length < 25) return false;
+  if (!anonKey || anonKey.includes("placeholder") || anonKey.length < 15) return false;
   return true;
 }
 
@@ -63,10 +63,10 @@ export function isSupabaseConfigured(): boolean {
  * Khởi tạo client Supabase với fallback an toàn
  */
 function getSupabaseClient(useServiceRole: boolean = false) {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  const key = useServiceRole
-    ? process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    : process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+  const url = (process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL)!;
+  const anonKey = (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_PUBLISHABLE_KEY)!;
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY || anonKey;
+  const key = useServiceRole ? serviceKey : anonKey;
 
   return createClient(url, key, {
     auth: { persistSession: false },

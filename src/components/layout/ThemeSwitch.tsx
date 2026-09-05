@@ -5,7 +5,8 @@ import { motion, AnimatePresence } from "motion/react";
 import { Sun, Moon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { executePoeticTransition } from "@/lib/theme-transition";
-import { useReducedMotion } from "@/lib/motion";
+import { useReducedMotion, SPRINGS } from "@/lib/motion";
+import { useMagnetic } from "@/lib/useMagnetic";
 
 export interface ThemeSwitchProps {
   className?: string;
@@ -17,6 +18,9 @@ export function ThemeSwitch({ className, id }: ThemeSwitchProps) {
   const [isDark, setIsDark] = useState(false);
   const prefersReducedMotion = useReducedMotion();
 
+  // ThinkAI UI Signature Magnetic Pull Effect (Lực hút nam châm mượt mà)
+  const { ref: magneticRef, x, y, handleMouseMove, handleMouseLeave } = useMagnetic(0.2);
+
   // Đồng bộ theme từ DOM & LocalStorage khi mount
   useEffect(() => {
     setMounted(true);
@@ -24,8 +28,10 @@ export function ThemeSwitch({ className, id }: ThemeSwitchProps) {
       const isHtmlDark = document.documentElement.classList.contains("dark");
       const savedTheme = localStorage.getItem("site-theme");
       const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      const activeDark = isHtmlDark || savedTheme === "dark" || (!savedTheme && prefersDark);
-      setIsDark(activeDark);
+      const activeDark = savedTheme ? savedTheme === "dark" : isHtmlDark;
+
+      // Đảm bảo state React luôn khớp chính xác với lớp .dark trên HTML element
+      setIsDark(isHtmlDark);
     };
 
     syncTheme();
@@ -94,6 +100,7 @@ export function ThemeSwitch({ className, id }: ThemeSwitchProps) {
 
   return (
     <motion.button
+      ref={magneticRef as any}
       id={id}
       type="button"
       role="switch"
@@ -106,20 +113,24 @@ export function ThemeSwitch({ className, id }: ThemeSwitchProps) {
       }
       onClick={handleToggle}
       onKeyDown={handleKeyDown}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={prefersReducedMotion ? undefined : { x, y }}
       whileHover={prefersReducedMotion ? {} : { scale: 1.05 }}
       whileTap={prefersReducedMotion ? {} : { scale: 0.95 }}
+      transition={SPRINGS.responsive}
       className={cn(
         "relative inline-flex items-center w-[60px] h-[32px] p-[3px] rounded-full cursor-pointer select-none shrink-0",
-        "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus)]",
+        "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-green)]",
         "transition-colors duration-500",
-        // Đường ray (Track) phong cách văn học
+        // Đường ray (Track) chuẩn token phong cách thi ca ThinkAI UI
         isDark
-          ? "bg-gradient-to-r from-[#121216] via-[#17171F] to-[#101014] border border-neutral-700/80 hover:border-[var(--accent-gold)]/50 shadow-[inset_0_2px_5px_rgba(0,0,0,0.7),0_0_12px_rgba(197,160,89,0.06)]"
-          : "bg-gradient-to-r from-[#F2ECE1] via-[#EAE1D3] to-[#DFD4C4] border border-amber-950/15 hover:border-amber-900/35 shadow-[inset_0_2px_4px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.9)]",
+          ? "bg-[var(--bg-card)] border border-[var(--accent-green)]/35 shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)]"
+          : "bg-[var(--bg-card)] border border-[var(--border-strong)] shadow-[inset_0_2px_4px_rgba(0,0,0,0.06)]",
         className
       )}
     >
-      {/* 1. ĐỐM DẤU TRACK NỀN (Stationary Guides) */}
+      {/* 1. ĐỐM DẤU TRACK NỀN (Stationary Track Icons) */}
       <div
         className="absolute inset-0 px-2.5 flex items-center justify-between pointer-events-none"
         aria-hidden="true"
@@ -128,7 +139,7 @@ export function ThemeSwitch({ className, id }: ThemeSwitchProps) {
         <span
           className={cn(
             "transition-opacity duration-300 select-none flex items-center justify-center",
-            isDark ? "opacity-35 text-amber-400" : "opacity-0"
+            isDark ? "opacity-40 text-[var(--accent-green)]" : "opacity-0"
           )}
         >
           <Sun className="w-3 h-3 stroke-[2.2]" />
@@ -138,7 +149,7 @@ export function ThemeSwitch({ className, id }: ThemeSwitchProps) {
         <span
           className={cn(
             "transition-opacity duration-300 select-none flex items-center justify-center",
-            !isDark ? "opacity-40 text-neutral-500" : "opacity-0"
+            !isDark ? "opacity-40 text-[var(--text-muted)]" : "opacity-0"
           )}
         >
           <Moon className="w-3 h-3 stroke-[2]" />
@@ -154,10 +165,10 @@ export function ThemeSwitch({ className, id }: ThemeSwitchProps) {
         transition={springConfig}
         className={cn(
           "relative z-10 w-[26px] h-[26px] rounded-full flex items-center justify-center pointer-events-none",
-          "transition-all duration-300",
+          "transition-all duration-300 border",
           isDark
-            ? "bg-gradient-to-b from-[#2A2B36] to-[#181922] border border-[var(--accent-gold)]/40 text-[var(--accent-gold)] shadow-[0_2px_8px_rgba(0,0,0,0.6),0_0_10px_rgba(197,160,89,0.15),inset_0_1px_0_rgba(255,255,255,0.18)]"
-            : "bg-gradient-to-b from-white to-[#F5F0E6] border border-amber-900/15 text-amber-600 shadow-[0_2px_6px_rgba(0,0,0,0.12),0_1px_2px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,1)]"
+            ? "bg-[#27272a] border-[var(--accent-green)]/40 text-emerald-400 shadow-[0_2px_6px_rgba(0,0,0,0.4)]"
+            : "bg-white border-[var(--border-subtle)] text-[var(--accent-green)] shadow-[0_2px_4px_rgba(0,0,0,0.08)]"
         )}
       >
         {/* Micro-Icon chuyển động mượt mà bên trong hạt công tắc */}
@@ -172,7 +183,7 @@ export function ThemeSwitch({ className, id }: ThemeSwitchProps) {
               transition={{ duration: 0.2, ease: "easeOut" }}
               className="flex items-center justify-center w-full h-full"
             >
-              <Sun className="w-3.5 h-3.5 text-amber-600 stroke-[2.3]" />
+              <Sun className="w-3.5 h-3.5 text-[var(--accent-green)] stroke-[2.3]" />
             </motion.div>
           ) : (
             /* --- ÁNH TRĂNG VÀNG (Golden Moonlight) --- */
@@ -184,7 +195,7 @@ export function ThemeSwitch({ className, id }: ThemeSwitchProps) {
               transition={{ duration: 0.2, ease: "easeOut" }}
               className="flex items-center justify-center w-full h-full"
             >
-              <Moon className="w-3.5 h-3.5 text-amber-300 dark:text-amber-200 fill-amber-300/20 stroke-[2.2]" />
+              <Moon className="w-3.5 h-3.5 text-emerald-400 dark:text-emerald-300 fill-emerald-400/20 stroke-[2.2]" />
             </motion.div>
           )}
         </AnimatePresence>

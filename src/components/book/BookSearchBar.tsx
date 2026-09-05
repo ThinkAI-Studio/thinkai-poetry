@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect, useMemo } from "react";
-import { Search, X, BookOpen, ArrowRight, CornerDownLeft } from "lucide-react";
+import { Search, X, CornerDownLeft, ArrowRight } from "lucide-react";
 import { usePoeticBook } from "@/context/PoeticBookContext";
 import { Poem } from "@/types/database";
 import { cn } from "@/lib/utils";
@@ -64,7 +64,6 @@ export function BookSearchBar({ className }: { className?: string }) {
 
       // 2. Khớp từng câu thơ trong raw_text
       if (poem.raw_text) {
-        // Tách theo dấu câu hoặc câu thơ
         const lines = poem.raw_text.split(/[.\n/]/).map((l) => l.trim()).filter(Boolean);
         const matchedLine = lines.find((l) => l.toLowerCase().includes(q));
         if (matchedLine) {
@@ -126,7 +125,7 @@ export function BookSearchBar({ className }: { className?: string }) {
   };
 
   return (
-    <div ref={containerRef} className={cn("relative z-50", className)}>
+    <div ref={containerRef} className={cn("relative z-30 shrink-0 select-none", className)}>
       {/* Khung tìm kiếm kẹp sách (Bookmark Bar) */}
       <div
         className={cn(
@@ -134,7 +133,9 @@ export function BookSearchBar({ className }: { className?: string }) {
           "bg-white/90 dark:bg-[#181816]/90 backdrop-blur-md",
           "border border-amber-900/20 dark:border-white/10",
           "shadow-[inset_0_1px_0_0_rgba(255,255,255,0.7),0_4px_16px_rgba(0,0,0,0.08)]",
-          isFocused ? "w-64 sm:w-80 ring-2 ring-[var(--accent-green)]/30 border-[var(--accent-green)] dark:border-[var(--accent-gold)]" : "w-44 sm:w-56 hover:border-amber-800/40"
+          isFocused
+            ? "w-52 sm:w-64 ring-2 ring-[var(--accent-green)]/30 border-[var(--accent-green)] dark:border-[var(--accent-gold)]"
+            : "w-36 sm:w-48 hover:border-amber-800/40"
         )}
       >
         <Search className="w-3.5 h-3.5 text-amber-800/70 dark:text-[var(--accent-gold)] shrink-0" />
@@ -146,7 +147,7 @@ export function BookSearchBar({ className }: { className?: string }) {
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => setIsFocused(true)}
           onKeyDown={handleKeyDownInput}
-          placeholder="Tìm thơ, tứ thơ... (Ctrl+K)"
+          placeholder="Tìm thơ... (Ctrl+K)"
           className="w-full bg-transparent text-xs font-serif text-neutral-800 dark:text-[#EAE6DF] placeholder:text-neutral-400 dark:placeholder:text-[#7E7B74] outline-none"
         />
 
@@ -157,13 +158,13 @@ export function BookSearchBar({ className }: { className?: string }) {
               setQuery("");
               inputRef.current?.focus();
             }}
-            className="p-0.5 rounded-full hover:bg-black/5 dark:hover:bg-white/10 text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 transition-colors"
+            className="p-0.5 rounded-full hover:bg-black/5 dark:hover:bg-white/10 text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 transition-colors shrink-0"
             aria-label="Xóa tìm kiếm"
           >
             <X className="w-3 h-3" />
           </button>
         ) : (
-          <span className="hidden sm:inline-block text-[10px] font-mono font-medium px-1.5 py-0.5 rounded bg-amber-100/70 dark:bg-neutral-800 text-amber-900/60 dark:text-neutral-400">
+          <span className="hidden sm:inline-block text-[10px] font-mono font-medium px-1.5 py-0.5 rounded bg-amber-100/70 dark:bg-neutral-800 text-amber-900/60 dark:text-neutral-400 shrink-0">
             ⌘K
           </span>
         )}
@@ -171,7 +172,7 @@ export function BookSearchBar({ className }: { className?: string }) {
 
       {/* DROPDOWN KẾT QUẢ TÌM KIẾM TỰ ĐỘNG LẬT TRANG */}
       {isFocused && query.trim().length >= 2 && (
-        <div className="absolute top-full left-0 right-0 mt-2 p-2 rounded-2xl bg-white/95 dark:bg-[#181816]/95 backdrop-blur-xl border border-amber-900/20 dark:border-white/10 shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200 min-w-[280px] sm:min-w-[320px] max-h-80 overflow-y-auto z-50">
+        <div className="absolute top-full right-0 mt-2 p-2 rounded-2xl bg-white/95 dark:bg-[#181816]/95 backdrop-blur-xl border border-amber-900/20 dark:border-white/10 shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200 min-w-[280px] sm:min-w-[320px] max-h-80 overflow-y-auto z-50">
           <div className="px-2 py-1 text-[10px] font-mono uppercase tracking-widest text-amber-800/60 dark:text-[var(--accent-gold)] flex items-center justify-between border-b border-neutral-200/50 dark:border-neutral-800/50 mb-1">
             <span>Tìm thấy {results.length} trang sách</span>
             <span className="flex items-center gap-1">
@@ -182,19 +183,6 @@ export function BookSearchBar({ className }: { className?: string }) {
           {results.length === 0 ? (
             <div className="py-5 text-center text-xs font-serif text-neutral-500 italic space-y-2">
               <p>Không tìm thấy câu thơ nào khớp với &ldquo;{query}&rdquo;</p>
-              <div className="text-[11px] font-sans not-italic text-neutral-400">
-                Gợi ý:{" "}
-                {["thu", "xuân", "trăng", "lục bát"].map((tag) => (
-                  <button
-                    key={tag}
-                    type="button"
-                    onClick={() => setQuery(tag)}
-                    className="underline mx-1 text-[var(--accent-green)] dark:text-[var(--accent-gold)] hover:opacity-80 cursor-pointer"
-                  >
-                    {tag}
-                  </button>
-                ))}
-              </div>
             </div>
           ) : (
             <div className="flex flex-col gap-1">

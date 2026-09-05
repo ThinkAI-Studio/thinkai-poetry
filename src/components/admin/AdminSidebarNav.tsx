@@ -16,8 +16,8 @@ import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
   { href: "/admin", label: "Tổng Quan", icon: ShieldCheck, exact: true },
-  { href: "/admin/poems", label: "Quản Lý Thơ", icon: BookOpen, exact: true },
-  { href: "/admin/poems/new", label: "Soạn Thơ Mới", icon: Plus, highlight: true },
+  { href: "/admin/poems", label: "Thi Phẩm & Tản Văn", icon: BookOpen, exact: true },
+  { href: "/admin/poems/new", label: "Soạn Tác Phẩm Mới", icon: Plus, highlight: true },
   { href: "/admin/collections", label: "Tuyển Tập Thơ", icon: BookMarked },
   { href: "/admin/authors", label: "Hồ Sơ Tác Giả", icon: User },
   { href: "/admin/logs", label: "Nhật Ký Audit", icon: History },

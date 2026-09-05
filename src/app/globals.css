@@ -31,7 +31,7 @@
     color-scheme: light;
   }
 
-  /* Toàn trang Dark Mode (Nghiên Mực & Chu Sa - TasteSkills & Impeccable) */
+  /* Toàn trang Dark Mode */
   .dark,
   [data-reader-theme="dark"] {
     --bg-page: #121211;
@@ -81,6 +81,19 @@
     overflow-wrap: anywhere;
     min-width: 0;
   }
+}
+
+/* ============================================================
+   3D BOOK PAGE FLIP SYSTEM (WEBKIT BACKFACE VISIBILITY FIX)
+   ============================================================ */
+.backface-hidden {
+  -webkit-backface-visibility: hidden !important;
+  backface-visibility: hidden !important;
+}
+
+.preserve-3d {
+  -webkit-transform-style: preserve-3d !important;
+  transform-style: preserve-3d !important;
 }
 
 /* ============================================================
@@ -140,38 +153,37 @@
 }
 
 /* ============================================================
-   3D BOOK PAGE FLIP VIEW TRANSITION (HIỆU ỨNG LẬT TRANG SÁCH THƠ)
+   3D BOOK PAGE FLIP VIEW TRANSITION
    ============================================================ */
 
 ::view-transition {
-  perspective: 2200px;
-  overflow: hidden;
+  perspective: 2000px !important;
+  overflow: hidden !important;
+  background: transparent !important;
 }
 
-/* Tắt hoạt ảnh cross-fade mờ phẳng mặc định của trình duyệt */
-::view-transition-old(root),
+::view-transition-group(root),
+::view-transition-image-pair(root) {
+  animation: none !important;
+}
+
+::view-transition-old(root) {
+  z-index: 2 !important;
+  animation: none !important;
+  mix-blend-mode: normal !important;
+  backface-visibility: hidden !important;
+  box-sizing: border-box;
+  filter: drop-shadow(-16px -16px 28px rgba(0, 0, 0, 0.5));
+}
+
 ::view-transition-new(root) {
-  animation: none;
-  mix-blend-mode: normal;
-  backface-visibility: hidden;
+  z-index: 1 !important;
+  animation: none !important;
+  mix-blend-mode: normal !important;
+  backface-visibility: hidden !important;
   box-sizing: border-box;
 }
 
-/* Trang cũ nằm ở lớp trên (z-index: 2), bị người que đẩy trượt khỏi màn hình */
-::view-transition-old(root) {
-  z-index: 2;
-  filter: drop-shadow(0px 0px 28px rgba(0, 0, 0, 0.5));
-}
-
-/* Trang mới nằm tĩnh ở lớp dưới (z-index: 1), lộ ra khi trang cũ bị đẩy đi */
-::view-transition-new(root) {
-  z-index: 1;
-}
-
-
-
-
-/* Triệt tiêu hoàn toàn hiện tượng nhấp nháy / flicker màu sắc khi chuyển theme */
 html.theme-transitioning,
 html.theme-transitioning *,
 html.theme-transitioning *::before,
@@ -179,9 +191,8 @@ html.theme-transitioning *::after {
   transition: none !important;
 }
 
-
 /* ============================================================
-   ĐỊNH NGHĨA TYPOGRAPHY THI PHẨM VIỆT NAM
+   TYPOGRAPHY THI PHẨM VIỆT NAM
    ============================================================ */
 .font-poem-heading {
   font-family: var(--font-heading);
@@ -196,7 +207,6 @@ html.theme-transitioning *::after {
   font-feature-settings: "kern" 1, "liga" 1;
 }
 
-/* Khổ thơ & khoảng thở giữa các đoạn thơ */
 .poem-body {
   line-height: 2.15;
 }
@@ -206,7 +216,28 @@ html.theme-transitioning *::after {
   letter-spacing: 0.015em;
 }
 
-/* Thể thơ Lục bát: Câu 6 lùi 2ch, câu 8 đứng thẳng lề */
+.prose-body {
+  line-height: 1.85;
+  letter-spacing: 0.01em;
+  font-size: 1.125rem;
+}
+
+.prose-body p {
+  margin-bottom: 1.5rem;
+  text-align: justify;
+}
+
+.prose-body p:first-of-type::first-letter {
+  font-family: var(--font-serif);
+  font-size: 3.25rem;
+  line-height: 1;
+  float: left;
+  margin-right: 0.75rem;
+  margin-top: 0.25rem;
+  color: var(--accent-green);
+  font-weight: bold;
+}
+
 .poem-luc-bat .verse-6,
 .poem-luc-bat p:nth-child(odd) {
   padding-left: 2ch;
@@ -216,96 +247,9 @@ html.theme-transitioning *::after {
   padding-left: 0ch;
 }
 
-/* Thể thơ Song thất lục bát */
 .poem-song-that .verse-7-1 {
   padding-left: 1.5ch;
 }
 .poem-song-that .verse-7-2 {
   padding-left: 1.5ch;
-}
-.poem-song-that .verse-6 {
-  padding-left: 3ch;
-}
-.poem-song-that .verse-8 {
-  padding-left: 0ch;
-}
-
-/* KHUNG HOA ĐUNG ĐƯA THEO GIÓ (SORA LATTICE FLORAL ANIMATION) */
-@keyframes floralSwayRotate {
-  0%, 100% {
-    transform: rotate(var(--sway-rotate-from, -4deg));
-  }
-  50% {
-    transform: rotate(var(--sway-rotate-to, 6deg));
-  }
-}
-
-@keyframes floralSwayTranslate {
-  0%, 100% {
-    transform: translateY(0px) translateX(0px);
-  }
-  50% {
-    transform: translateY(var(--sway-translate-y, -8px)) translateX(var(--sway-translate-x, 4px));
-  }
-}
-
-@keyframes floatPill {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-6px);
-  }
-}
-
-/* SORA LATTICE SOFT BOTANICAL CARD UTILITIES (IMPECCABLE TECTONIC DEPTH) */
-.tai-card {
-  background-color: var(--bg-card);
-  color: var(--text-primary);
-  border: 1px solid var(--border-subtle);
-  border-radius: 1rem;
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.7), 0 4px 20px -4px rgba(0, 0, 0, 0.04);
-  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
-}
-
-.dark .tai-card {
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.08), 0 6px 24px -4px rgba(0, 0, 0, 0.5);
-}
-
-.tai-card:hover {
-  border-color: var(--border-strong);
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.8), 0 12px 36px -8px rgba(0, 0, 0, 0.08);
-}
-
-.dark .tai-card:hover {
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.12), 0 16px 40px -8px rgba(0, 0, 0, 0.65);
-}
-
-/* 60FPS FLUID EQUALIZER WAVEFORM */
-@keyframes eqBarPulse {
-  0% {
-    transform: scaleY(0.18);
-  }
-  50% {
-    transform: scaleY(0.95);
-  }
-  100% {
-    transform: scaleY(0.3);
-  }
-}
-
-.animate-eq-bar {
-  animation: eqBarPulse 0.85s ease-in-out infinite alternate;
-  transform-origin: bottom;
-}
-
-/* ACCESSIBILITY: PREFERS REDUCED MOTION (HALLMARK GATE 27) */
-@media (prefers-reduced-motion: reduce) {
-  .floral-sway-rotate,
-  .floral-sway-translate,
-  .floating-pill,
-  .animate-eq-bar {
-    animation: none !important;
-    transform: none !important;
-  }
 }

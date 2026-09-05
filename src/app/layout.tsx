@@ -33,9 +33,12 @@ export const metadata: Metadata = {
   title: "Thịnh và Thơ | Không Gian Thi Ca Đương Đại",
   description: "Tuyển tập những tác phẩm thi ca đương đại, lắng đọng từng thanh âm và nhịp điệu tâm hồn. Thịnh và Thơ.",
   icons: {
-    icon: "/thinh-va-tho-symbol.png",
-    shortcut: "/thinh-va-tho-symbol.png",
-    apple: "/thinh-va-tho-symbol.png",
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon.png", type: "image/png", sizes: "192x192" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
   },
   openGraph: {
     title: "Thịnh và Thơ | Không Gian Thi Ca Đương Đại",

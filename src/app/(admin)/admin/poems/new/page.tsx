@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
-import { ArrowLeft, Plus, Check } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { ArrowLeft, Plus, Check, Feather, BookOpen, Clock, FileText, Upload } from "lucide-react";
 import { TaiButton } from "@/components/tai-ui/TaiButton";
 import { mockCollections } from "@/data/mock-poetry";
 import { cn } from "@/lib/utils";
@@ -18,12 +19,27 @@ const DEFAULT_CATEGORY_OPTIONS: CategoryOption[] = [
   { id: "tu_do", name: "Thơ Tự Do", slug: "tu_do" },
   { id: "that_ngon", name: "Thơ Đường Luật (Thất ngôn)", slug: "that_ngon" },
   { id: "song_that_luc_bat", name: "Song Thất Lục Bát", slug: "song_that_luc_bat" },
+  { id: "tan_van", name: "Tản Văn (Tùy bút, Cảm xúc)", slug: "tan_van" },
+  { id: "van_xuoi", name: "Văn Xuôi Nghệ Thuật", slug: "van_xuoi" },
+  { id: "but_ky", name: "Bút Ký / Hồi Ký", slug: "but_ky" },
+  { id: "doan_van", name: "Đoạn Văn Triết Lý", slug: "doan_van" },
   { id: "tho_thien", name: "Thơ Thiền & Tĩnh Tâm", slug: "tho_thien" },
   { id: "tho_4_5_chu", name: "Thơ 4 chữ / 5 chữ", slug: "tho_4_5_chu" },
   { id: "tho_7_chu", name: "Thơ 7 chữ", slug: "tho_7_chu" },
 ];
 
 export default function NewPoemPage() {
+  return (
+    <Suspense fallback={<div className="p-8 font-mono text-xs text-[var(--text-muted)]">Đang tải trình soạn thảo tác phẩm...</div>}>
+      <NewPoemFormContent />
+    </Suspense>
+  );
+}
+
+function NewPoemFormContent() {
+  const searchParams = useSearchParams();
+  const initialType = searchParams.get("type") === "prose" ? "prose" : "poem";
+  const [contentType, setContentType] = useState<"poem" | "prose">(initialType);
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
   const [categories, setCategories] = useState<CategoryOption[]>(DEFAULT_CATEGORY_OPTIONS);
@@ -37,6 +53,83 @@ export default function NewPoemPage() {
   const [isSaved, setIsSaved] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [importStatus, setImportStatus] = useState<string | null>(null);
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setImportStatus(`Đang xử lý tệp ${file.name}...`);
+    const fileNameWithoutExt = file.name.replace(/\.[^/.]+$/, "");
+    const reader = new FileReader();
+
+    reader.onload = (event) => {
+      try {
+        const textContent = event.target?.result as string;
+        if (!textContent) return;
+
+        if (file.name.endsWith(".json")) {
+          const parsed = JSON.parse(textContent);
+          if (parsed.title) setTitle(parsed.title);
+          if (parsed.slug) setSlug(parsed.slug);
+          if (parsed.excerpt) setExcerpt(parsed.excerpt);
+          if (parsed.raw_text || parsed.content) {
+            setPoemText(parsed.raw_text || parsed.content);
+          }
+          if (parsed.form_type) {
+            const isProseType = ["tan_van", "van_xuoi", "but_ky", "doan_van"].includes(parsed.form_type);
+            setContentType(isProseType ? "prose" : "poem");
+            setSelectedCategories([parsed.form_type]);
+          }
+          setImportStatus(`Đã tải lên tệp ${file.name} thành công!`);
+          setTimeout(() => setImportStatus(null), 4000);
+          return;
+        }
+
+        let extractedTitle = fileNameWithoutExt;
+        let extractedContent = textContent;
+
+        const titleMatch = textContent.match(/^#\s+(.+)$/m);
+        if (titleMatch) {
+          extractedTitle = titleMatch[1].trim();
+          extractedContent = textContent.replace(/^#\s+.+$/m, "").trim();
+        }
+
+        const autoSlug = extractedTitle
+          .toLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/[đĐ]/g, "d")
+          .replace(/[^a-z0-9\s-]/g, "")
+          .trim()
+          .replace(/\s+/g, "-");
+
+        setTitle(extractedTitle);
+        setSlug(autoSlug);
+        setPoemText(extractedContent);
+
+        const lines = extractedContent.split("\n").filter((l) => l.trim().length > 0);
+        const avgLineLength = lines.length > 0 ? lines.reduce((acc, l) => acc + l.length, 0) / lines.length : 0;
+
+        if (avgLineLength > 55 || lines.length <= 4) {
+          setContentType("prose");
+          setSelectedCategories(["tan_van"]);
+          setExcerpt(lines[0] ? lines[0].slice(0, 140) + "..." : "");
+        } else {
+          setContentType("poem");
+          setSelectedCategories(["luc_bat"]);
+          setExcerpt(lines.slice(0, 2).join(" "));
+        }
+
+        setImportStatus(`Đã phân tích & nhập nội dung từ ${file.name} thành công!`);
+        setTimeout(() => setImportStatus(null), 4000);
+      } catch (err: any) {
+        setImportStatus(`Không thể đọc tệp ${file.name}: ${err.message}`);
+      }
+    };
+
+    reader.readAsText(file, "UTF-8");
+  };
 
   // Load existing categories from backend
   useEffect(() => {
@@ -138,24 +231,35 @@ export default function NewPoemPage() {
     setErrorMsg(null);
 
     try {
-      // Tự động phân tách khổ thơ và gán class thụt lề câu 6-8 lục bát
-      const stanzas = poemText
-        .split(/\n\s*\n/)
-        .map((stanza) => {
-          const lines = stanza
-            .split("\n")
-            .map((line) => line.trim())
-            .filter(Boolean);
-          if (primaryFormType === "luc_bat") {
-            const verses = lines
-              .map((l, i) => `<p class="verse ${i % 2 === 0 ? "verse-6" : "verse-8"}">${l}</p>`)
-              .join("");
+      // Tự động phân tách khổ thơ hoặc đoạn văn tùy theo thể loại
+      let stanzas = "";
+      if (contentType === "prose" || ["tan_van", "van_xuoi", "but_ky", "doan_van"].includes(primaryFormType)) {
+        const paragraphs = poemText
+          .split(/\n\s*\n/)
+          .map((p) => p.trim())
+          .filter(Boolean)
+          .map((p) => `<p>${p.replace(/\n/g, "<br/>")}</p>`)
+          .join("");
+        stanzas = `<div class="prose-content">${paragraphs}</div>`;
+      } else {
+        stanzas = poemText
+          .split(/\n\s*\n/)
+          .map((stanza) => {
+            const lines = stanza
+              .split("\n")
+              .map((line) => line.trim())
+              .filter(Boolean);
+            if (primaryFormType === "luc_bat") {
+              const verses = lines
+                .map((l, i) => `<p class="verse ${i % 2 === 0 ? "verse-6" : "verse-8"}">${l}</p>`)
+                .join("");
+              return `<div class="stanza">${verses}</div>`;
+            }
+            const verses = lines.map((l) => `<p class="verse">${l}</p>`).join("");
             return `<div class="stanza">${verses}</div>`;
-          }
-          const verses = lines.map((l) => `<p class="verse">${l}</p>`).join("");
-          return `<div class="stanza">${verses}</div>`;
-        })
-        .join("");
+          })
+          .join("");
+      }
 
       const res = await fetch("/api/poems", {
         method: "POST",
@@ -191,7 +295,7 @@ export default function NewPoemPage() {
   return (
     <div className="max-w-4xl mx-auto flex flex-col gap-8 pb-16">
       {/* Top Header */}
-      <div className="flex items-center justify-between pb-4 border-b border-[var(--border-subtle)]">
+      <div className="flex items-center justify-between pb-4 border-b border-[var(--border-subtle)] flex-wrap gap-4">
         <div className="flex items-center gap-3">
           <Link
             href="/admin/poems"
@@ -201,15 +305,64 @@ export default function NewPoemPage() {
           </Link>
           <div>
             <h1 className="font-serif text-2xl font-bold text-[var(--text-primary)]">
-              Soạn Thảo Thi Phẩm Mới
+              {contentType === "prose" ? "Soạn Thảo Tản Văn Mới" : "Soạn Thảo Thi Phẩm Mới"}
             </h1>
             <p className="text-xs font-mono text-[var(--text-secondary)]">
-              Biên tập bài thơ, chọn thể loại linh hoạt và xuất bản lên vườn thơ Hữu Thịnh
+              {contentType === "prose"
+                ? "Biên tập tản văn, văn xuôi hoặc bút ký nghệ thuật lên hệ thống"
+                : "Biên tập bài thơ, chọn thể loại linh hoạt và xuất bản lên vườn thơ Hữu Thịnh"}
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        {/* Tab chuyển đổi chế độ Soạn Thơ vs Soạn Văn */}
+        <div className="flex items-center gap-2 p-1.5 bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-2xl">
+          <button
+            type="button"
+            onClick={() => {
+              setContentType("poem");
+              setSelectedCategories(["luc_bat"]);
+            }}
+            className={cn(
+              "px-3.5 py-1.5 rounded-xl text-xs font-mono font-semibold uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer",
+              contentType === "poem"
+                ? "bg-[var(--accent-green)] text-white shadow-xs"
+                : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+            )}
+          >
+            <Feather className="w-3.5 h-3.5" />
+            <span>Soạn Thơ</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setContentType("prose");
+              setSelectedCategories(["tan_van"]);
+            }}
+            className={cn(
+              "px-3.5 py-1.5 rounded-xl text-xs font-mono font-semibold uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer",
+              contentType === "prose"
+                ? "bg-[var(--accent-green)] text-white shadow-xs"
+                : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+            )}
+          >
+            <BookOpen className="w-3.5 h-3.5" />
+            <span>Soạn Tản Văn</span>
+          </button>
+        </div>
+
+        <div className="flex items-center gap-3 flex-wrap">
+          <label className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-mono font-semibold uppercase tracking-wider bg-[var(--bg-card)] border border-[var(--border-strong)] text-[var(--text-primary)] hover:border-[var(--accent-green)] transition-all cursor-pointer shadow-xs active:scale-95">
+            <Upload className="w-3.5 h-3.5 text-[var(--accent-green)]" />
+            <span>Tải Lên Tệp (.txt, .md, .json)</span>
+            <input
+              type="file"
+              accept=".txt,.md,.json"
+              onChange={handleFileUpload}
+              className="hidden"
+            />
+          </label>
+
           <TaiButton
             variant="primary"
             onClick={handleSave}
@@ -219,6 +372,13 @@ export default function NewPoemPage() {
           </TaiButton>
         </div>
       </div>
+
+      {importStatus && (
+        <div className="p-4 bg-[var(--accent-green)]/15 border border-[var(--accent-green)]/40 text-[var(--accent-green)] dark:text-emerald-300 font-mono text-xs flex items-center gap-2 rounded-xl">
+          <Upload className="w-4 h-4 text-[var(--accent-green)] animate-bounce" />
+          <span>{importStatus}</span>
+        </div>
+      )}
 
       {isSaved && (
         <div className="p-4 bg-emerald-500/15 border border-emerald-500/40 text-emerald-800 dark:text-emerald-200 font-mono text-xs flex items-center gap-2 rounded-xl">
@@ -241,42 +401,44 @@ export default function NewPoemPage() {
         {/* Row 1: Tiêu đề & Slug */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-mono uppercase tracking-wider text-[var(--text-secondary)]">
-              Tiêu đề bài thơ *
+            <label className="text-xs font-mono uppercase tracking-wider text-[var(--text-secondary)] font-semibold">
+              {contentType === "prose" ? "Tiêu đề bài tản văn / văn xuôi *" : "Tiêu đề bài thơ *"}
             </label>
             <input
               type="text"
               required
               value={title}
               onChange={handleTitleChange}
-              placeholder="VD: Trăng Thu Dạ Khúc"
+              placeholder={contentType === "prose" ? "VD: Nhớ Mùa Thu Hà Nội" : "VD: Trăng Thu Dạ Khúc"}
               className="p-3 bg-[var(--bg-card)] border border-[var(--border-strong)] text-[var(--text-primary)] font-serif text-base rounded-xl focus:outline-none focus:border-[var(--accent-green)] focus:ring-1 focus:ring-[var(--accent-green)]"
             />
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-mono uppercase tracking-wider text-[var(--text-secondary)]">
+            <label className="text-xs font-mono uppercase tracking-wider text-[var(--text-secondary)] font-semibold">
               Đường dẫn tĩnh (Slug)
             </label>
             <input
               type="text"
               value={slug}
               onChange={(e) => setSlug(e.target.value)}
-              placeholder="trang-thu-da-khuc"
+              placeholder={contentType === "prose" ? "nho-mua-thu-ha-noi" : "trang-thu-da-khuc"}
               className="p-3 bg-[var(--bg-card)] border border-[var(--border-strong)] text-[var(--text-secondary)] font-mono text-xs rounded-xl focus:outline-none focus:border-[var(--accent-green)] focus:ring-1 focus:ring-[var(--accent-green)]"
             />
           </div>
         </div>
 
-        {/* Row 2: Thể loại thơ (Checkbox & Thêm thể loại mới theo yêu cầu của Thịnh) */}
+        {/* Row 2: Thể loại (Phân loại theo Thơ hay Tản Văn) */}
         <div className="flex flex-col gap-3 p-4 bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-2xl shadow-xs">
           <div className="flex items-center justify-between flex-wrap gap-2">
             <div>
               <label className="text-xs font-mono uppercase tracking-wider text-[var(--text-secondary)] font-semibold">
-                Thể loại thơ (Chọn một hoặc nhiều thể loại) *
+                {contentType === "prose" ? "Thể loại văn xuôi / tản văn *" : "Thể loại thơ *"}
               </label>
               <p className="text-[11px] font-mono text-[var(--text-muted)] mt-0.5">
-                Đánh dấu thể loại phù hợp, hoặc tự tạo thêm nếu chưa có trong danh sách
+                {contentType === "prose"
+                  ? "Đánh dấu thể loại tản văn, tùy bút phù hợp hoặc tự tạo thể loại mới"
+                  : "Đánh dấu thể loại phù hợp, hoặc tự tạo thêm nếu chưa có trong danh sách"}
               </p>
             </div>
 
@@ -334,7 +496,7 @@ export default function NewPoemPage() {
                     setIsCreatingCategory(false);
                   }
                 }}
-                placeholder="Nhập tên thể loại mới (VD: Thơ Văn Xuôi, Thơ Haiku...)"
+                placeholder="Nhập tên thể loại mới (VD: Tùy Bút Cảm Nhận, Thơ Haiku...)"
                 className="p-2.5 px-3 bg-[var(--bg-page)] border border-[var(--border-strong)] text-[var(--text-primary)] font-mono text-xs rounded-xl focus:outline-none focus:border-[var(--accent-green)] focus:ring-1 focus:ring-[var(--accent-green)] flex-1 max-w-md"
               />
               <button
@@ -356,9 +518,9 @@ export default function NewPoemPage() {
           )}
         </div>
 
-        {/* Row 3: Tuyển tập */}
+        {/* Row 3: Thuộc Tuyển Tập */}
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-mono uppercase tracking-wider text-[var(--text-secondary)]">
+          <label className="text-xs font-mono uppercase tracking-wider text-[var(--text-secondary)] font-semibold">
             Thuộc Tuyển Tập
           </label>
           <select
@@ -367,7 +529,7 @@ export default function NewPoemPage() {
             className="p-3 bg-[var(--bg-card)] border border-[var(--border-strong)] text-[var(--text-primary)] font-mono text-xs rounded-xl focus:outline-none focus:border-[var(--accent-green)] focus:ring-1 focus:ring-[var(--accent-green)]"
           >
             <option value="" className="bg-[var(--bg-card)] text-[var(--text-primary)]">
-              -- Không thuộc tuyển tập nào (Bài thơ độc lập) --
+              -- Tác phẩm độc lập --
             </option>
             {mockCollections.map((c) => (
               <option key={c.id} value={c.id} className="bg-[var(--bg-card)] text-[var(--text-primary)]">
@@ -377,37 +539,66 @@ export default function NewPoemPage() {
           </select>
         </div>
 
-        {/* Trích dẫn ngắn */}
+        {/* Trích dẫn ngắn / Lời tựa */}
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-mono uppercase tracking-wider text-[var(--text-secondary)]">
-            Trích dẫn tiêu biểu (Excerpt)
+          <label className="text-xs font-mono uppercase tracking-wider text-[var(--text-secondary)] font-semibold">
+            {contentType === "prose" ? "Lời tựa / Tóm tắt dạo đầu tản văn (Excerpt)" : "Trích dẫn tiêu biểu (Excerpt)"}
           </label>
           <input
             type="text"
             value={excerpt}
             onChange={(e) => setExcerpt(e.target.value)}
-            placeholder="Hai câu thơ tâm đắc nhất dùng để giới thiệu..."
+            placeholder={
+              contentType === "prose"
+                ? "Viết đoạn văn ngắn 2-3 câu dạo đầu cảm xúc để thu hút người đọc..."
+                : "Hai câu thơ tâm đắc nhất dùng để giới thiệu..."
+            }
             className="p-3 bg-[var(--bg-card)] border border-[var(--border-strong)] text-[var(--text-primary)] font-serif text-sm rounded-xl focus:outline-none focus:border-[var(--accent-green)] focus:ring-1 focus:ring-[var(--accent-green)]"
           />
         </div>
 
-        {/* Thân bài thơ */}
+        {/* BOX INPUT CHUYÊN BIỆT CHO NỘI DUNG */}
         <div className="flex flex-col gap-1.5">
-          <div className="flex items-center justify-between">
-            <label className="text-xs font-mono uppercase tracking-wider text-[var(--text-secondary)]">
-              Nội dung bài thơ (Mỗi dòng một câu, ngắt khổ bằng 2 lần Enter) *
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <label className="text-xs font-mono uppercase tracking-wider text-[var(--text-secondary)] font-semibold">
+              {contentType === "prose"
+                ? "Nội dung tản văn / văn xuôi (Phân cách các đoạn bằng 2 lần Enter) *"
+                : "Nội dung bài thơ (Mỗi dòng một câu, ngắt khổ bằng 2 lần Enter) *"}
             </label>
-            <span className="text-[11px] font-mono text-[var(--text-muted)]">
-              {primaryFormType === "luc_bat" ? "Hệ thống tự động căn lề nhịp 6-8" : "Căn dòng tiêu chuẩn"}
-            </span>
+            {contentType === "prose" ? (
+              <div className="flex items-center gap-3 text-[11px] font-mono text-[var(--accent-green)] bg-[var(--accent-green)]/10 px-3 py-1 rounded-full border border-[var(--accent-green)]/20">
+                <span className="flex items-center gap-1.5">
+                  <FileText className="w-3.5 h-3.5 text-[var(--accent-green)]" />
+                  <span>{poemText ? poemText.split(/\s+/).filter(Boolean).length : 0} từ</span>
+                </span>
+                <span>•</span>
+                <span className="flex items-center gap-1.5">
+                  <Clock className="w-3.5 h-3.5 text-[var(--accent-green)]" />
+                  <span>~{Math.max(1, Math.ceil((poemText ? poemText.split(/\s+/).filter(Boolean).length : 0) / 200))} phút đọc</span>
+                </span>
+              </div>
+            ) : (
+              <span className="text-[11px] font-mono text-[var(--text-muted)]">
+                {primaryFormType === "luc_bat" ? "Hệ thống tự động căn lề nhịp 6-8" : "Căn dòng tiêu chuẩn"}
+              </span>
+            )}
           </div>
           <textarea
             required
-            rows={10}
+            rows={contentType === "prose" ? 14 : 10}
             value={poemText}
             onChange={(e) => setPoemText(e.target.value)}
-            placeholder={`Gió xuân thổi nhẹ qua rèm\nNhành hoa hé nụ dịu êm đón ngày\nSương giăng mờ ảo hàng cây\nHương xưa còn đọng tháng ngày phôi pha.\n\nThềm rêu vương vấn bước qua...`}
-            className="p-4 bg-[var(--bg-card)] border border-[var(--border-strong)] text-[var(--text-primary)] font-serif text-lg leading-loose focus:outline-none focus:border-[var(--accent-green)] focus:ring-1 focus:ring-[var(--accent-green)] rounded-xl"
+            placeholder={
+              contentType === "prose"
+                ? `Hà Nội những ngày chớm thu, cái lạnh chầm chậm lan qua từng khoảng không nồng nàn vị hoa sữa. Tôi đi qua những góc phố quen, thấy nắng vàng rải nhẹ trên mái ngói rêu phong.\n\nCó những kỷ niệm đã nằm yên trong miền ký ức, nhưng chỉ cần một làn gió thu nhẹ thoảng qua là mọi cảm xúc lại vỡ òa...`
+                : `Gió xuân thổi nhẹ qua rèm\nNhành hoa hé nụ dịu êm đón ngày\nSương giăng mờ ảo hàng cây\nHương xưa còn đọng tháng ngày phôi pha.\n\nThềm rêu vương vấn bước qua...`
+            }
+            className={cn(
+              "p-5 bg-[var(--bg-card)] border border-[var(--border-strong)] text-[var(--text-primary)] font-serif focus:outline-none focus:border-[var(--accent-green)] focus:ring-1 focus:ring-[var(--accent-green)] rounded-xl transition-all",
+              contentType === "prose"
+                ? "text-base leading-relaxed text-left p-6"
+                : "text-lg leading-loose text-center"
+            )}
           />
         </div>
 
@@ -415,10 +606,10 @@ export default function NewPoemPage() {
         <div className="p-4 bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-2xl flex items-center justify-between shadow-xs">
           <div className="flex flex-col">
             <span className="text-sm font-serif font-bold text-[var(--text-primary)]">
-              Hiển thị thẻ tác giả Hữu Thịnh ở cuối bài thơ
+              {contentType === "prose" ? "Hiển thị thẻ tác giả Hữu Thịnh ở cuối bài văn" : "Hiển thị thẻ tác giả Hữu Thịnh ở cuối bài thơ"}
             </span>
             <span className="text-xs font-mono text-[var(--text-secondary)]">
-              Nếu tắt, bài thơ sẽ ẩn thẻ tác giả để người đọc tập trung hoàn toàn vào câu từ
+              Nếu tắt, bài viết sẽ ẩn thẻ tác giả để người đọc tập trung hoàn toàn vào câu từ
             </span>
           </div>
 

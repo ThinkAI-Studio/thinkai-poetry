@@ -22,48 +22,73 @@ interface InkVerseReaderProps {
   className?: string;
 }
 
+function parsePoemContent(contentHtml: string): StanzaItem[] {
+  if (!contentHtml || typeof contentHtml !== "string") return [];
+
+  // Match <div class="...stanza...">...</div>
+  const stanzaRegex = /<div[^>]*class="[^"]*stanza[^"]*"[^>]*>([\s\S]*?)<\/div>/gi;
+  const stanzaMatches = Array.from(contentHtml.matchAll(stanzaRegex));
+
+  if (stanzaMatches.length > 0) {
+    return stanzaMatches.map((sMatch, sIdx) => {
+      const stanzaInner = sMatch[1];
+      const verseRegex = /<p[^>]*class="([^"]*)"[^>]*>([\s\S]*?)<\/p>|<p[^>]*>([\s\S]*?)<\/p>/gi;
+      const verseMatches = Array.from(stanzaInner.matchAll(verseRegex));
+
+      const verses = verseMatches.map((vMatch, vIdx) => {
+        const text = (vMatch[2] || vMatch[3] || "").replace(/<[^>]+>/g, "").trim();
+        const className = vMatch[1] || "verse";
+        return { id: `v-${sIdx}-${vIdx}`, text, className };
+      });
+
+      return {
+        id: `stanza-${sIdx}`,
+        verses: verses.length > 0 ? verses : [{ id: `v-${sIdx}-0`, text: stanzaInner.replace(/<[^>]+>/g, "").trim(), className: "verse" }],
+      };
+    });
+  }
+
+  // Match all <p> tags
+  const pRegex = /<p[^>]*class="([^"]*)"[^>]*>([\s\S]*?)<\/p>|<p[^>]*>([\s\S]*?)<\/p>/gi;
+  const pMatches = Array.from(contentHtml.matchAll(pRegex));
+
+  if (pMatches.length > 0) {
+    return [
+      {
+        id: "stanza-0",
+        verses: pMatches.map((pMatch, idx) => {
+          const text = (pMatch[2] || pMatch[3] || "").replace(/<[^>]+>/g, "").trim();
+          const className = pMatch[1] || "verse";
+          return { id: `v-${idx}`, text, className };
+        }),
+      },
+    ];
+  }
+
+  // Fallback cho văn bản thuần dòng
+  const lines = contentHtml.replace(/<[^>]+>/g, "").split(/\n+/).map((l) => l.trim()).filter(Boolean);
+  if (lines.length > 0) {
+    return [
+      {
+        id: "stanza-0",
+        verses: lines.map((text, idx) => ({ id: `v-${idx}`, text, className: "verse" })),
+      },
+    ];
+  }
+
+  return [];
+}
+
 export function InkVerseReader({ contentHtml, fontSize, className }: InkVerseReaderProps) {
   const prefersReduced = usePrefersReducedMotion();
 
-  // Phân giải HTML thành cấu trúc Khổ thơ (Stanza) & Câu thơ (Verse)
-  const stanzas = useMemo<StanzaItem[]>(() => {
-    if (typeof window === "undefined") {
-      return [];
-    }
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(contentHtml, "text/html");
-    const stanzaEls = Array.from(doc.querySelectorAll(".stanza"));
-
-    if (stanzaEls.length === 0) {
-      // Fallback nếu bài thơ chỉ chứa các thẻ <p>
-      const pEls = Array.from(doc.querySelectorAll("p"));
-      return [
-        {
-          id: "stanza-0",
-          verses: pEls.map((p, idx) => ({
-            id: `v-${idx}`,
-            text: p.textContent || "",
-            className: p.className || "verse",
-          })),
-        },
-      ];
-    }
-
-    return stanzaEls.map((stanza, sIdx) => ({
-      id: `stanza-${sIdx}`,
-      verses: Array.from(stanza.querySelectorAll(".verse")).map((v, vIdx) => ({
-        id: `v-${sIdx}-${vIdx}`,
-        text: v.textContent || "",
-        className: v.className || "verse",
-      })),
-    }));
-  }, [contentHtml]);
+  // Phân giải HTML đồng nhất giữa Server (SSR) và Client để tránh Hydration Mismatch
+  const stanzas = useMemo<StanzaItem[]>(() => parsePoemContent(contentHtml), [contentHtml]);
 
   if (stanzas.length === 0) {
-    // Fallback SSR an toàn
     return (
       <div
-        className={cn("font-poem-verse poem-body max-w-lg mx-auto select-text", className)}
+        className={cn("font-poem-verse poem-body max-w-lg mx-auto space-y-10 select-text", className)}
         style={{ fontSize: `${fontSize}px`, color: "var(--text-primary)" }}
         dangerouslySetInnerHTML={{ __html: contentHtml }}
       />
