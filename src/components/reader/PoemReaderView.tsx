@@ -112,9 +112,12 @@ export function PoemReaderView({ poem }: PoemReaderViewProps) {
           </h1>
 
           <div className="flex items-center justify-center flex-wrap gap-2 sm:gap-3 text-xs font-mono text-[var(--text-muted)]">
-            {poem.author && (
+            {poem.show_author_info !== false && poem.author && (
               <>
-                <span className="font-serif font-bold text-[var(--text-primary)]">{poem.author.name}</span>
+                <span className="font-serif font-bold text-[var(--text-primary)]">
+                  {poem.author.name}
+                  {poem.author.pen_name ? ` (${poem.author.pen_name})` : ""}
+                </span>
                 <span>•</span>
               </>
             )}
@@ -180,8 +183,8 @@ export function PoemReaderView({ poem }: PoemReaderViewProps) {
           )}
         </div>
 
-        {/* THÔNG TIN TÁC GIẢ (CHỈ HIỂN THỊ KHI ADMIN BẬT: show_author_info === true) */}
-        {poem.show_author_info && poem.author && (
+        {/* THÔNG TIN TÁC GIẢ (CHỈ HIỂN THỊ KHI BẬT: show_author_info !== false) */}
+        {poem.show_author_info !== false && poem.author && (
           <div className="tai-card rounded-2xl p-6 md:p-8 mt-10 border border-[var(--border-subtle)] flex flex-col sm:flex-row items-center sm:items-start gap-5">
             <div className="w-20 h-20 shrink-0 bg-[var(--bg-elevated)] border border-[var(--border-subtle)] rounded-full flex items-center justify-center overflow-hidden shadow-xs">
               {poem.author.avatar_url ? (
@@ -202,10 +205,11 @@ export function PoemReaderView({ poem }: PoemReaderViewProps) {
                 Tác giả thi phẩm
               </span>
               <Link
-                href="/tac-gia"
+                href="/authors"
                 className="font-poem-heading text-xl font-bold text-[var(--text-primary)] hover:text-[var(--accent-green)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-green)] rounded"
               >
                 {poem.author.name}
+                {poem.author.pen_name ? ` (${poem.author.pen_name})` : ""}
               </Link>
               <p className="font-poem-verse text-sm text-[var(--text-secondary)] leading-relaxed max-w-xl">
                 {poem.author.bio}

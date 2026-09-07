@@ -142,11 +142,13 @@ export function FloatingPoemNote({ className }: { className?: string }) {
           </div>
         )}
 
-        {/* Ký tên tác giả */}
-        <div className="mt-8 text-right font-poem-heading italic text-base text-neutral-700 dark:text-neutral-300 pr-2">
-          — {currentPoem.author?.name || "Thịnh"}
-          {currentPoem.author?.pen_name ? ` (${currentPoem.author.pen_name})` : ""}
-        </div>
+        {/* Ký tên tác giả (chỉ hiện khi bật hiển thị tác giả) */}
+        {currentPoem.show_author_info !== false && (
+          <div className="mt-8 text-right font-poem-heading italic text-base text-neutral-700 dark:text-neutral-300 pr-2">
+            — {currentPoem.author?.name || "Thịnh"}
+            {currentPoem.author?.pen_name ? ` (${currentPoem.author.pen_name})` : ""}
+          </div>
+        )}
 
         {/* Chân Tờ Note: Nút lùi / tới */}
         <div className="mt-8 pt-4 border-t border-dashed border-amber-900/15 dark:border-white/10 flex items-center justify-between text-xs font-mono">

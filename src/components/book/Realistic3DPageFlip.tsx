@@ -262,8 +262,8 @@ function PageRight({
           </div>
         )}
 
-        {/* Tác giả & Con dấu Triện Son (Chỉ hiện ở trang cuối của tác phẩm) */}
-        {isLastPageOfPoem && (
+        {/* Tác giả & Con dấu Triện Son (Chỉ hiện khi bật hiển thị tác giả & ở trang cuối của tác phẩm) */}
+        {isLastPageOfPoem && (poem.show_author_info !== false) && (
           <div className="mt-8 flex items-center justify-end gap-3 select-none">
             <div className="text-right">
               <span className="block font-poem-heading text-sm font-semibold text-neutral-800 dark:text-[#EAE6DF]">
@@ -439,8 +439,8 @@ function PageMobile({
           </div>
         )}
 
-        {/* Con dấu triện son tác giả ở cuối bài */}
-        {isLastPageOfPoem && (
+        {/* Con dấu triện son tác giả ở cuối bài (Chỉ hiện khi bật hiển thị tác giả) */}
+        {isLastPageOfPoem && (poem.show_author_info !== false) && (
           <div className="mt-6 flex items-center justify-end gap-3 select-none">
             <div className="text-right">
               <span className="block font-poem-heading text-sm font-semibold text-neutral-800 dark:text-[#EAE6DF]">

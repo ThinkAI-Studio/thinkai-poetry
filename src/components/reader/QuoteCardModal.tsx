@@ -26,13 +26,16 @@ export function QuoteCardModal({
   authorName,
 }: QuoteCardModalProps) {
   const resolvedTitle = poemTitle || poem?.title || "Thi Phẩm";
+  const isAuthorVisible = poem ? poem.show_author_info !== false : true;
   const resolvedAuthor =
     authorName ||
-    (poem?.author?.name
-      ? poem.author.pen_name
-        ? `${poem.author.name} (${poem.author.pen_name})`
-        : poem.author.name
-      : "Thịnh (Wind)");
+    (isAuthorVisible
+      ? poem?.author?.name
+        ? poem.author.pen_name
+          ? `${poem.author.name} (${poem.author.pen_name})`
+          : poem.author.name
+        : "Thịnh (Wind)"
+      : null);
   const initialQuote = defaultQuote || poem?.excerpt || "Gió xuân thổi nhẹ qua rèm\nNhành hoa hé nụ dịu êm đón ngày...";
 
   const [quote, setQuote] = useState(initialQuote);
@@ -102,7 +105,7 @@ export function QuoteCardModal({
 
       ctx.font = '16px "Be Vietnam Pro", sans-serif';
       ctx.fillStyle = isDark ? "#A1A1AA" : "#5A5A5A";
-      ctx.fillText(`Tác giả: ${resolvedAuthor} • Wind`, canvas.width / 2, 565);
+      ctx.fillText(resolvedAuthor ? `Tác giả: ${resolvedAuthor} • Wind` : "Wind", canvas.width / 2, 565);
 
       // Download
       const link = document.createElement("a");
@@ -175,7 +178,7 @@ export function QuoteCardModal({
               <div className="mt-4 pt-3 border-t border-current/10 w-full flex flex-col items-center">
                 <span className="font-poem-heading font-bold text-sm">— {resolvedTitle} —</span>
                 <span className="text-[11px] font-mono opacity-70 mt-0.5">
-                  {resolvedAuthor} • Wind
+                  {resolvedAuthor ? `${resolvedAuthor} • Wind` : "Wind"}
                 </span>
               </div>
             </div>
