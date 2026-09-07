@@ -26,7 +26,7 @@ export default function AdminPoemsListPage() {
   const [toast, setToast] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
   useEffect(() => {
-    fetch("/api/poems")
+    fetch("/api/poems?include_drafts=true")
       .then((res) => res.json())
       .then((json) => {
         if (json.success && json.data && json.data.length > 0) {
@@ -47,13 +47,14 @@ export default function AdminPoemsListPage() {
     p.title.toLowerCase().includes(search.toLowerCase())
   );
 
-  const toggleAuthorInfo = async (poem: Poem) => {
-    const nextState = !poem.show_author_info;
+  const togglePoemVisibility = async (poem: Poem) => {
+    const isCurrentlyPublished = poem.status === "published";
+    const nextStatus: "published" | "draft" = isCurrentlyPublished ? "draft" : "published";
     setUpdatingId(poem.id);
 
     // Optimistic UI update
     setPoems((prev) =>
-      prev.map((p) => (p.id === poem.id ? { ...p, show_author_info: nextState } : p))
+      prev.map((p) => (p.id === poem.id ? { ...p, status: nextStatus } : p))
     );
 
     try {
@@ -62,7 +63,7 @@ export default function AdminPoemsListPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           id: poem.id,
-          show_author_info: nextState,
+          status: nextStatus,
         }),
       });
 
@@ -76,12 +77,14 @@ export default function AdminPoemsListPage() {
 
       showToast(
         "success",
-        `Đã ${nextState ? "bật" : "ẩn"} thẻ tác giả cho "${poem.title}".`
+        nextStatus === "published"
+          ? `Đã xuất bản và hiển thị bài "${poem.title}" lên website.`
+          : `Đã ẩn toàn bộ bài "${poem.title}" khỏi website và sách 3D.`
       );
     } catch (err: any) {
       // Rollback on error
       setPoems((prev) =>
-        prev.map((p) => (p.id === poem.id ? { ...p, show_author_info: poem.show_author_info } : p))
+        prev.map((p) => (p.id === poem.id ? { ...p, status: poem.status } : p))
       );
       showToast(
         "error",
@@ -161,7 +164,7 @@ export default function AdminPoemsListPage() {
 
         <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] text-[11px] font-mono text-[var(--text-secondary)] shrink-0 self-start sm:self-auto shadow-xs">
           <span className="w-2 h-2 rounded-full bg-emerald-500" />
-          <span>Tự động lưu khi bật/ẩn thẻ tác giả</span>
+          <span>Tự động lưu khi bật/ẩn bài viết trên web</span>
         </div>
       </div>
 
@@ -170,12 +173,12 @@ export default function AdminPoemsListPage() {
         <table className="w-full text-left text-xs font-mono min-w-[640px]">
           <thead className="bg-[var(--text-primary)]/[0.04] border-b border-[var(--border-subtle)] uppercase tracking-wider text-[var(--text-secondary)] whitespace-nowrap">
             <tr>
-              <th className="py-3 px-4 min-w-[200px]">Bài thơ</th>
+              <th className="py-3 px-4 min-w-[200px]">Tác phẩm</th>
               <th className="py-3 px-4">Thể loại</th>
               <th className="py-3 px-4">Tác giả</th>
               <th className="py-3 px-4 min-w-[170px]">
                 <div className="flex items-center gap-1.5">
-                  <span>Hiện thẻ tác giả</span>
+                  <span>Hiển thị trên Web</span>
                   <span className="text-[10px] lowercase text-[var(--accent-green)] dark:text-emerald-400 font-normal">
                     (tự động lưu)
                   </span>
@@ -207,6 +210,7 @@ export default function AdminPoemsListPage() {
               filteredPoems.map((poem) => {
                 const isUpdating = updatingId === poem.id;
                 const isJustSaved = justSavedId === poem.id;
+                const isPublished = poem.status === "published";
 
                 return (
                   <tr key={poem.id} className="hover:bg-[var(--text-primary)]/[0.02] transition-colors">
@@ -215,6 +219,11 @@ export default function AdminPoemsListPage() {
                         <span className="font-serif font-bold text-base text-[var(--text-primary)]">
                           {poem.title}
                         </span>
+                        {poem.status !== "published" && (
+                          <span className="text-[10px] font-mono text-amber-700 dark:text-amber-400 mt-0.5">
+                            [Đang ẩn khỏi website]
+                          </span>
+                        )}
                         <span className="text-[11px] text-[var(--text-muted)] line-clamp-1 italic">
                           “{poem.excerpt}”
                         </span>
@@ -253,18 +262,22 @@ export default function AdminPoemsListPage() {
                     <td className="py-3.5 px-4">
                       <button
                         type="button"
-                        onClick={() => toggleAuthorInfo(poem)}
+                        onClick={() => togglePoemVisibility(poem)}
                         disabled={isUpdating}
                         className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-serif font-medium transition-all cursor-pointer active:scale-95 ${
                           isUpdating
                             ? "bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/30 animate-pulse cursor-wait"
                             : isJustSaved
                             ? "bg-emerald-500/20 text-emerald-800 dark:text-emerald-200 border border-emerald-500/50 shadow-xs"
-                            : poem.show_author_info
-                            ? "bg-[var(--accent-green)]/15 text-[var(--accent-green)] dark:text-emerald-400 border border-[var(--accent-green)]/35 hover:bg-[var(--accent-green)]/25"
-                            : "bg-[var(--text-primary)]/8 text-[var(--text-muted)] border border-[var(--border-subtle)] hover:bg-[var(--text-primary)]/15"
+                            : isPublished
+                            ? "bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 border border-emerald-500/35 hover:bg-emerald-500/25"
+                            : "bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/30 hover:bg-amber-500/25"
                         }`}
-                        title="Bấm để chuyển đổi Ẩn/Hiện — Hệ thống sẽ tự động lưu ngay lập tức"
+                        title={
+                          isPublished
+                            ? "Bài đang hiển thị công khai trên website. Bấm để ẩn toàn bộ bài."
+                            : "Bài đang ẩn khỏi website. Bấm để xuất bản và hiển thị lại."
+                        }
                       >
                         {isUpdating ? (
                           <>
@@ -276,15 +289,15 @@ export default function AdminPoemsListPage() {
                             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
                             <span>✓ Đã lưu</span>
                           </>
-                        ) : poem.show_author_info ? (
+                        ) : isPublished ? (
                           <>
-                            <Eye className="w-3.5 h-3.5 text-[var(--accent-green)] dark:text-emerald-400" />
-                            <span>Bật (Hiện)</span>
+                            <Eye className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                            <span>Đang Hiện</span>
                           </>
                         ) : (
                           <>
-                            <EyeOff className="w-3.5 h-3.5 opacity-60" />
-                            <span>Tắt (Ẩn)</span>
+                            <EyeOff className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+                            <span>Đang Ẩn</span>
                           </>
                         )}
                       </button>

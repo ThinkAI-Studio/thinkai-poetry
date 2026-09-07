@@ -7,8 +7,9 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const formType = searchParams.get("form_type") as any;
     const limit = searchParams.get("limit") ? parseInt(searchParams.get("limit")!) : undefined;
+    const includeDrafts = searchParams.get("include_drafts") === "true";
 
-    const poems = await getPoems({ formType, limit });
+    const poems = await getPoems({ formType, limit, includeDrafts });
     return NextResponse.json({ success: true, data: poems });
   } catch (error: any) {
     return NextResponse.json(

@@ -44,13 +44,14 @@ export function PoeticBookProvider({
   const [highlightedText, setHighlightedText] = useState<string | null>(null);
   const [soundEnabled, setSoundEnabledState] = useState(true);
 
-  // Nạp thêm poems từ API nếu có
+  // Nạp thêm poems từ API nếu có (chỉ lấy bài đã xuất bản)
   useEffect(() => {
     fetch("/api/poems")
       .then((res) => res.json())
       .then((json) => {
-        if (json.success && json.data && json.data.length > 0) {
-          setPoems(json.data);
+        if (json.success && json.data) {
+          const published = json.data.filter((p: Poem) => p.status === "published");
+          setPoems(published);
         }
       })
       .catch(() => {});

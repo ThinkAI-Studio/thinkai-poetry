@@ -98,25 +98,25 @@
     "view_count": 120,
     "published_at": "2026-09-05T18:38:00.000Z",
     "created_at": "2026-09-05T18:38:00.000Z",
-    "updated_at": "2026-09-05T18:38:00.000Z",
+    "updated_at": "2026-09-07T16:25:16.566Z",
     "author": {
       "id": "a0000000-0000-0000-0000-000000000001",
-      "name": "Thịnh",
-      "pen_name": "Wind",
+      "bio": "Tác giả Phan Hữu Thịnh (Bút danh: Wind) - một cây bút sáng tác tự do, coi thơ ca như một khoảng lặng bình yên để ghi lại những nhịp đập chân thật nhất của tâm hồn. Không gò bó mình trong những quy chuẩn hay khuôn mẫu cố định, phong cách nghệ thuật của Wind hoàn toàn chắt lọc từ dòng chảy cảm xúc tự nhiên.\nMỗi vần thơ của Wind là một mảnh ghép ký ướt, một dòng nhật ký đong đầy tâm tư được cất lên vào những thời điểm nhất định trong cuộc sống—khi tâm hồn cần một nơi trú ngụ hay khi những trăn trở thường nhật chạm đến độ chín. Như chính cái tên của mình, Wind mang đến một phong cách viết tự do, nhẹ nhàng nhưng đầy lắng đọng, lay động lòng người bằng sự chân thành và tinh tế.",
+      "name": "Wind",
       "slug": "thinh-wind",
-      "period": "Văn học đương đại",
-      "bio": "Tác giả Thịnh (Ký danh: Wind) — Người gieo vần cho những miền ký ức và triết lý nhân sinh sâu lắng. Tác giả của các thi phẩm đương đại giàu cảm xúc trong không gian thi ca Wind.",
-      "avatar_url": "/floral/flower-pink.png",
+      "period": "Tản Văn / Thơ",
+      "pen_name": "🍃",
+      "avatar_url": "/floral/leaf-1.png",
       "created_at": "2026-09-04T13:29:52.622438+00:00",
-      "updated_at": "2026-09-07T15:33:15.71202+00:00"
+      "updated_at": "2026-09-07T16:13:11.972989+00:00"
     },
     "category": {
       "id": "c0000000-0000-0000-0000-000000000005",
       "name": "Tản Văn",
       "slug": "tan-van",
-      "description": "Tùy bút & cảm xúc văn xuôi lắng đọng",
+      "created_at": "2026-09-05T15:18:48.927373+00:00",
       "sort_order": 5,
-      "created_at": "2026-09-04T17:50:44.109Z"
+      "description": "Tùy bút & cảm cảm xúc văn xuôi"
     }
   }
 ]

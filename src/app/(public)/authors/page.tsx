@@ -14,8 +14,8 @@ export default async function AuthorsPage() {
   const authors = await getAuthors();
   const allPoems = await getPoems();
   const author = authors[0];
-  // Chỉ hiển thị những thi phẩm mà tác giả cho phép hiện thông tin tác giả
-  const poems = allPoems.filter((p) => p.show_author_info !== false);
+  // Chỉ hiển thị những thi phẩm đã xuất bản và tác giả cho phép hiện thông tin tác giả
+  const poems = allPoems.filter((p) => p.status === "published" && p.show_author_info !== false);
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 md:py-16">

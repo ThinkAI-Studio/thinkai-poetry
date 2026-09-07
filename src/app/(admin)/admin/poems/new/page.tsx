@@ -54,6 +54,7 @@ function NewPoemFormContent() {
   const [excerpt, setExcerpt] = useState("");
   const [poemText, setPoemText] = useState("");
   const [showAuthorInfo, setShowAuthorInfo] = useState(true);
+  const [status, setStatus] = useState<"published" | "draft">("published");
   const [isSaved, setIsSaved] = useState(false);
   const [savedPoemSlug, setSavedPoemSlug] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -65,7 +66,7 @@ function NewPoemFormContent() {
     setIsEditMode(true);
     setLoadingEdit(true);
 
-    fetch("/api/poems")
+    fetch("/api/poems?include_drafts=true")
       .then((res) => res.json())
       .then((json) => {
         if (json.success && Array.isArray(json.data)) {
@@ -76,6 +77,7 @@ function NewPoemFormContent() {
             setExcerpt(found.excerpt || "");
             setPoemText(found.raw_text || "");
             setShowAuthorInfo(found.show_author_info !== false);
+            setStatus(found.status === "draft" ? "draft" : "published");
             if (found.collection_id) setCollectionId(found.collection_id);
 
             const isProseType = ["tan_van", "van_xuoi", "but_ky", "doan_van"].includes(found.form_type);
@@ -311,6 +313,7 @@ function NewPoemFormContent() {
             content_html: stanzas,
             raw_text: poemText,
             show_author_info: showAuthorInfo,
+            status,
             collection_id: collectionId || null,
           }),
         });
@@ -328,6 +331,7 @@ function NewPoemFormContent() {
             raw_text: poemText,
             audio_url: null,
             show_author_info: showAuthorInfo,
+            status,
             collection_id: collectionId || null,
           }),
         });
@@ -682,6 +686,30 @@ function NewPoemFormContent() {
                 : "text-lg leading-loose text-center"
             )}
           />
+        </div>
+
+        {/* CÔNG TẮC XUẤT BẢN / ẨN BÀI VIẾT TRÊN WEBSITE */}
+        <div className="p-4 bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-2xl flex items-center justify-between shadow-xs">
+          <div className="flex flex-col">
+            <span className="text-sm font-serif font-bold text-[var(--text-primary)]">
+              {status === "published"
+                ? "Xuất bản công khai (Hiển thị bài viết trên website & sách 3D)"
+                : "Tạm ẩn bài viết (Lưu bản nháp, ẩn khỏi website & sách 3D)"}
+            </span>
+            <span className="text-xs font-mono text-[var(--text-secondary)]">
+              Bật để người đọc có thể thưởng thức tác phẩm trên website, tắt để tạm thời ẩn bài
+            </span>
+          </div>
+
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              checked={status === "published"}
+              onChange={(e) => setStatus(e.target.checked ? "published" : "draft")}
+              className="sr-only peer"
+            />
+            <div className="w-11 h-6 bg-[var(--text-primary)]/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[var(--accent-green)]"></div>
+          </label>
         </div>
 
         {/* CÔNG TẮC BẬT / TẮT THÔNG TIN TÁC GIẢ */}

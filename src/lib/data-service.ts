@@ -191,10 +191,11 @@ export async function getPoems(options?: {
   categorySlug?: string;
   collectionSlug?: string;
   limit?: number;
+  includeDrafts?: boolean;
 }): Promise<Poem[]> {
   if (isSupabaseConfigured()) {
     try {
-      const supabase = getSupabaseClient();
+      const supabase = getSupabaseClient(options?.includeDrafts ?? false);
       let query = supabase
         .from("poems")
         .select(`
@@ -203,8 +204,11 @@ export async function getPoems(options?: {
           category:categories(*),
           annotations(*)
         `)
-        .eq("status", "published")
         .order("created_at", { ascending: false });
+
+      if (!options?.includeDrafts) {
+        query = query.eq("status", "published");
+      }
 
       if (options?.formType && options.formType !== "all") {
         query = query.eq("form_type", options.formType);
@@ -224,6 +228,9 @@ export async function getPoems(options?: {
 
   // Fallback
   let results = getAllFallbackPoems();
+  if (!options?.includeDrafts) {
+    results = results.filter((p) => p.status === "published");
+  }
   if (options?.formType && options.formType !== "all") {
     results = results.filter((p) => p.form_type === options.formType);
   }
@@ -233,11 +240,14 @@ export async function getPoems(options?: {
   return results;
 }
 
-export async function getPoemBySlug(slug: string): Promise<Poem | null> {
+export async function getPoemBySlug(
+  slug: string,
+  options?: { includeDrafts?: boolean }
+): Promise<Poem | null> {
   if (isSupabaseConfigured()) {
     try {
-      const supabase = getSupabaseClient();
-      const { data, error } = await supabase
+      const supabase = getSupabaseClient(options?.includeDrafts ?? false);
+      let query = supabase
         .from("poems")
         .select(`
           *,
@@ -245,9 +255,13 @@ export async function getPoemBySlug(slug: string): Promise<Poem | null> {
           category:categories(*),
           annotations(*)
         `)
-        .eq("slug", slug)
-        .single();
+        .eq("slug", slug);
 
+      if (!options?.includeDrafts) {
+        query = query.eq("status", "published");
+      }
+
+      const { data, error } = await query.single();
       if (!error && data) {
         return data as Poem;
       }
@@ -257,7 +271,13 @@ export async function getPoemBySlug(slug: string): Promise<Poem | null> {
   }
 
   // Fallback
-  return getAllFallbackPoems().find((p) => p.slug === slug) || null;
+  const poems = getAllFallbackPoems();
+  const poem = poems.find((p) => p.slug === slug);
+  if (!poem) return null;
+  if (!options?.includeDrafts && poem.status !== "published") {
+    return null;
+  }
+  return poem;
 }
 
 export async function createPoem(

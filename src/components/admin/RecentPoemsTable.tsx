@@ -31,13 +31,14 @@ export function RecentPoemsTable({ initialPoems }: RecentPoemsTableProps) {
     }, 4000);
   };
 
-  const toggleAuthorInfo = async (poem: Poem) => {
-    const nextState = !poem.show_author_info;
+  const togglePoemVisibility = async (poem: Poem) => {
+    const isCurrentlyPublished = poem.status === "published";
+    const nextStatus: "published" | "draft" = isCurrentlyPublished ? "draft" : "published";
     setUpdatingId(poem.id);
 
     // Optimistic UI update
     setPoems((prev) =>
-      prev.map((p) => (p.id === poem.id ? { ...p, show_author_info: nextState } : p))
+      prev.map((p) => (p.id === poem.id ? { ...p, status: nextStatus } : p))
     );
 
     try {
@@ -46,7 +47,7 @@ export function RecentPoemsTable({ initialPoems }: RecentPoemsTableProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           id: poem.id,
-          show_author_info: nextState,
+          status: nextStatus,
         }),
       });
 
@@ -60,12 +61,14 @@ export function RecentPoemsTable({ initialPoems }: RecentPoemsTableProps) {
 
       showToast(
         "success",
-        `Đã ${nextState ? "bật" : "ẩn"} thẻ tác giả cho "${poem.title}".`
+        nextStatus === "published"
+          ? `Đã xuất bản và hiển thị bài "${poem.title}" lên website.`
+          : `Đã ẩn bài "${poem.title}" khỏi website và sách 3D.`
       );
     } catch (err: any) {
       // Rollback on error
       setPoems((prev) =>
-        prev.map((p) => (p.id === poem.id ? { ...p, show_author_info: poem.show_author_info } : p))
+        prev.map((p) => (p.id === poem.id ? { ...p, status: poem.status } : p))
       );
       showToast(
         "error",
@@ -115,7 +118,7 @@ export function RecentPoemsTable({ initialPoems }: RecentPoemsTableProps) {
             Các thi phẩm gần đây
           </h2>
           <p className="text-xs font-mono text-[var(--text-muted)] mt-0.5">
-            Bấm vào nút &ldquo;Thẻ tác giả&rdquo; để bật hoặc ẩn danh tính tác giả (hệ thống tự động lưu)
+            Bấm nút để ẩn hoặc hiện toàn bộ bài thơ/tản văn trên website và sách 3D (tự động lưu)
           </p>
         </div>
         <Link
@@ -132,9 +135,9 @@ export function RecentPoemsTable({ initialPoems }: RecentPoemsTableProps) {
         <table className="w-full text-left text-xs font-mono">
           <thead className="bg-[var(--text-primary)]/[0.04] border-b border-[var(--border-subtle)] uppercase tracking-wider text-[var(--text-secondary)] whitespace-nowrap">
             <tr>
-              <th className="py-3.5 px-4 min-w-[200px]">Tiêu đề bài thơ</th>
+              <th className="py-3.5 px-4 min-w-[200px]">Tiêu đề bài thơ / văn</th>
               <th className="py-3.5 px-4">Thể loại</th>
-              <th className="py-3.5 px-4 min-w-[150px]">Thẻ tác giả</th>
+              <th className="py-3.5 px-4 min-w-[170px]">Trạng thái hiển thị</th>
               <th className="py-3.5 px-4">Lượt đọc</th>
               <th className="py-3.5 px-4">Ngày tạo</th>
               <th className="py-3.5 px-4 text-right">Thao tác</th>
@@ -151,6 +154,7 @@ export function RecentPoemsTable({ initialPoems }: RecentPoemsTableProps) {
               poems.map((poem) => {
                 const isUpdating = updatingId === poem.id;
                 const isJustSaved = justSavedId === poem.id;
+                const isPublished = poem.status === "published";
                 const isProse =
                   poem.form_type === "tan_van" ||
                   poem.category?.slug === "tan-van" ||
@@ -159,7 +163,14 @@ export function RecentPoemsTable({ initialPoems }: RecentPoemsTableProps) {
                 return (
                   <tr key={poem.id} className="hover:bg-[var(--text-primary)]/[0.02] transition-colors">
                     <td className="py-3.5 px-4 font-serif font-bold text-sm text-[var(--text-primary)] whitespace-normal min-w-[200px]">
-                      {poem.title}
+                      <div className="flex flex-col">
+                        <span>{poem.title}</span>
+                        {poem.status !== "published" && (
+                          <span className="text-[10px] font-mono text-amber-700 dark:text-amber-400 mt-0.5">
+                            [Đang ẩn khỏi web]
+                          </span>
+                        )}
+                      </div>
                     </td>
                     <td className="py-3.5 px-4">
                       {isProse ? (
@@ -187,38 +198,42 @@ export function RecentPoemsTable({ initialPoems }: RecentPoemsTableProps) {
                     <td className="py-3.5 px-4">
                       <button
                         type="button"
-                        onClick={() => toggleAuthorInfo(poem)}
+                        onClick={() => togglePoemVisibility(poem)}
                         disabled={isUpdating}
                         className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[11px] font-serif font-medium transition-all cursor-pointer active:scale-95 ${
                           isUpdating
                             ? "bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/30 animate-pulse cursor-wait"
                             : isJustSaved
                             ? "bg-emerald-500/20 text-emerald-800 dark:text-emerald-200 border border-emerald-500/50 shadow-xs"
-                            : poem.show_author_info
-                            ? "bg-[var(--accent-green)]/15 text-[var(--accent-green)] dark:text-emerald-400 border border-[var(--accent-green)]/35 hover:bg-[var(--accent-green)]/25"
-                            : "bg-[var(--text-primary)]/8 text-[var(--text-muted)] border border-[var(--border-subtle)] hover:bg-[var(--text-primary)]/15"
+                            : isPublished
+                            ? "bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 border border-emerald-500/35 hover:bg-emerald-500/25"
+                            : "bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/30 hover:bg-amber-500/25"
                         }`}
-                        title="Bấm để bật/ẩn thông tin tác giả — Hệ thống sẽ tự động lưu ngay lập tức"
+                        title={
+                          isPublished
+                            ? "Bài đang hiển thị công khai trên website. Bấm để ẩn toàn bộ bài."
+                            : "Bài đang ẩn khỏi website. Bấm để xuất bản và hiển thị lại."
+                        }
                       >
                         {isUpdating ? (
                           <>
-                            <Loader2 className="w-3 h-3 animate-spin" />
+                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
                             <span>Đang lưu...</span>
                           </>
                         ) : isJustSaved ? (
                           <>
-                            <CheckCircle2 className="w-3 h-3 text-emerald-500" />
+                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
                             <span>✓ Đã lưu</span>
                           </>
-                        ) : poem.show_author_info ? (
+                        ) : isPublished ? (
                           <>
-                            <Eye className="w-3 h-3 text-[var(--accent-green)] dark:text-emerald-400" />
-                            <span>Bật (Hiện)</span>
+                            <Eye className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                            <span>Đang Hiện</span>
                           </>
                         ) : (
                           <>
-                            <EyeOff className="w-3 h-3 opacity-60" />
-                            <span>Tắt (Ẩn)</span>
+                            <EyeOff className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+                            <span>Đang Ẩn</span>
                           </>
                         )}
                       </button>
@@ -231,19 +246,21 @@ export function RecentPoemsTable({ initialPoems }: RecentPoemsTableProps) {
                     </td>
                     <td className="py-3.5 px-4 text-right">
                       <div className="inline-flex items-center gap-3">
-                        <Link
-                          href={`/poems/${poem.slug}`}
-                          target="_blank"
-                          className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] inline-flex items-center gap-1 transition-colors"
-                          title="Xem bài thơ"
-                        >
-                          <ExternalLink className="w-3 h-3" />
-                          <span>Xem</span>
-                        </Link>
+                        {isPublished && (
+                          <Link
+                            href={`/poems/${poem.slug}`}
+                            target="_blank"
+                            className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] inline-flex items-center gap-1 transition-colors"
+                            title="Xem bài thơ trên web"
+                          >
+                            <ExternalLink className="w-3 h-3" />
+                            <span>Xem</span>
+                          </Link>
+                        )}
                         <Link
                           href={`/admin/poems/new?edit=${poem.id}`}
                           className="text-[var(--accent-green)] dark:text-emerald-400 hover:underline inline-flex items-center gap-1 transition-colors"
-                          title="Chỉnh sửa bài thơ"
+                          title="Chỉnh sửa bài viết"
                         >
                           <Edit3 className="w-3 h-3" />
                           <span>Sửa</span>

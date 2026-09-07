@@ -5,9 +5,11 @@ import { TaiButton } from "@/components/tai-ui/TaiButton";
 import { RecentPoemsTable } from "@/components/admin/RecentPoemsTable";
 
 export default async function AdminDashboardPage() {
-  const poems = await getPoems();
+  const poems = await getPoems({ includeDrafts: true });
   const collections = await getCollections();
   const totalPoems = poems.length;
+  const publishedPoemsCount = poems.filter((p) => p.status === "published").length;
+  const hiddenPoemsCount = totalPoems - publishedPoemsCount;
   const totalCollections = collections.length;
   const totalViews = poems.reduce((acc, p) => acc + p.view_count, 0);
 
@@ -42,12 +44,12 @@ export default async function AdminDashboardPage() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
         <div className="p-6 bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-2xl shadow-xs flex flex-col justify-between hover:border-[var(--accent-green)]/40 transition-colors">
           <div className="flex items-center justify-between text-[var(--text-secondary)] mb-3">
-            <span className="text-xs font-mono uppercase tracking-wider">Tổng Thi Phẩm</span>
+            <span className="text-xs font-mono uppercase tracking-wider">Tổng Tác Phẩm</span>
           </div>
           <span className="text-3xl font-mono font-bold text-[var(--text-primary)]">{totalPoems}</span>
           <span className="text-[11px] font-mono text-[var(--accent-green)] dark:text-emerald-400 mt-2 flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-            Đã xuất bản 100%
+            {publishedPoemsCount}/{totalPoems} đang hiển thị • {hiddenPoemsCount} đang ẩn
           </span>
         </div>
 
