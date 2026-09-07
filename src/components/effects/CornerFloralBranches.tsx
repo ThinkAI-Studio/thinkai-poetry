@@ -57,7 +57,6 @@ const MomijiLeaf = memo(
           fill={`url(#momiji-grad-${variant})`}
           stroke="rgba(0,0,0,0.22)"
           strokeWidth="0.5"
-          filter="url(#leafSoftGlow)"
         />
         {/* Gân lá phát sáng tinh tế */}
         <path
@@ -118,7 +117,6 @@ const MomijiLeafAngle = memo(
           fill={`url(#momiji-grad-${variant})`}
           stroke="rgba(0,0,0,0.2)"
           strokeWidth="0.45"
-          filter="url(#leafSoftGlow)"
         />
         <path
           d="M 0,18 L 0,2 M 0,14 L -8,3 M 0,14 L 7,3 M 0,10 L -10,-4 M 0,10 L 9,-4"
@@ -276,10 +274,7 @@ const CherryBlossomFlower = memo(
     }
 
     return (
-      <g
-        transform={`translate(${x}, ${y}) rotate(${rotate}) scale(${scale})`}
-        filter="url(#sakuraDropShadow)"
-      >
+      <g transform={`translate(${x}, ${y}) rotate(${rotate}) scale(${scale})`}>
         {/* 5 Cánh hoa đào với rãnh chẻ nhẹ ở đầu cánh */}
         {[0, 72, 144, 216, 288].map((angle, idx) => (
           <path
@@ -433,20 +428,6 @@ const SharedBranchDefs = memo(() => (
         <stop offset="100%" stopColor="#FDA4AF" />
       </linearGradient>
 
-      {/* Đổ bóng tự nhiên cho cánh hoa */}
-      <filter id="sakuraDropShadow" x="-30%" y="-30%" width="160%" height="160%">
-        <feDropShadow dx="0" dy="1.5" stdDeviation="1.8" floodColor="#000" floodOpacity="0.28" />
-      </filter>
-
-      {/* Phát sáng tự nhiên dịu nhẹ cho lá phong đỏ */}
-      <filter id="leafSoftGlow" x="-25%" y="-25%" width="150%" height="150%">
-        <feDropShadow dx="0" dy="1.4" stdDeviation="2" floodColor="#3B0505" floodOpacity="0.32" />
-      </filter>
-
-      {/* Đổ bóng tự nhiên dịu nhẹ cho thân cành */}
-      <filter id="branchDepthShadow" x="-25%" y="-25%" width="150%" height="150%">
-        <feDropShadow dx="1" dy="2.5" stdDeviation="3.5" floodColor="#180C06" floodOpacity="0.22" />
-      </filter>
     </defs>
   </svg>
 ));
@@ -463,11 +444,11 @@ const LeftCornerBranchSvg = memo(() => {
       viewBox="0 0 490 410"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className="w-full h-full select-none pointer-events-none drop-shadow-lg"
+      className="w-full h-full select-none pointer-events-none drop-shadow-md"
       preserveAspectRatio="xMinYMin meet"
     >
       {/* 1. TẦNG NHÁNH HẬU CẢNH (Background Depth Twigs - Mờ nhẹ tạo chiều sâu) */}
-      <g opacity="0.65" filter="url(#branchDepthShadow)">
+      <g opacity="0.65">
         <path
           d="M 120,40 C 150,22 195,15 240,18 C 265,20 285,14 315,8"
           stroke="url(#twigBarkGrad)"
@@ -493,7 +474,7 @@ const LeftCornerBranchSvg = memo(() => {
       </g>
 
       {/* 2. TẦNG THÂN CHÍNH GÂN GUỐC (Main Organic Trunk with knots & ridges) */}
-      <g filter="url(#branchDepthShadow)">
+      <g>
         {/* Thân cây dáng bonsai cổ thụ uốn lượn có độ vuốt thon (Tapering) */}
         <path
           d="M -15,-10 
@@ -678,11 +659,11 @@ const RightCornerBranchSvg = memo(() => {
       viewBox="0 0 490 410"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className="w-full h-full select-none pointer-events-none drop-shadow-lg"
+      className="w-full h-full select-none pointer-events-none drop-shadow-md"
       preserveAspectRatio="xMaxYMin meet"
     >
       {/* 1. TẦNG NHÁNH HẬU CẢNH (Background Depth Twigs) */}
-      <g opacity="0.65" filter="url(#branchDepthShadow)">
+      <g opacity="0.65">
         <path
           d="M 370,40 C 340,22 295,15 250,18 C 225,20 205,14 175,8"
           stroke="url(#twigBarkGrad)"
@@ -708,7 +689,7 @@ const RightCornerBranchSvg = memo(() => {
       </g>
 
       {/* 2. TẦNG THÂN CHÍNH GÂN GUỐC PHÍA PHẢI */}
-      <g filter="url(#branchDepthShadow)">
+      <g>
         {/* Thân chính vươn cong từ góc phải trên vào trung tâm */}
         <path
           d="M 505,-10 
@@ -899,23 +880,15 @@ interface FallingParticleConfig {
 }
 
 const FALLING_PARTICLES: FallingParticleConfig[] = [
-  // Hạt rơi từ cành bên trái (lan tỏa tự nhiên từ 4% đến 32% chiều ngang)
-  { id: "fp-1", type: "sakura-petal", startX: "5%", driftX: 50, duration: 8.2, delay: -1.8, scale: 1.0, initialRotate: 25, mobileVisible: true },
-  { id: "fp-2", type: "maple", startX: "12%", driftX: 75, duration: 11.5, delay: -5.8, scale: 0.8, initialRotate: -40, variant: "crimson", mobileVisible: true },
-  { id: "fp-3", type: "sakura-pair", startX: "19%", driftX: 40, duration: 9.2, delay: -3.5, scale: 0.9, initialRotate: 55, mobileVisible: false },
-  { id: "fp-4", type: "maple", startX: "8%", driftX: 60, duration: 12.8, delay: -9.2, scale: 0.68, initialRotate: 18, variant: "amber", mobileVisible: true },
-  { id: "fp-5", type: "sakura-petal", startX: "26%", driftX: -35, duration: 7.6, delay: -0.9, scale: 1.15, initialRotate: -25, mobileVisible: false },
-  { id: "fp-6", type: "maple", startX: "16%", driftX: 45, duration: 10.6, delay: -4.5, scale: 0.85, initialRotate: 65, variant: "scarlet", mobileVisible: false },
-  { id: "fp-7", type: "sakura-petal", startX: "22%", driftX: 30, duration: 8.8, delay: -7.2, scale: 0.75, initialRotate: -15, mobileVisible: true },
+  // Hạt rơi từ cành bên trái (lan tỏa tự nhiên, nhẹ nhàng, tối ưu GPU)
+  { id: "fp-1", type: "sakura-petal", startX: "6%", driftX: 45, duration: 9.2, delay: -1.8, scale: 0.95, initialRotate: 25, mobileVisible: true },
+  { id: "fp-2", type: "maple", startX: "14%", driftX: 65, duration: 11.5, delay: -5.5, scale: 0.78, initialRotate: -35, variant: "crimson", mobileVisible: true },
+  { id: "fp-3", type: "sakura-pair", startX: "24%", driftX: 35, duration: 9.8, delay: -3.2, scale: 0.88, initialRotate: 45, mobileVisible: false },
 
-  // Hạt rơi từ cành bên phải (lan tỏa tự nhiên từ 68% đến 96% chiều ngang)
-  { id: "fp-8", type: "sakura-petal", startX: "93%", driftX: -50, duration: 8.6, delay: -2.8, scale: 0.95, initialRotate: -32, mobileVisible: true },
-  { id: "fp-9", type: "maple", startX: "85%", driftX: -70, duration: 12.0, delay: -6.8, scale: 0.78, initialRotate: 48, variant: "ruby", mobileVisible: true },
-  { id: "fp-10", type: "sakura-pair", startX: "78%", driftX: -42, duration: 9.8, delay: -1.5, scale: 1.05, initialRotate: 18, mobileVisible: false },
-  { id: "fp-11", type: "maple", startX: "90%", driftX: -55, duration: 13.2, delay: -10.5, scale: 0.7, initialRotate: -60, variant: "scarlet", mobileVisible: true },
-  { id: "fp-12", type: "sakura-petal", startX: "71%", driftX: 35, duration: 8.0, delay: -4.2, scale: 0.85, initialRotate: -12, mobileVisible: false },
-  { id: "fp-13", type: "maple", startX: "81%", driftX: -45, duration: 11.0, delay: -8.5, scale: 0.82, initialRotate: 32, variant: "amber", mobileVisible: false },
-  { id: "fp-14", type: "sakura-petal", startX: "75%", driftX: -30, duration: 9.0, delay: -6.1, scale: 0.8, initialRotate: 40, mobileVisible: true },
+  // Hạt rơi từ cành bên phải (lan tỏa tự nhiên, nhẹ nhàng, tối ưu GPU)
+  { id: "fp-4", type: "sakura-petal", startX: "92%", driftX: -45, duration: 8.8, delay: -2.2, scale: 0.9, initialRotate: -30, mobileVisible: true },
+  { id: "fp-5", type: "maple", startX: "84%", driftX: -60, duration: 12.0, delay: -6.8, scale: 0.75, initialRotate: 40, variant: "ruby", mobileVisible: true },
+  { id: "fp-6", type: "sakura-pair", startX: "76%", driftX: -38, duration: 10.2, delay: -4.0, scale: 0.85, initialRotate: 20, mobileVisible: false },
 ];
 
 const FallingDriftingParticle = memo(({ p }: { p: FallingParticleConfig }) => {
@@ -1002,78 +975,51 @@ export function CornerFloralBranches() {
   const [isActive, setIsActive] = useState(false);
   const prefersReduced = useReducedMotion();
 
+  // Lắng nghe vùng sách bằng IntersectionObserver - hoàn toàn không tốn CPU/layout reflow
   useEffect(() => {
-    let ticking = false;
+    const bookElem = document.getElementById("khong-gian-sach-tho");
+    if (!bookElem) return;
 
-    const checkScrollState = () => {
-      const bookElem = document.getElementById("khong-gian-sach-tho");
-      const currentScroll = window.scrollY;
-
-      if (bookElem) {
-        const rect = bookElem.getBoundingClientRect();
-        // Lướt tới phần sách -> Vươn cành hoa ra
-        const inBookZone = rect.top <= 140 || currentScroll > 380;
-        // Lướt ngược lên đầu trang hero/intro -> Thu cành hoa lại
-        const atTopIntro = currentScroll < 200 && rect.top > 140;
-
-        if (atTopIntro) {
-          setIsActive(false);
-        } else if (inBookZone) {
-          setIsActive(true);
-        }
-      } else {
-        // Trên các trang khác không chứa id khong-gian-sach-tho
-        if (currentScroll < 200) {
-          setIsActive(false);
-        } else if (currentScroll > 380) {
-          setIsActive(true);
-        }
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsActive(entry.isIntersecting);
+      },
+      {
+        rootMargin: "-120px 0px 0px 0px",
+        threshold: 0,
       }
+    );
 
-      ticking = false;
-    };
-
-    const onScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(checkScrollState);
-        ticking = true;
-      }
-    };
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    checkScrollState();
-
-    return () => window.removeEventListener("scroll", onScroll);
+    observer.observe(bookElem);
+    return () => observer.disconnect();
   }, []);
 
   return (
     <>
-      {/* 1. TOÀN CỤC SVG SHADERS & FILTERS */}
+      {/* 1. TOÀN CỤC SVG SHADERS & GRADIENTS */}
       <SharedBranchDefs />
 
-      {/* 2. STYLE HOẠT ẢNH THI CA: ĐUNG ĐƯA THEO GIÓ & RỤNG LÁ */}
+      {/* 2. STYLE HOẠT ẢNH THI CA: ĐUNG ĐƯA THEO GIÓ & RỤNG LÁ (GPU ACCELERATED 2D) */}
       <style jsx global>{`
         @keyframes fallingLeavesCascade {
           0% {
-            transform: translate3d(0, -35px, 0) rotate(var(--leaf-rot-start, 0deg)) rotateY(0deg);
+            transform: translate3d(0, -35px, 0) rotate(var(--leaf-rot-start, 0deg));
             opacity: 0;
           }
-          8% {
-            opacity: 0.98;
+          10% {
+            opacity: 0.95;
           }
-          45% {
+          50% {
             transform: translate3d(var(--leaf-drift-x, 45px), 48vh, 0)
-              rotate(calc(var(--leaf-rot-start, 0deg) + 160deg))
-              rotateY(180deg);
-            opacity: 0.92;
+              rotate(calc(var(--leaf-rot-start, 0deg) + 160deg));
+            opacity: 0.9;
           }
           85% {
-            opacity: 0.8;
+            opacity: 0.75;
           }
           100% {
-            transform: translate3d(calc(var(--leaf-drift-x, 45px) * 1.65), 105vh, 0)
-              rotate(var(--leaf-rot-end, 360deg))
-              rotateY(360deg);
+            transform: translate3d(calc(var(--leaf-drift-x, 45px) * 1.5), 105vh, 0)
+              rotate(var(--leaf-rot-end, 360deg));
             opacity: 0;
           }
         }
@@ -1120,7 +1066,7 @@ export function CornerFloralBranches() {
         }
       `}</style>
 
-      {/* 3. KHUNG CÀNH HOA CỐ ĐỊNH GÓC HEADER (FIXED Z-35, POINTER-EVENTS-NONE) */}
+      {/* 3. KHUNG CÀNH HOA CỐ ĐỊNH GÓC HEADER (FIXED Z-35, POINTER-EVENTS-NONE, GPU LAYER) */}
       <AnimatePresence>
         {isActive && (
           <div
@@ -1132,19 +1078,19 @@ export function CornerFloralBranches() {
               initial={
                 prefersReduced
                   ? { opacity: 0 }
-                  : { opacity: 0, x: -110, y: -70, scale: 0.78, rotate: -12 }
+                  : { opacity: 0, x: -90, y: -50, scale: 0.85, rotate: -10 }
               }
               animate={{ opacity: 1, x: 0, y: 0, scale: 1, rotate: 0 }}
               exit={
                 prefersReduced
                   ? { opacity: 0 }
-                  : { opacity: 0, x: -100, y: -60, scale: 0.8, rotate: -10 }
+                  : { opacity: 0, x: -80, y: -40, scale: 0.88, rotate: -8 }
               }
               transition={{
-                duration: 0.85,
-                ease: [0.16, 1, 0.3, 1], // Spring-like natural ease
+                duration: 0.65,
+                ease: [0.16, 1, 0.3, 1],
               }}
-              className="absolute top-[-15px] sm:top-[-20px] left-[-20px] sm:left-[-35px] md:left-[-45px] w-[140px] xs:w-[170px] sm:w-[250px] md:w-[320px] lg:w-[380px] xl:w-[430px] max-w-[40vw] h-[120px] xs:h-[140px] sm:h-[210px] md:h-[265px] lg:h-[315px] xl:h-[355px] pointer-events-none origin-top-left"
+              className="absolute top-[-15px] sm:top-[-20px] left-[-20px] sm:left-[-35px] md:left-[-45px] w-[140px] xs:w-[170px] sm:w-[250px] md:w-[320px] lg:w-[380px] xl:w-[430px] max-w-[40vw] h-[120px] xs:h-[140px] sm:h-[210px] md:h-[265px] lg:h-[315px] xl:h-[355px] pointer-events-none origin-top-left transform-gpu will-change-[transform,opacity]"
             >
               <div className="w-full h-full branch-organic-sway-left">
                 <LeftCornerBranchSvg />
@@ -1156,19 +1102,19 @@ export function CornerFloralBranches() {
               initial={
                 prefersReduced
                   ? { opacity: 0 }
-                  : { opacity: 0, x: 110, y: -70, scale: 0.78, rotate: 12 }
+                  : { opacity: 0, x: 90, y: -50, scale: 0.85, rotate: 10 }
               }
               animate={{ opacity: 1, x: 0, y: 0, scale: 1, rotate: 0 }}
               exit={
                 prefersReduced
                   ? { opacity: 0 }
-                  : { opacity: 0, x: 100, y: -60, scale: 0.8, rotate: 10 }
+                  : { opacity: 0, x: 80, y: -40, scale: 0.88, rotate: 8 }
               }
               transition={{
-                duration: 0.85,
+                duration: 0.65,
                 ease: [0.16, 1, 0.3, 1],
               }}
-              className="absolute top-[-15px] sm:top-[-20px] right-[-20px] sm:right-[-35px] md:right-[-45px] w-[140px] xs:w-[170px] sm:w-[250px] md:w-[320px] lg:w-[380px] xl:w-[430px] max-w-[40vw] h-[120px] xs:h-[140px] sm:h-[210px] md:h-[265px] lg:h-[315px] xl:h-[355px] pointer-events-none origin-top-right"
+              className="absolute top-[-15px] sm:top-[-20px] right-[-20px] sm:right-[-35px] md:right-[-45px] w-[140px] xs:w-[170px] sm:w-[250px] md:w-[320px] lg:w-[380px] xl:w-[430px] max-w-[40vw] h-[120px] xs:h-[140px] sm:h-[210px] md:h-[265px] lg:h-[315px] xl:h-[355px] pointer-events-none origin-top-right transform-gpu will-change-[transform,opacity]"
             >
               <div className="w-full h-full branch-organic-sway-right">
                 <RightCornerBranchSvg />
@@ -1181,7 +1127,7 @@ export function CornerFloralBranches() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.6 }}
+                transition={{ duration: 0.5 }}
                 className="absolute inset-0 pointer-events-none overflow-hidden"
               >
                 {FALLING_PARTICLES.map((particle) => (

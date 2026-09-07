@@ -19,28 +19,45 @@ export function SiteHeader() {
   const pathname = usePathname();
   const router = useRouter();
 
+  // Lắng nghe vị trí phần sách bằng IntersectionObserver để ẩn/hiện header không gây reflow
+  useEffect(() => {
+    if (pathname !== "/") {
+      setIsBookSectionActive(false);
+      return;
+    }
+
+    const bookElem = document.getElementById("khong-gian-sach-tho");
+    if (!bookElem) {
+      setIsBookSectionActive(false);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsBookSectionActive(entry.isIntersecting);
+      },
+      {
+        rootMargin: "-120px 0px 0px 0px",
+        threshold: 0,
+      }
+    );
+
+    observer.observe(bookElem);
+    return () => observer.disconnect();
+  }, [pathname]);
+
+  // Kiểm tra scroll > 20 để đổi nền header nhẹ nhàng mà không reflow layout
   useEffect(() => {
     let ticking = false;
+    let lastScrolled = false;
+
     const handleScroll = () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
-          const scrollY = window.scrollY;
-          setIsScrolled(scrollY > 20);
-
-          const bookElem = document.getElementById("khong-gian-sach-tho");
-          if (bookElem) {
-            const rect = bookElem.getBoundingClientRect();
-            // Lướt xuống phần sách -> Header ẩn đi với motion thu vào nhẹ
-            const inBookZone = rect.top <= 140 || scrollY > 380;
-            const atTopIntro = scrollY < 200 && rect.top > 140;
-
-            if (atTopIntro) {
-              setIsBookSectionActive(false);
-            } else if (inBookZone) {
-              setIsBookSectionActive(true);
-            }
-          } else {
-            setIsBookSectionActive(false);
+          const scrolled = window.scrollY > 20;
+          if (scrolled !== lastScrolled) {
+            lastScrolled = scrolled;
+            setIsScrolled(scrolled);
           }
           ticking = false;
         });
@@ -89,10 +106,10 @@ export function SiteHeader() {
   return (
     <header
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-in-out transform",
+        "fixed top-0 left-0 right-0 z-50 transition-[transform,opacity,background-color,border-color] duration-300 ease-out transform-gpu will-change-[transform,opacity]",
         isScrolled
           ? "bg-[var(--bg-page)]/90 backdrop-blur-md border-b border-[var(--border-subtle)] py-3 shadow-xs"
-          : "bg-transparent py-5",
+          : "bg-transparent py-3 sm:py-4",
         isBookSectionActive
           ? "-translate-y-full opacity-0 pointer-events-none"
           : "translate-y-0 opacity-100 pointer-events-auto"

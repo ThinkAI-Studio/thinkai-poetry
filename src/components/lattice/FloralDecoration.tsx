@@ -309,18 +309,32 @@ export function FloralDecoration() {
   const [isPast, setIsPast] = useState(false);
   const [burstPetals, setBurstPetals] = useState<BurstPetal[]>([]);
 
-  // Lắng nghe scroll để ẩn nhẹ hoa khi cuộn xuống dưới (Sora Lattice behavior)
+  // Lắng nghe scroll nhẹ nhàng với rAF để ẩn hoa khi cuộn xuống dưới, không lag CPU
   useEffect(() => {
+    let ticking = false;
+    let lastPast = false;
+
     const handleScroll = () => {
-      const past = window.scrollY > 160;
-      setIsPast(past);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const past = window.scrollY > 180;
+          if (past !== lastPast) {
+            lastPast = past;
+            setIsPast(past);
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const handleMouseMove = (e: React.MouseEvent) => {
+    if (isPast) return;
     mouseX.set(e.clientX);
     mouseY.set(e.clientY);
   };
