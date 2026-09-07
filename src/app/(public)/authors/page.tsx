@@ -5,6 +5,8 @@ import { ArrowRoll } from "@/components/tai-ui/ArrowRoll";
 import { TiltCard } from "@/components/tai-ui/TiltCard";
 import { AuthorHeroWithAdminAccess } from "@/components/author/AuthorHeroWithAdminAccess";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Tác Giả | Wind",
   description: "Hồ sơ tác giả Thịnh (ký danh Wind) và các tác phẩm thi ca đương đại.",

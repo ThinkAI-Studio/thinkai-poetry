@@ -13,6 +13,7 @@ import {
   Edit3,
 } from "lucide-react";
 import type { Poem } from "@/types/database";
+import { broadcastPoemSync } from "@/lib/poem-sync";
 
 interface RecentPoemsTableProps {
   initialPoems: Poem[];
@@ -40,6 +41,13 @@ export function RecentPoemsTable({ initialPoems }: RecentPoemsTableProps) {
     setPoems((prev) =>
       prev.map((p) => (p.id === poem.id ? { ...p, status: nextStatus } : p))
     );
+
+    // Phát tín hiệu đồng bộ tức thì (0ms) tới tất cả các tab khác
+    broadcastPoemSync({
+      type: "POEM_VISIBILITY_CHANGED",
+      poemId: poem.id,
+      status: nextStatus,
+    });
 
     try {
       const res = await fetch("/api/poems", {
@@ -70,6 +78,11 @@ export function RecentPoemsTable({ initialPoems }: RecentPoemsTableProps) {
       setPoems((prev) =>
         prev.map((p) => (p.id === poem.id ? { ...p, status: poem.status } : p))
       );
+      broadcastPoemSync({
+        type: "POEM_VISIBILITY_CHANGED",
+        poemId: poem.id,
+        status: poem.status,
+      });
       showToast(
         "error",
         err.message || "Lỗi khi lưu thay đổi lên máy chủ."

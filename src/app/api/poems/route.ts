@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import { revalidatePath } from "next/cache";
 import { createPoem, getPoems, updatePoem } from "@/lib/data-service";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export async function GET(request: NextRequest) {
   try {
@@ -10,7 +14,11 @@ export async function GET(request: NextRequest) {
     const includeDrafts = searchParams.get("include_drafts") === "true";
 
     const poems = await getPoems({ formType, limit, includeDrafts });
-    return NextResponse.json({ success: true, data: poems });
+    const response = NextResponse.json({ success: true, data: poems });
+    response.headers.set("Cache-Control", "private, no-cache, no-store, must-revalidate, max-age=0");
+    response.headers.set("Pragma", "no-cache");
+    response.headers.set("Expires", "0");
+    return response;
   } catch (error: any) {
     return NextResponse.json(
       { success: false, error: error.message || "Lỗi khi lấy danh sách thi phẩm" },
@@ -45,7 +53,16 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error }, { status: 500 });
     }
 
-    return NextResponse.json({ success: true, data }, { status: 201 });
+    try {
+      revalidatePath("/", "layout");
+      revalidatePath("/admin", "layout");
+      revalidatePath("/poems", "layout");
+      revalidatePath("/authors", "page");
+    } catch {}
+
+    const response = NextResponse.json({ success: true, data }, { status: 201 });
+    response.headers.set("Cache-Control", "private, no-cache, no-store, must-revalidate, max-age=0");
+    return response;
   } catch (error: any) {
     return NextResponse.json(
       { success: false, error: error.message || "Lỗi khi tạo thi phẩm mới" },
@@ -81,7 +98,16 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ success: false, error }, { status: 500 });
     }
 
-    return NextResponse.json({ success: true, data });
+    try {
+      revalidatePath("/", "layout");
+      revalidatePath("/admin", "layout");
+      revalidatePath("/poems", "layout");
+      revalidatePath("/authors", "page");
+    } catch {}
+
+    const response = NextResponse.json({ success: true, data });
+    response.headers.set("Cache-Control", "private, no-cache, no-store, must-revalidate, max-age=0");
+    return response;
   } catch (error: any) {
     return NextResponse.json(
       { success: false, error: error.message || "Lỗi khi cập nhật bài thơ" },

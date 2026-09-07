@@ -17,6 +17,7 @@ import {
   X,
 } from "lucide-react";
 import type { Poem } from "@/types/database";
+import { broadcastPoemSync } from "@/lib/poem-sync";
 
 export default function AdminPoemsListPage() {
   const [poems, setPoems] = useState<Poem[]>(mockPoems);
@@ -26,7 +27,7 @@ export default function AdminPoemsListPage() {
   const [toast, setToast] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
   useEffect(() => {
-    fetch("/api/poems?include_drafts=true")
+    fetch(`/api/poems?include_drafts=true&_t=${Date.now()}`, { cache: "no-store" })
       .then((res) => res.json())
       .then((json) => {
         if (json.success && json.data && json.data.length > 0) {
@@ -57,6 +58,13 @@ export default function AdminPoemsListPage() {
       prev.map((p) => (p.id === poem.id ? { ...p, status: nextStatus } : p))
     );
 
+    // Phát tín hiệu đồng bộ tức thì (0ms) tới tất cả các tab khác
+    broadcastPoemSync({
+      type: "POEM_VISIBILITY_CHANGED",
+      poemId: poem.id,
+      status: nextStatus,
+    });
+
     try {
       const res = await fetch("/api/poems", {
         method: "PATCH",
@@ -86,6 +94,11 @@ export default function AdminPoemsListPage() {
       setPoems((prev) =>
         prev.map((p) => (p.id === poem.id ? { ...p, status: poem.status } : p))
       );
+      broadcastPoemSync({
+        type: "POEM_VISIBILITY_CHANGED",
+        poemId: poem.id,
+        status: poem.status,
+      });
       showToast(
         "error",
         err.message || "Lỗi khi lưu thay đổi lên máy chủ."

@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import { Poem } from "@/types/database";
 import { mockPoems } from "@/data/mock-poetry";
 import { playPageTurnSound, setPageTurnSoundEnabled } from "@/lib/book-audio";
+import { POEM_SYNC_CHANNEL, PoemSyncMessage } from "@/lib/poem-sync";
 
 export type ReadingViewMode = "book" | "note";
 
@@ -25,6 +26,7 @@ interface PoeticBookContextType {
   goToNextPage: () => void;
   goToPrevPage: () => void;
   searchAndFlipTo: (poemSlug: string, keyword?: string) => void;
+  refreshPoems: () => Promise<void>;
 }
 
 const PoeticBookContext = createContext<PoeticBookContextType | undefined>(undefined);
@@ -36,7 +38,9 @@ export function PoeticBookProvider({
   children: React.ReactNode;
   initialPoems?: Poem[];
 }) {
-  const [poems, setPoems] = useState<Poem[]>(initialPoems);
+  const [poems, setPoems] = useState<Poem[]>(() =>
+    initialPoems.filter((p) => p.status === "published")
+  );
   const [isOpen, setIsOpen] = useState(false);
   const [readingMode, setReadingMode] = useState<ReadingViewMode>("book");
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
@@ -44,18 +48,87 @@ export function PoeticBookProvider({
   const [highlightedText, setHighlightedText] = useState<string | null>(null);
   const [soundEnabled, setSoundEnabledState] = useState(true);
 
-  // Nạp thêm poems từ API nếu có (chỉ lấy bài đã xuất bản)
-  useEffect(() => {
-    fetch("/api/poems")
-      .then((res) => res.json())
-      .then((json) => {
-        if (json.success && json.data) {
-          const published = json.data.filter((p: Poem) => p.status === "published");
-          setPoems(published);
-        }
-      })
-      .catch(() => {});
+  // Hàm tải lại danh sách bài thơ với cache-busting tuyệt đối
+  const refreshPoems = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/poems?_t=${Date.now()}`, {
+        cache: "no-store",
+        headers: { Pragma: "no-cache" },
+      });
+      const json = await res.json();
+      if (json.success && Array.isArray(json.data)) {
+        const published = json.data.filter((p: Poem) => p.status === "published");
+        setPoems(published);
+      }
+    } catch {}
   }, []);
+
+  // Cập nhật khi initialPoems từ server SSR thay đổi
+  useEffect(() => {
+    if (initialPoems && initialPoems.length > 0) {
+      setPoems(initialPoems.filter((p) => p.status === "published"));
+    }
+  }, [initialPoems]);
+
+  // Nạp thêm poems từ API ngay khi mount
+  useEffect(() => {
+    refreshPoems();
+  }, [refreshPoems]);
+
+  // Lắng nghe tín hiệu đồng bộ thời gian thực giữa các Tab (0ms delay khi Admin bấm Ẩn/Hiện)
+  useEffect(() => {
+    const handleSyncMessage = (msg: PoemSyncMessage) => {
+      if (msg.type === "POEM_VISIBILITY_CHANGED") {
+        if (msg.status === "draft") {
+          // Ngay lập tức ẩn bài thơ khỏi giao diện sách 3D trong 0ms
+          setPoems((prev) => prev.filter((p) => p.id !== msg.poemId));
+        } else {
+          // Bài thơ được xuất bản lại, cập nhật ngay lập tức
+          refreshPoems();
+        }
+      } else if (msg.type === "POEMS_MUTATED") {
+        refreshPoems();
+      }
+    };
+
+    let channel: BroadcastChannel | null = null;
+    try {
+      channel = new BroadcastChannel(POEM_SYNC_CHANNEL);
+      channel.onmessage = (e) => {
+        if (e.data) handleSyncMessage(e.data);
+      };
+    } catch {}
+
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === "poetic_sync_timestamp" && e.newValue) {
+        try {
+          const parsed = JSON.parse(e.newValue);
+          handleSyncMessage(parsed);
+        } catch {}
+      }
+    };
+
+    // Khi người dùng chuyển qua lại giữa các tab (Focus lại tab web)
+    const handleFocus = () => {
+      refreshPoems();
+    };
+
+    window.addEventListener("storage", handleStorage);
+    window.addEventListener("focus", handleFocus);
+
+    return () => {
+      if (channel) channel.close();
+      window.removeEventListener("storage", handleStorage);
+      window.removeEventListener("focus", handleFocus);
+    };
+  }, [refreshPoems]);
+
+  // Đảm bảo không bị vỡ trang khi bài thơ đang xem bị ẩn đi
+  useEffect(() => {
+    if (poems.length > 0 && currentPageIndex >= poems.length) {
+      setCurrentPageIndex(Math.max(0, poems.length - 1));
+    }
+  }, [poems.length, currentPageIndex]);
 
   const totalPages = poems.length;
   const currentPoem = poems[currentPageIndex] || poems[0] || null;
@@ -180,6 +253,7 @@ export function PoeticBookProvider({
         goToNextPage,
         goToPrevPage,
         searchAndFlipTo,
+        refreshPoems,
       }}
     >
       {children}

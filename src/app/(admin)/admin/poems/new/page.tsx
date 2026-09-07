@@ -7,6 +7,7 @@ import { ArrowLeft, Plus, Check, Feather, BookOpen, Clock, FileText, Upload, Ext
 import { TaiButton } from "@/components/tai-ui/TaiButton";
 import { mockCollections } from "@/data/mock-poetry";
 import { cn } from "@/lib/utils";
+import { broadcastPoemSync } from "@/lib/poem-sync";
 
 interface CategoryOption {
   id: string;
@@ -345,6 +346,13 @@ function NewPoemFormContent() {
       setSavedPoemSlug(json.data?.slug || slug);
       setIsSaved(true);
       setTimeout(() => setIsSaved(false), 8000);
+
+      // Đồng bộ thời gian thực ngay lập tức tới website và các tab khác
+      broadcastPoemSync({
+        type: "POEM_VISIBILITY_CHANGED",
+        poemId: json.data?.id || editId || "",
+        status: status as "published" | "draft",
+      });
     } catch (err: any) {
       setErrorMsg(err.message || "Đã xảy ra lỗi");
     } finally {
