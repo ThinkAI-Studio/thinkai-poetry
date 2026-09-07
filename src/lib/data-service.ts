@@ -52,11 +52,22 @@ const localCategories: Category[] = [...mockCategories];
  */
 export function isSupabaseConfigured(): boolean {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
-  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_PUBLISHABLE_KEY;
+  const anonKey =
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+    process.env.SUPABASE_PUBLISHABLE_KEY ||
+    process.env.SUPABASE_ANON_KEY;
 
   if (!url || !url.startsWith("https://")) return false;
   if (!anonKey || anonKey.includes("placeholder") || anonKey.length < 15) return false;
   return true;
+}
+
+export function hasSupabaseServiceRoleKey(): boolean {
+  const serviceKey =
+    process.env.SUPABASE_SERVICE_ROLE_KEY ||
+    process.env.SUPABASE_SECRET_KEY ||
+    process.env.SUPABASE_SERVICE_KEY;
+  return Boolean(serviceKey && !serviceKey.includes("placeholder") && serviceKey.length > 20);
 }
 
 /**
@@ -64,14 +75,75 @@ export function isSupabaseConfigured(): boolean {
  */
 function getSupabaseClient(useServiceRole: boolean = false) {
   const url = (process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL)!;
-  const anonKey = (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_PUBLISHABLE_KEY)!;
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY || anonKey;
+  const anonKey = (
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+    process.env.SUPABASE_PUBLISHABLE_KEY ||
+    process.env.SUPABASE_ANON_KEY
+  )!;
+  const serviceKey =
+    process.env.SUPABASE_SERVICE_ROLE_KEY ||
+    process.env.SUPABASE_SECRET_KEY ||
+    process.env.SUPABASE_SERVICE_KEY ||
+    anonKey;
   const key = useServiceRole ? serviceKey : anonKey;
 
   return createClient(url, key, {
     auth: { persistSession: false },
   });
 }
+
+// UUID validation helper
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const DEFAULT_AUTHOR_UUID = "a0000000-0000-0000-0000-000000000001";
+
+// Map various category slugs/keys to valid Supabase category UUIDs
+const CATEGORY_UUID_MAP: Record<string, string> = {
+  "luc_bat": "c0000000-0000-0000-0000-000000000001",
+  "tho-luc-bat": "c0000000-0000-0000-0000-000000000001",
+  "cat-1": "c0000000-0000-0000-0000-000000000001",
+  "song_that_luc_bat": "c0000000-0000-0000-0000-000000000001",
+  "tu_do": "c0000000-0000-0000-0000-000000000002",
+  "tho-tu-do": "c0000000-0000-0000-0000-000000000002",
+  "cat-2": "c0000000-0000-0000-0000-000000000002",
+  "tho_4_5_chu": "c0000000-0000-0000-0000-000000000002",
+  "that_ngon": "c0000000-0000-0000-0000-000000000003",
+  "tho-duong-luat": "c0000000-0000-0000-0000-000000000003",
+  "duong_luat": "c0000000-0000-0000-0000-000000000003",
+  "tho_7_chu": "c0000000-0000-0000-0000-000000000003",
+  "cat-3": "c0000000-0000-0000-0000-000000000003",
+  "tho_thien": "c0000000-0000-0000-0000-000000000004",
+  "tho-thien": "c0000000-0000-0000-0000-000000000004",
+  "thien": "c0000000-0000-0000-0000-000000000004",
+  "cat-4": "c0000000-0000-0000-0000-000000000004",
+  "tan_van": "c0000000-0000-0000-0000-000000000005",
+  "tan-van": "c0000000-0000-0000-0000-000000000005",
+  "van_xuoi": "c0000000-0000-0000-0000-000000000005",
+  "but_ky": "c0000000-0000-0000-0000-000000000005",
+  "doan_van": "c0000000-0000-0000-0000-000000000005",
+  "cat-tan-van": "c0000000-0000-0000-0000-000000000005",
+};
+
+// Map form_type to PostgreSQL check constraint allowed values ('luc_bat', 'song_that_luc_bat', 'that_ngon', 'tu_do')
+const FORM_TYPE_MAP: Record<string, string> = {
+  "tho-luc-bat": "luc_bat",
+  "luc_bat": "luc_bat",
+  "song_that_luc_bat": "song_that_luc_bat",
+  "that_ngon": "that_ngon",
+  "tho-duong-luat": "that_ngon",
+  "duong_luat": "that_ngon",
+  "tho_7_chu": "that_ngon",
+  "tu_do": "tu_do",
+  "tho-tu-do": "tu_do",
+  "tho_thien": "tu_do",
+  "tho-thien": "tu_do",
+  "thien": "tu_do",
+  "tan_van": "tu_do",
+  "tan-van": "tu_do",
+  "van_xuoi": "tu_do",
+  "but_ky": "tu_do",
+  "doan_van": "tu_do",
+  "tho_4_5_chu": "tu_do",
+};
 
 // ==============================================================================
 // 1. POEMS (THI PHẨM)
@@ -154,18 +226,34 @@ export async function getPoemBySlug(slug: string): Promise<Poem | null> {
 export async function createPoem(
   poemData: Partial<Poem>
 ): Promise<{ data: Poem | null; error: string | null }> {
+  // Resolve valid UUID for author
+  const rawAuthorId = poemData.author_id || localAuthors[0]?.id;
+  const authorId = (rawAuthorId && UUID_REGEX.test(rawAuthorId)) ? rawAuthorId : DEFAULT_AUTHOR_UUID;
+
+  // Resolve valid UUID for category
+  const rawCatId = poemData.category_id || poemData.form_type || "luc_bat";
+  const categoryId = (rawCatId && UUID_REGEX.test(rawCatId))
+    ? rawCatId
+    : (CATEGORY_UUID_MAP[rawCatId] || CATEGORY_UUID_MAP[poemData.form_type || "luc_bat"] || "c0000000-0000-0000-0000-000000000001");
+
+  // Resolve valid DB form_type
+  const rawFormType = poemData.form_type || "luc_bat";
+  const dbFormType = FORM_TYPE_MAP[rawFormType] || "tu_do";
+
   const newPoem: Poem = {
-    id: poemData.id || `poem-${Date.now()}`,
+    id: poemData.id && UUID_REGEX.test(poemData.id)
+      ? poemData.id
+      : `f0000000-0000-0000-0000-${Date.now().toString(16).slice(-12).padStart(12, "0")}`,
     title: poemData.title || "Chưa đặt tên",
     slug: poemData.slug || `bai-tho-${Date.now()}`,
-    form_type: poemData.form_type || "luc_bat",
+    form_type: dbFormType as PoemFormType,
     excerpt: poemData.excerpt || null,
     content_json: poemData.content_json || {},
     content_html: poemData.content_html || "",
     raw_text: poemData.raw_text || "",
-    author_id: poemData.author_id || localAuthors[0].id,
+    author_id: authorId,
     show_author_info: poemData.show_author_info ?? true,
-    category_id: poemData.category_id || localCategories[0].id,
+    category_id: categoryId,
     cover_image_url: poemData.cover_image_url || "/floral/flower-pink.png",
     audio_url: poemData.audio_url || null,
     status: poemData.status || "published",
@@ -174,8 +262,8 @@ export async function createPoem(
     published_at: new Date().toISOString(),
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
-    author: localAuthors.find((a) => a.id === poemData.author_id) || localAuthors[0],
-    category: localCategories.find((c) => c.id === poemData.category_id) || localCategories[0],
+    author: localAuthors.find((a) => a.id === authorId) || localAuthors[0],
+    category: localCategories.find((c) => c.id === categoryId) || localCategories[0],
   };
 
   if (isSupabaseConfigured()) {
@@ -186,34 +274,60 @@ export async function createPoem(
         .insert({
           title: newPoem.title,
           slug: newPoem.slug,
-          form_type: newPoem.form_type,
+          form_type: dbFormType,
           excerpt: newPoem.excerpt,
           content_json: newPoem.content_json,
           content_html: newPoem.content_html,
           raw_text: newPoem.raw_text,
-          author_id: newPoem.author_id,
+          author_id: authorId,
           show_author_info: newPoem.show_author_info,
-          category_id: newPoem.category_id,
+          category_id: categoryId,
           cover_image_url: newPoem.cover_image_url,
           audio_url: newPoem.audio_url,
           status: newPoem.status,
           is_featured: newPoem.is_featured,
         })
-        .select()
+        .select(`
+          *,
+          author:authors(*),
+          category:categories(*)
+        `)
         .single();
 
-      if (!error && data) {
+      if (error) {
+        console.error("Lỗi Supabase createPoem:", error);
+        if (error.code === "42501") {
+          return {
+            data: null,
+            error: "Thiếu biến SUPABASE_SERVICE_ROLE_KEY trên Vercel: Supabase RLS yêu cầu Service Role Key để cấp quyền thêm bài thơ mới từ Cổng Quản Trị.",
+          };
+        }
+        if (error.code === "23505") {
+          return {
+            data: null,
+            error: "Đường dẫn tĩnh (slug) của bài thơ này đã tồn tại trên hệ thống. Vui lòng đổi slug khác.",
+          };
+        }
+        return {
+          data: null,
+          error: `Lỗi Supabase (${error.code || "DB"}): ${error.message}`,
+        };
+      }
+
+      if (data) {
         saveLocalStoredPoem(data as Poem);
         return { data: data as Poem, error: null };
-      } else if (error) {
-        console.warn("Lỗi Supabase createPoem:", error.message);
       }
     } catch (e: any) {
-      console.warn("Lỗi kết nối Supabase:", e.message);
+      console.error("Lỗi kết nối Supabase createPoem:", e);
+      return {
+        data: null,
+        error: `Không thể kết nối đến Supabase: ${e.message}`,
+      };
     }
   }
 
-  // Luôn cập nhật vào local storage để thao tác admin thành công và bền vững
+  // Fallback lưu local khi không cấu hình Supabase (offline dev)
   saveLocalStoredPoem(newPoem);
   return { data: newPoem, error: null };
 }

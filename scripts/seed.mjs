@@ -101,11 +101,76 @@ async function runSeed() {
       { id: "c0000000-0000-0000-0000-000000000002", name: "Thơ Tự Do", slug: "tho-tu-do", description: "Phóng khoáng, khai mở nội tâm", sort_order: 2 },
       { id: "c0000000-0000-0000-0000-000000000003", name: "Thơ Đường Luật", slug: "tho-duong-luat", description: "Thất ngôn nghiêm cẩn", sort_order: 3 },
       { id: "c0000000-0000-0000-0000-000000000004", name: "Thơ Thiền & Tĩnh Tâm", slug: "tho-thien", description: "Lắng đọng, an nhiên", sort_order: 4 },
+      { id: "c0000000-0000-0000-0000-000000000005", name: "Tản Văn", slug: "tan-van", description: "Tùy bút & cảm cảm xúc văn xuôi", sort_order: 5 },
     ]);
     if (errCat) console.warn("Lỗi categories:", errCat.message);
     else console.log("✓ Categories đã nạp thành công.");
 
-    console.log("\n🎉 KHỞI TẠO CƠ BẢN HOÀN TẤT THÀNH CÔNG! (Toàn bộ dữ liệu thơ mẫu đã được xóa)");
+    console.log("3. Đang đồng bộ thi phẩm (poems) từ local-poems.json...");
+    const localPoemsPath = path.join(rootDir, "src/data/local-poems.json");
+    if (fs.existsSync(localPoemsPath)) {
+      const localPoems = JSON.parse(fs.readFileSync(localPoemsPath, "utf-8"));
+      const CATEGORY_MAP = {
+        "tho-luc-bat": "c0000000-0000-0000-0000-000000000001",
+        "cat-1": "c0000000-0000-0000-0000-000000000001",
+        "tho-tu-do": "c0000000-0000-0000-0000-000000000002",
+        "tu_do": "c0000000-0000-0000-0000-000000000002",
+        "cat-2": "c0000000-0000-0000-0000-000000000002",
+        "tho-duong-luat": "c0000000-0000-0000-0000-000000000003",
+        "cat-3": "c0000000-0000-0000-0000-000000000003",
+        "tho-thien": "c0000000-0000-0000-0000-000000000004",
+        "cat-4": "c0000000-0000-0000-0000-000000000004",
+        "tan-van": "c0000000-0000-0000-0000-000000000005",
+        "tan_van": "c0000000-0000-0000-0000-000000000005",
+        "cat-tan-van": "c0000000-0000-0000-0000-000000000005",
+      };
+      const FORM_TYPE_MAP = {
+        "tho-luc-bat": "luc_bat",
+        "luc_bat": "luc_bat",
+        "tho-tu-do": "tu_do",
+        "tu_do": "tu_do",
+        "tho-duong-luat": "that_ngon",
+        "duong_luat": "that_ngon",
+        "tho-thien": "tu_do",
+        "thien": "tu_do",
+        "tan-van": "tu_do",
+        "tan_van": "tu_do",
+      };
+      const dbRows = localPoems.map((p, idx) => {
+        const categoryId = CATEGORY_MAP[p.category_id] || CATEGORY_MAP[p.form_type] || CATEGORY_MAP["tho-luc-bat"];
+        const formType = FORM_TYPE_MAP[p.form_type] || "luc_bat";
+        const pad = (idx + 1).toString(16).padStart(12, "0");
+        const poemId = p.id?.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)
+          ? p.id
+          : `f0000000-0000-0000-0000-${pad}`;
+        return {
+          id: poemId,
+          title: p.title,
+          slug: p.slug,
+          form_type: formType,
+          excerpt: p.excerpt || "",
+          content_json: p.content_json || {},
+          content_html: p.content_html,
+          raw_text: p.raw_text,
+          author_id: "a0000000-0000-0000-0000-000000000001",
+          show_author_info: p.show_author_info ?? true,
+          category_id: categoryId,
+          cover_image_url: p.cover_image_url || "/floral/flower-pink.png",
+          audio_url: p.audio_url || null,
+          status: p.status || "published",
+          is_featured: p.is_featured ?? false,
+          view_count: p.view_count || 0,
+          published_at: p.published_at || new Date().toISOString(),
+          created_at: p.created_at || new Date().toISOString(),
+          updated_at: p.updated_at || new Date().toISOString(),
+        };
+      });
+      const { data: synced, error: errPoems } = await supabase.from("poems").upsert(dbRows, { onConflict: "slug" }).select();
+      if (errPoems) console.warn("Lỗi poems:", errPoems.message);
+      else console.log(`✓ Synchronized ${synced?.length || 0} poems to Supabase.`);
+    }
+
+    console.log("\n🎉 KHỞI TẠO DỮ LIỆU HOÀN TẤT THÀNH CÔNG!");
   } catch (e) {
     console.error("Lỗi khi nạp dữ liệu:", e);
   }

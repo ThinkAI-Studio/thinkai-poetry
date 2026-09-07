@@ -3,7 +3,7 @@
 import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { ArrowLeft, Plus, Check, Feather, BookOpen, Clock, FileText, Upload } from "lucide-react";
+import { ArrowLeft, Plus, Check, Feather, BookOpen, Clock, FileText, Upload, ExternalLink } from "lucide-react";
 import { TaiButton } from "@/components/tai-ui/TaiButton";
 import { mockCollections } from "@/data/mock-poetry";
 import { cn } from "@/lib/utils";
@@ -15,17 +15,17 @@ interface CategoryOption {
 }
 
 const DEFAULT_CATEGORY_OPTIONS: CategoryOption[] = [
-  { id: "luc_bat", name: "Thơ Lục Bát (6 - 8)", slug: "luc_bat" },
-  { id: "tu_do", name: "Thơ Tự Do", slug: "tu_do" },
-  { id: "that_ngon", name: "Thơ Đường Luật (Thất ngôn)", slug: "that_ngon" },
-  { id: "song_that_luc_bat", name: "Song Thất Lục Bát", slug: "song_that_luc_bat" },
-  { id: "tan_van", name: "Tản Văn (Tùy bút, Cảm xúc)", slug: "tan_van" },
-  { id: "van_xuoi", name: "Văn Xuôi Nghệ Thuật", slug: "van_xuoi" },
-  { id: "but_ky", name: "Bút Ký / Hồi Ký", slug: "but_ky" },
-  { id: "doan_van", name: "Đoạn Văn Triết Lý", slug: "doan_van" },
-  { id: "tho_thien", name: "Thơ Thiền & Tĩnh Tâm", slug: "tho_thien" },
-  { id: "tho_4_5_chu", name: "Thơ 4 chữ / 5 chữ", slug: "tho_4_5_chu" },
-  { id: "tho_7_chu", name: "Thơ 7 chữ", slug: "tho_7_chu" },
+  { id: "c0000000-0000-0000-0000-000000000001", name: "Thơ Lục Bát (6 - 8)", slug: "luc_bat" },
+  { id: "c0000000-0000-0000-0000-000000000002", name: "Thơ Tự Do", slug: "tu_do" },
+  { id: "c0000000-0000-0000-0000-000000000003", name: "Thơ Đường Luật (Thất ngôn)", slug: "that_ngon" },
+  { id: "c0000000-0000-0000-0000-000000000001", name: "Song Thất Lục Bát", slug: "song_that_luc_bat" },
+  { id: "c0000000-0000-0000-0000-000000000005", name: "Tản Văn (Tùy bút, Cảm xúc)", slug: "tan_van" },
+  { id: "c0000000-0000-0000-0000-000000000005", name: "Văn Xuôi Nghệ Thuật", slug: "van_xuoi" },
+  { id: "c0000000-0000-0000-0000-000000000005", name: "Bút Ký / Hồi Ký", slug: "but_ky" },
+  { id: "c0000000-0000-0000-0000-000000000005", name: "Đoạn Văn Triết Lý", slug: "doan_van" },
+  { id: "c0000000-0000-0000-0000-000000000004", name: "Thơ Thiền & Tĩnh Tâm", slug: "tho_thien" },
+  { id: "c0000000-0000-0000-0000-000000000002", name: "Thơ 4 chữ / 5 chữ", slug: "tho_4_5_chu" },
+  { id: "c0000000-0000-0000-0000-000000000003", name: "Thơ 7 chữ", slug: "tho_7_chu" },
 ];
 
 export default function NewPoemPage() {
@@ -51,6 +51,7 @@ function NewPoemFormContent() {
   const [poemText, setPoemText] = useState("");
   const [showAuthorInfo, setShowAuthorInfo] = useState(true);
   const [isSaved, setIsSaved] = useState(false);
+  const [savedPoemSlug, setSavedPoemSlug] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [importStatus, setImportStatus] = useState<string | null>(null);
@@ -283,8 +284,9 @@ function NewPoemFormContent() {
         throw new Error(json.error || "Không thể lưu thi phẩm");
       }
 
+      setSavedPoemSlug(json.data?.slug || slug);
       setIsSaved(true);
-      setTimeout(() => setIsSaved(false), 5000);
+      setTimeout(() => setIsSaved(false), 8000);
     } catch (err: any) {
       setErrorMsg(err.message || "Đã xảy ra lỗi");
     } finally {
@@ -381,11 +383,31 @@ function NewPoemFormContent() {
       )}
 
       {isSaved && (
-        <div className="p-4 bg-emerald-500/15 border border-emerald-500/40 text-emerald-800 dark:text-emerald-200 font-mono text-xs flex items-center gap-2 rounded-xl">
-          <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-          <span>
-            Thi phẩm đã được lưu và đồng bộ lên cơ sở dữ liệu thành công!
-          </span>
+        <div className="p-4 bg-emerald-500/15 border border-emerald-500/40 text-emerald-800 dark:text-emerald-200 font-mono text-xs flex items-center justify-between gap-4 rounded-xl flex-wrap">
+          <div className="flex items-center gap-2">
+            <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+            <span>
+              Thi phẩm đã được lưu và đồng bộ lên cơ sở dữ liệu Supabase thành công!
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            {savedPoemSlug && (
+              <Link
+                href={`/poems/${savedPoemSlug}`}
+                target="_blank"
+                className="px-3 py-1.5 bg-[var(--accent-green)] hover:opacity-90 text-white rounded-lg flex items-center gap-1.5 transition-all shadow-xs"
+              >
+                <span>Xem bài đăng</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </Link>
+            )}
+            <Link
+              href="/admin/poems"
+              className="px-3 py-1.5 border border-[var(--border-strong)] text-[var(--text-primary)] rounded-lg hover:bg-[var(--text-primary)]/5 transition-all"
+            >
+              Về danh sách
+            </Link>
+          </div>
         </div>
       )}
 
