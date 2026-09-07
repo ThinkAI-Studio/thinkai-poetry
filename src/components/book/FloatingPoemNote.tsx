@@ -7,7 +7,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Feather,
-  Paperclip,
+  BookText,
 } from "lucide-react";
 import { usePoeticBook } from "@/context/PoeticBookContext";
 import { cn } from "@/lib/utils";
@@ -22,6 +22,12 @@ export function FloatingPoemNote({ className }: { className?: string }) {
     goToNextPage,
     goToPrevPage,
   } = usePoeticBook();
+
+  const isProse =
+    Boolean(currentPoem) &&
+    (currentPoem?.form_type === "tan_van" ||
+      currentPoem?.category?.slug === "tan-van" ||
+      Boolean(currentPoem?.category?.name && /tản văn|văn xuôi|tùy bút/i.test(currentPoem.category.name)));
 
   const stanzas = currentPoem?.raw_text
     ? currentPoem.raw_text.split(/\n\s*\n/).filter(Boolean)
@@ -69,10 +75,18 @@ export function FloatingPoemNote({ className }: { className?: string }) {
         {/* Header Tờ Note */}
         <div className="flex items-center justify-between pb-4 border-b border-dashed border-amber-900/15 dark:border-white/10 text-xs font-serif text-amber-900/60 dark:text-amber-200/50 mb-6">
           <span className="flex items-center gap-1.5">
-            <Feather className="w-3.5 h-3.5 text-[var(--accent-green)] dark:text-[var(--accent-gold)]" />
+            {isProse ? (
+              <BookText className="w-3.5 h-3.5 text-[var(--accent-green)] dark:text-[var(--accent-gold)]" />
+            ) : (
+              <Feather className="w-3.5 h-3.5 text-[var(--accent-green)] dark:text-[var(--accent-gold)]" />
+            )}
             <span className="uppercase tracking-wider">
-              {currentPoem.form_type === "luc_bat"
+              {isProse
+                ? "Tản Văn / Tùy Bút"
+                : currentPoem.form_type === "luc_bat"
                 ? "Thơ Lục Bát"
+                : currentPoem.form_type === "song_that_luc_bat"
+                ? "Song Thất Lục Bát"
                 : currentPoem.form_type === "that_ngon"
                 ? "Thơ Đường Luật"
                 : "Thơ Tự Do"}
@@ -89,27 +103,44 @@ export function FloatingPoemNote({ className }: { className?: string }) {
           {currentPoem.title}
         </h2>
 
-        {/* Các khổ thơ */}
-        <div className="space-y-5 font-poem-verse text-base sm:text-lg leading-[2.1] text-neutral-800 dark:text-neutral-200 text-center max-w-md mx-auto">
-          {stanzas.map((stanza, sIdx) => {
-            const lines = stanza.split("\n").filter(Boolean);
-            return (
-              <div key={sIdx} className="space-y-1">
-                {lines.map((line, lIdx) => (
-                  <p key={lIdx}>
-                    {highlightedText && line.toLowerCase().includes(highlightedText.toLowerCase()) ? (
-                      <mark className="bg-amber-300/60 dark:bg-emerald-400/40 text-amber-950 dark:text-emerald-50 px-1 py-0.5 rounded shadow-xs font-semibold animate-pulse">
-                        {line}
-                      </mark>
-                    ) : (
-                      line
-                    )}
-                  </p>
-                ))}
-              </div>
-            );
-          })}
-        </div>
+        {/* Nội dung tác phẩm */}
+        {isProse ? (
+          <div className="space-y-4 font-serif text-base sm:text-lg leading-[2.1] text-neutral-800 dark:text-neutral-200 text-justify max-w-lg mx-auto">
+            {stanzas.map((para, pIdx) => (
+              <p key={pIdx} className="indent-6 sm:indent-8">
+                {highlightedText && para.toLowerCase().includes(highlightedText.toLowerCase()) ? (
+                  <mark className="bg-amber-300/60 dark:bg-emerald-400/40 text-amber-950 dark:text-emerald-50 px-1 py-0.5 rounded shadow-xs font-semibold animate-pulse">
+                    {para}
+                  </mark>
+                ) : (
+                  para
+                )}
+              </p>
+            ))}
+          </div>
+        ) : (
+          /* Các khổ thơ */
+          <div className="space-y-5 font-poem-verse text-base sm:text-lg leading-[2.1] text-neutral-800 dark:text-neutral-200 text-center max-w-md mx-auto">
+            {stanzas.map((stanza, sIdx) => {
+              const lines = stanza.split("\n").filter(Boolean);
+              return (
+                <div key={sIdx} className="space-y-1">
+                  {lines.map((line, lIdx) => (
+                    <p key={lIdx}>
+                      {highlightedText && line.toLowerCase().includes(highlightedText.toLowerCase()) ? (
+                        <mark className="bg-amber-300/60 dark:bg-emerald-400/40 text-amber-950 dark:text-emerald-50 px-1 py-0.5 rounded shadow-xs font-semibold animate-pulse">
+                          {line}
+                        </mark>
+                      ) : (
+                        line
+                      )}
+                    </p>
+                  ))}
+                </div>
+              );
+            })}
+          </div>
+        )}
 
         {/* Ký tên tác giả */}
         <div className="mt-8 text-right font-poem-heading italic text-base text-neutral-700 dark:text-neutral-300 pr-2">

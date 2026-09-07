@@ -77,14 +77,25 @@ export function BookSearchBar({ className }: { className?: string }) {
         }
       }
 
-      // 3. Khớp thể thơ
-      const formName =
-        poem.form_type === "luc_bat"
-          ? "lục bát"
-          : poem.form_type === "that_ngon"
-          ? "đường luật thất ngôn"
-          : "tự do";
-      if (formName.includes(q)) {
+      // 3. Khớp thể thơ hoặc văn xuôi/tản văn
+      const isProse =
+        poem.form_type === "tan_van" ||
+        poem.category?.slug === "tan-van" ||
+        Boolean(poem.category?.name && /tản văn|văn xuôi|tùy bút/i.test(poem.category.name));
+
+      const formName = isProse
+        ? "tản văn văn xuôi tùy bút prose"
+        : poem.form_type === "luc_bat"
+        ? "thơ lục bát"
+        : poem.form_type === "song_that_luc_bat"
+        ? "thơ song thất lục bát"
+        : poem.form_type === "that_ngon"
+        ? "thơ đường luật thất ngôn bát cú"
+        : "thơ tự do";
+
+      const categoryName = (poem.category?.name || "").toLowerCase();
+
+      if (formName.includes(q) || categoryName.includes(q)) {
         matches.push({
           poem,
           pageIndex: index,
@@ -220,8 +231,14 @@ export function BookSearchBar({ className }: { className?: string }) {
 
                     <div className="flex items-center justify-between pt-1 text-[10px] font-mono text-neutral-400 dark:text-neutral-500">
                       <span>
-                        {match.poem.form_type === "luc_bat"
+                        {match.poem.form_type === "tan_van" ||
+                        match.poem.category?.slug === "tan-van" ||
+                        Boolean(match.poem.category?.name && /tản văn|văn xuôi/i.test(match.poem.category.name))
+                          ? "Tản Văn / Văn Xuôi"
+                          : match.poem.form_type === "luc_bat"
                           ? "Thơ Lục Bát"
+                          : match.poem.form_type === "song_that_luc_bat"
+                          ? "Song Thất Lục Bát"
                           : match.poem.form_type === "that_ngon"
                           ? "Thất Ngôn Bát Cú"
                           : "Thơ Tự Do"}

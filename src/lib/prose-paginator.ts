@@ -24,7 +24,9 @@ export function isProseForm(formType: string): boolean {
   const normalized = formType.toLowerCase().trim();
   return [
     "tan_van",
+    "tan-van",
     "van_xuoi",
+    "van-xuoi",
     "but_ky",
     "doan_van",
     "tản văn",
@@ -47,7 +49,10 @@ export function buildBookSpreads(poems: Poem[]): BookSpread[] {
   let globalSpreadCounter = 0;
 
   poems.forEach((poem) => {
-    const isProse = isProseForm(poem.form_type) || isProseForm(poem.category?.name || "");
+    const isProse =
+      isProseForm(poem.form_type) ||
+      isProseForm(poem.category?.name || "") ||
+      isProseForm(poem.category?.slug || "");
     const rawText = poem.raw_text || poem.excerpt || "";
 
     if (isProse) {
