@@ -540,23 +540,6 @@ export function Realistic3DPageFlip({
     };
   }, []);
 
-  // Đồng bộ khi `currentIndex` từ props thay đổi do chọn bài ở Mục lục / Search
-  useEffect(() => {
-    if (!poems || poems.length === 0 || spreads.length === 0) return;
-
-    if (prevPropIndexRef.current !== currentIndex) {
-      prevPropIndexRef.current = currentIndex;
-      const targetPoemId = poems[currentIndex]?.id;
-
-      if (targetPoemId) {
-        const foundSpreadIdx = spreads.findIndex((s) => s.poem.id === targetPoemId);
-        if (foundSpreadIdx !== -1 && foundSpreadIdx !== displayedSpreadIdx && !isFlipping) {
-          triggerFlip(foundSpreadIdx > displayedSpreadIdx ? "next" : "prev", foundSpreadIdx);
-        }
-      }
-    }
-  }, [currentIndex, poems, spreads, displayedSpreadIdx, isFlipping]);
-
   // Kết thúc lật trang & cập nhật state đồng bộ chuẩn xác
   const handleAnimationComplete = useCallback((finalSpreadIdx: number) => {
     setDisplayedSpreadIdx(finalSpreadIdx);
@@ -590,6 +573,23 @@ export function Realistic3DPageFlip({
       handleAnimationComplete(toSpreadIdx);
     }, 630);
   }, [isFlipping, spreads.length, handleAnimationComplete]);
+
+  // Đồng bộ khi `currentIndex` từ props thay đổi do chọn bài ở Mục lục / Search
+  useEffect(() => {
+    if (!poems || poems.length === 0 || spreads.length === 0) return;
+
+    if (prevPropIndexRef.current !== currentIndex) {
+      prevPropIndexRef.current = currentIndex;
+      const targetPoemId = poems[currentIndex]?.id;
+
+      if (targetPoemId) {
+        const foundSpreadIdx = spreads.findIndex((s) => s.poem.id === targetPoemId);
+        if (foundSpreadIdx !== -1 && foundSpreadIdx !== displayedSpreadIdx && !isFlipping) {
+          triggerFlip(foundSpreadIdx > displayedSpreadIdx ? "next" : "prev", foundSpreadIdx);
+        }
+      }
+    }
+  }, [currentIndex, poems, spreads, displayedSpreadIdx, isFlipping, triggerFlip]);
 
   const handleNext = useCallback(() => {
     if (displayedSpreadIdx < spreads.length - 1 && !isFlipping) {
