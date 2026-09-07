@@ -64,7 +64,7 @@ export const DEFAULT_BOOKSHELF_ITEMS: PoeticBookItem[] = [
     title: "Gió Đầu Mùa",
     volumeLabel: "Tập I",
     slug: "tuyen-tap-huu-thinh-gio-dau-mua",
-    author: "Hữu Thịnh",
+    author: "Thịnh (Wind)",
     year: "2024",
     description: "Tập thơ tập hợp những sáng tác tiêu biểu về tình người, nỗi nhớ và những giao cảm tinh tế với đất trời lúc giao mùa chớm lạnh.",
     poemsCount: 8,
@@ -97,7 +97,7 @@ export const DEFAULT_BOOKSHELF_ITEMS: PoeticBookItem[] = [
     title: "Hương Sắc Mùa Thu",
     volumeLabel: "Tập II",
     slug: "huong-sac-mua-thu",
-    author: "Hữu Thịnh",
+    author: "Thịnh (Wind)",
     year: "2024",
     description: "Những câu thơ dệt nên từ heo may se lạnh, hoa cúc vàng rực và những chiều sương bảng lảng bên hồ nước phẳng lặng.",
     poemsCount: 6,
@@ -129,7 +129,7 @@ export const DEFAULT_BOOKSHELF_ITEMS: PoeticBookItem[] = [
     title: "Thiền Trà & Chiêm Nghiệm",
     volumeLabel: "Tập III",
     slug: "thien-tra-va-chiem-nghiem",
-    author: "Hữu Thịnh",
+    author: "Thịnh (Wind)",
     year: "2025",
     description: "Nhấp ngụm trà sớm bên thềm hoa, lắng nghe tiếng chuông chiều buông nhẹ ngân nga giữa cõi trần thế an nhiên.",
     poemsCount: 5,
@@ -453,10 +453,10 @@ function BookSpineItem({
               {book.author}
             </span>
             
-            {/* Triện son đỏ Hữu Thịnh */}
+            {/* Triện son đỏ Thịnh (Wind) */}
             <div className="w-4 h-4 rounded-[2px] bg-[#9E2A2B] border border-amber-300/40 flex items-center justify-center shadow-xs">
               <span className="text-[7px] font-serif text-amber-100 font-bold leading-none">
-                HT
+                W
               </span>
             </div>
           </div>

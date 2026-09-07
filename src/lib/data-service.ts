@@ -36,6 +36,43 @@ function saveLocalStoredPoem(poem: Poem) {
   } catch {}
 }
 
+function getLocalStoredAuthors(): Author[] {
+  try {
+    const filePath = path.join(process.cwd(), "src/data/local-authors.json");
+    if (fs.existsSync(filePath)) {
+      const data = fs.readFileSync(filePath, "utf-8");
+      const parsed = JSON.parse(data);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch {}
+  return [...mockAuthors];
+}
+
+function saveLocalStoredAuthor(author: Author) {
+  try {
+    const filePath = path.join(process.cwd(), "src/data/local-authors.json");
+    const existing = getLocalStoredAuthors();
+    const updated = [author, ...existing.filter((a) => a.id !== author.id)];
+    fs.writeFileSync(filePath, JSON.stringify(updated, null, 2), "utf-8");
+
+    // Đồng bộ vào local-poems.json nếu có bài thơ thuộc tác giả này
+    const poemsFilePath = path.join(process.cwd(), "src/data/local-poems.json");
+    if (fs.existsSync(poemsFilePath)) {
+      const poems = JSON.parse(fs.readFileSync(poemsFilePath, "utf-8")) || [];
+      const updatedPoems = poems.map((p: Poem) => {
+        if (p.author_id === author.id || (!p.author_id && p.author?.id === author.id)) {
+          return {
+            ...p,
+            author,
+          };
+        }
+        return p;
+      });
+      fs.writeFileSync(poemsFilePath, JSON.stringify(updatedPoems, null, 2), "utf-8");
+    }
+  } catch {}
+}
+
 function getAllFallbackPoems(): Poem[] {
   const custom = getLocalStoredPoems();
   const customSlugs = new Set(custom.map((p) => p.slug));
@@ -420,7 +457,7 @@ export async function getAuthors(): Promise<Author[]> {
       const { data, error } = await supabase
         .from("authors")
         .select("*")
-        .order("name", { ascending: true });
+        .order("created_at", { ascending: true });
 
       if (!error && data && data.length > 0) {
         return data as Author[];
@@ -430,7 +467,7 @@ export async function getAuthors(): Promise<Author[]> {
     }
   }
 
-  return localAuthors;
+  return getLocalStoredAuthors();
 }
 
 export async function getAuthorBySlug(slug: string): Promise<Author | null> {
@@ -451,7 +488,81 @@ export async function getAuthorBySlug(slug: string): Promise<Author | null> {
     }
   }
 
-  return localAuthors.find((a) => a.slug === slug) || null;
+  return getLocalStoredAuthors().find((a) => a.slug === slug) || null;
+}
+
+export async function getAuthorById(id: string): Promise<Author | null> {
+  if (isSupabaseConfigured()) {
+    try {
+      const supabase = getSupabaseClient();
+      const { data, error } = await supabase
+        .from("authors")
+        .select("*")
+        .eq("id", id)
+        .single();
+
+      if (!error && data) {
+        return data as Author;
+      }
+    } catch (e) {
+      console.warn("Lỗi getAuthorById từ Supabase:", e);
+    }
+  }
+
+  return getLocalStoredAuthors().find((a) => a.id === id) || null;
+}
+
+export async function updateAuthor(
+  id: string,
+  authorData: Partial<Omit<Author, "id" | "created_at">>
+): Promise<Author> {
+  let updatedAuthor: Author | null = null;
+
+  if (isSupabaseConfigured()) {
+    try {
+      const supabase = hasSupabaseServiceRoleKey()
+        ? getSupabaseClient(true)
+        : getSupabaseClient();
+
+      const payload: Record<string, any> = {};
+      if (authorData.name !== undefined) payload.name = authorData.name;
+      if (authorData.pen_name !== undefined) payload.pen_name = authorData.pen_name;
+      if (authorData.slug !== undefined) payload.slug = authorData.slug;
+      if (authorData.period !== undefined) payload.period = authorData.period;
+      if (authorData.bio !== undefined) payload.bio = authorData.bio;
+      if (authorData.avatar_url !== undefined) payload.avatar_url = authorData.avatar_url;
+
+      const { data, error } = await supabase
+        .from("authors")
+        .update(payload)
+        .eq("id", id)
+        .select("*")
+        .single();
+
+      if (!error && data) {
+        updatedAuthor = data as Author;
+      } else if (error) {
+        console.warn("Lỗi updateAuthor trên Supabase:", error);
+      }
+    } catch (e) {
+      console.warn("Lỗi ngoại lệ updateAuthor trên Supabase:", e);
+    }
+  }
+
+  // Cập nhật và lưu vào file local fallback
+  const authors = getLocalStoredAuthors();
+  const existing = authors.find((a) => a.id === id) || authors[0] || mockAuthors[0];
+  const merged: Author = {
+    ...existing,
+    ...authorData,
+    id: existing.id || id,
+    created_at: existing.created_at || new Date().toISOString(),
+  };
+
+  const finalAuthor = updatedAuthor || merged;
+  saveLocalStoredAuthor(finalAuthor);
+
+  return finalAuthor;
 }
 
 // ==============================================================================

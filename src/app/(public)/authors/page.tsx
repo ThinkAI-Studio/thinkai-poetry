@@ -7,7 +7,7 @@ import { AuthorHeroWithAdminAccess } from "@/components/author/AuthorHeroWithAdm
 
 export const metadata = {
   title: "Tác Giả | Wind",
-  description: "Hồ sơ tác giả Hữu Thịnh và các cây bút thi ca đương đại. Wind.",
+  description: "Hồ sơ tác giả Thịnh (ký danh Wind) và các tác phẩm thi ca đương đại.",
 };
 
 export default async function AuthorsPage() {

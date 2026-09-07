@@ -144,7 +144,8 @@ export function FloatingPoemNote({ className }: { className?: string }) {
 
         {/* Ký tên tác giả */}
         <div className="mt-8 text-right font-poem-heading italic text-base text-neutral-700 dark:text-neutral-300 pr-2">
-          — {currentPoem.author?.name || "Hữu Thịnh"}
+          — {currentPoem.author?.name || "Thịnh"}
+          {currentPoem.author?.pen_name ? ` (${currentPoem.author.pen_name})` : ""}
         </div>
 
         {/* Chân Tờ Note: Nút lùi / tới */}

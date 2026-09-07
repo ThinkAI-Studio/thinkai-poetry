@@ -1,6 +1,6 @@
 -- ==============================================================================
--- THỊNH VÀ THƠ — SUPABASE DATABASE SCHEMA DDL
--- Tác giả: Hữu Thịnh
+-- THI ĐÀN WIND — SUPABASE DATABASE SCHEMA DDL
+-- Tác giả: Thịnh (Ký danh: Wind)
 -- Nền tảng: ThinkAI Studio / Next.js + Supabase PostgreSQL
 -- ==============================================================================
 

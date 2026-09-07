@@ -1,5 +1,5 @@
 /**
- * Hữu Thịnh Thi Quán - Masterpiece Bottom Corner Page Peel Engine
+ * Wind (Tác Giả Thịnh) Thi Quán - Masterpiece Bottom Corner Page Peel Engine
  * Chuyển động kéo bóc trang sách từ góc dưới lên góc trên cùng (Bottom Corner Page Peel):
  * - Polygon Interpolation kéo góc dưới (Bottom-Right / Bottom-Left) trượt chéo bóc dần lên góc đối diện
  * - Nếp gấp chéo & bóng đổ tự nhiên bằng GPU (Diagonal Fold Shadow via CSS drop-shadow)

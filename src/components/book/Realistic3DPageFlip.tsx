@@ -267,7 +267,8 @@ function PageRight({
           <div className="mt-8 flex items-center justify-end gap-3 select-none">
             <div className="text-right">
               <span className="block font-poem-heading text-sm font-semibold text-neutral-800 dark:text-[#EAE6DF]">
-                {poem.author?.name || "Hữu Thịnh"}
+                {poem.author?.name || "Thịnh"}
+                {poem.author?.pen_name ? ` (${poem.author.pen_name})` : ""}
               </span>
               <span className="text-[11px] font-sans text-neutral-500 dark:text-neutral-400">
                 {poem.author?.period || "Chép trong vườn thiền"}
@@ -276,13 +277,13 @@ function PageRight({
 
             <div
               className="w-11 h-11 rounded-lg border-2 border-[#9E2A2B] bg-[#9E2A2B]/10 dark:bg-[#9E2A2B]/15 p-0.5 shadow-xs relative flex items-center justify-center shrink-0 transition-transform duration-300 hover:scale-105"
-              title={`Dấu ấn thi phẩm ${poem.author?.name || "Hữu Thịnh"}`}
+              title={`Dấu ấn thi phẩm ${poem.author?.name || "Thịnh"} (${poem.author?.pen_name || "Wind"})`}
             >
               <div className="w-full h-full border border-[#9E2A2B]/50 rounded-sm flex items-center justify-center">
-                <span className="font-serif text-[11px] font-bold text-[#9E2A2B] tracking-tighter leading-tight text-center select-none">
-                  Hữu
+                <span className="font-serif text-[11px] font-bold text-[#9E2A2B] tracking-tighter leading-tight text-center select-none uppercase">
+                  {poem.author?.name || "Thịnh"}
                   <br />
-                  Thịnh
+                  {poem.author?.pen_name || "Wind"}
                 </span>
               </div>
             </div>
@@ -443,7 +444,8 @@ function PageMobile({
           <div className="mt-6 flex items-center justify-end gap-3 select-none">
             <div className="text-right">
               <span className="block font-poem-heading text-sm font-semibold text-neutral-800 dark:text-[#EAE6DF]">
-                {poem.author?.name || "Hữu Thịnh"}
+                {poem.author?.name || "Thịnh"}
+                {poem.author?.pen_name ? ` (${poem.author.pen_name})` : ""}
               </span>
               <span className="text-[11px] font-sans text-neutral-500 dark:text-neutral-400">
                 {poem.author?.period || "Chép trong vườn thiền"}
@@ -451,13 +453,13 @@ function PageMobile({
             </div>
             <div
               className="w-10 h-10 rounded-lg border-2 border-[#9E2A2B] bg-[#9E2A2B]/10 dark:bg-[#9E2A2B]/15 p-0.5 shadow-xs flex items-center justify-center shrink-0"
-              title={`Dấu ấn thi phẩm ${poem.author?.name || "Hữu Thịnh"}`}
+              title={`Dấu ấn thi phẩm ${poem.author?.name || "Thịnh"} (${poem.author?.pen_name || "Wind"})`}
             >
               <div className="w-full h-full border border-[#9E2A2B]/50 rounded-sm flex items-center justify-center">
-                <span className="font-serif text-[10px] font-bold text-[#9E2A2B] tracking-tighter leading-tight text-center">
-                  Hữu
+                <span className="font-serif text-[10px] font-bold text-[#9E2A2B] tracking-tighter leading-tight text-center uppercase">
+                  {poem.author?.name || "Thịnh"}
                   <br />
-                  Thịnh
+                  {poem.author?.pen_name || "Wind"}
                 </span>
               </div>
             </div>

@@ -76,7 +76,7 @@ export default function PreviewBookshelfPage() {
                 Vườn Thơ Mới
               </span>
               <span className="hover:text-neutral-900 dark:hover:text-white transition-colors cursor-pointer">
-                Tác Giả Hữu Thịnh
+                Tác Giả Thịnh (Wind)
               </span>
             </nav>
 
@@ -123,7 +123,7 @@ export default function PreviewBookshelfPage() {
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                    <span><strong>Nhận diện chuẩn:</strong> Toàn bộ định vị là &ldquo;Wind&rdquo; - Thơ Hữu Thịnh.</span>
+                    <span><strong>Nhận diện chuẩn:</strong> Toàn bộ định vị là &ldquo;Wind&rdquo; - Tác giả Thịnh.</span>
                   </div>
                 </div>
               </div>
@@ -132,7 +132,7 @@ export default function PreviewBookshelfPage() {
             <div className="flex flex-col sm:flex-row lg:flex-col gap-2 shrink-0 self-stretch sm:self-auto justify-center">
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono font-medium bg-white/90 dark:bg-neutral-800/90 border border-neutral-200 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 shadow-xs">
                 <BookmarkCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                Tác giả: Hữu Thịnh
+                Tác giả: Thịnh (Wind)
               </span>
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono font-medium bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/50 text-amber-900 dark:text-amber-300">
                 <Info className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
@@ -148,7 +148,7 @@ export default function PreviewBookshelfPage() {
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-mono uppercase tracking-widest text-[#1E3F2E] dark:text-[#4ade80] bg-[#1E3F2E]/8 dark:bg-[#4ade80]/10 border border-[#1E3F2E]/15 dark:border-[#4ade80]/20 mb-5">
           <span>Wind</span>
           <span>&bull;</span>
-          <span>Thư Phòng Thơ Hữu Thịnh</span>
+          <span>Thư Phòng Thơ Thịnh (Wind)</span>
         </div>
         <h1 className="font-poem-heading text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-neutral-900 dark:text-white mb-5 leading-tight">
           Lắng đọng tâm tình <br />
@@ -173,7 +173,7 @@ export default function PreviewBookshelfPage() {
       <footer className="w-full border-t border-neutral-200/80 dark:border-neutral-800/80 py-10 bg-neutral-100/50 dark:bg-neutral-950/50 text-center text-xs text-neutral-500 dark:text-neutral-400 font-serif">
         <div className="max-w-6xl mx-auto px-4 flex flex-col items-center gap-2">
           <p className="font-medium text-neutral-700 dark:text-neutral-300">
-            Wind &copy; {new Date().getFullYear()} &bull; Không gian thi ca đương đại của tác giả Hữu Thịnh
+            Wind &copy; {new Date().getFullYear()} &bull; Không gian thi ca đương đại của tác giả Thịnh (Wind)
           </p>
           <p className="text-[11px] text-neutral-400 dark:text-neutral-500">
             Bản xem trước nghiệm thu &bull; Chưa merge vào luồng chính &bull; Tối ưu hóa 60fps Native Compositor

@@ -90,9 +90,9 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* Tên tác giả: Hữu Thịnh */}
+              {/* Tên tác giả: Thịnh (Wind) */}
               <div className="mt-5 mb-5 text-right font-poem-heading text-sm font-medium text-neutral-700 dark:text-[#A6A39C] select-none pr-1">
-                Hữu Thịnh
+                Thịnh (Ký danh: Wind)
               </div>
 
               {/* Nút Mở Cuốn Sách Thơ 3D */}

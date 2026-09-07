@@ -1,23 +1,24 @@
--- ==============================================================================
--- HỮU THỊNH THI QUÁN (THỊNH VÀ THƠ) — SUPABASE INITIAL SETUP
+-- THI ĐÀN WIND (TÁC GIẢ THỊNH) — SUPABASE INITIAL SETUP
 -- Organization: ThinkAI Studio
--- Tác giả: Hữu Thịnh
+-- Tác giả: Thịnh (Ký danh: Wind)
 -- ==============================================================================
 
--- 1. SEED TÁC GIẢ (AUTHORS) — DUY NHẤT HỮU THỊNH
+-- 1. SEED TÁC GIẢ (AUTHORS) — TÁC GIẢ THỊNH (KÝ DANH: WIND)
 INSERT INTO public.authors (id, name, pen_name, slug, period, bio, avatar_url)
 VALUES
   (
     'a0000000-0000-0000-0000-000000000001',
-    'Hữu Thịnh',
-    'Hữu Thịnh',
-    'huu-thinh',
+    'Thịnh',
+    'Wind',
+    'thinh-wind',
     'Văn học đương đại',
-    'Người gieo vần cho những miền ký ức. Tác giả của nhiều thi phẩm trữ tình đương đại, gắn liền với tình yêu thiên nhiên, triết lý nhân sinh và vẻ đẹp sâu lắng của tâm hồn người Việt.',
+    'Tác giả Thịnh (Ký danh: Wind) — Người gieo vần cho những miền ký ức và triết lý nhân sinh sâu lắng. Tác giả của các thi phẩm đương đại giàu cảm xúc trong không gian thi ca Wind.',
     '/floral/flower-pink.png'
   )
 ON CONFLICT (id) DO UPDATE SET
   name = EXCLUDED.name,
+  pen_name = EXCLUDED.pen_name,
+  slug = EXCLUDED.slug,
   bio = EXCLUDED.bio,
   avatar_url = EXCLUDED.avatar_url;
 

@@ -312,7 +312,7 @@ function NewPoemFormContent() {
             <p className="text-xs font-mono text-[var(--text-secondary)]">
               {contentType === "prose"
                 ? "Biên tập tản văn, văn xuôi hoặc bút ký nghệ thuật lên hệ thống"
-                : "Biên tập bài thơ, chọn thể loại linh hoạt và xuất bản lên vườn thơ Hữu Thịnh"}
+                : "Biên tập bài thơ, chọn thể loại linh hoạt và xuất bản lên thi quán Thịnh (Wind)"}
             </p>
           </div>
         </div>
@@ -628,7 +628,7 @@ function NewPoemFormContent() {
         <div className="p-4 bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-2xl flex items-center justify-between shadow-xs">
           <div className="flex flex-col">
             <span className="text-sm font-serif font-bold text-[var(--text-primary)]">
-              {contentType === "prose" ? "Hiển thị thẻ tác giả Hữu Thịnh ở cuối bài văn" : "Hiển thị thẻ tác giả Hữu Thịnh ở cuối bài thơ"}
+              {contentType === "prose" ? "Hiển thị thẻ tác giả Thịnh (Wind) ở cuối bài văn" : "Hiển thị thẻ tác giả Thịnh (Wind) ở cuối bài thơ"}
             </span>
             <span className="text-xs font-mono text-[var(--text-secondary)]">
               Nếu tắt, bài viết sẽ ẩn thẻ tác giả để người đọc tập trung hoàn toàn vào câu từ

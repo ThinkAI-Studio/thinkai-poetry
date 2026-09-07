@@ -26,7 +26,13 @@ export function QuoteCardModal({
   authorName,
 }: QuoteCardModalProps) {
   const resolvedTitle = poemTitle || poem?.title || "Thi Phẩm";
-  const resolvedAuthor = authorName || poem?.author?.name || "Hữu Thịnh";
+  const resolvedAuthor =
+    authorName ||
+    (poem?.author?.name
+      ? poem.author.pen_name
+        ? `${poem.author.name} (${poem.author.pen_name})`
+        : poem.author.name
+      : "Thịnh (Wind)");
   const initialQuote = defaultQuote || poem?.excerpt || "Gió xuân thổi nhẹ qua rèm\nNhành hoa hé nụ dịu êm đón ngày...";
 
   const [quote, setQuote] = useState(initialQuote);

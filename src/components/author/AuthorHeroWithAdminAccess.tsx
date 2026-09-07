@@ -166,8 +166,13 @@ export function AuthorHeroWithAdminAccess({ author }: AuthorHeroProps) {
             <span>{author.period || "Văn Học Đương Đại"}</span>
           </div>
 
-          <h1 className="font-poem-heading text-3xl sm:text-4xl md:text-5xl font-bold text-[var(--text-primary)] tracking-tight">
-            {author.name}
+          <h1 className="font-poem-heading text-3xl sm:text-4xl md:text-5xl font-bold text-[var(--text-primary)] tracking-tight flex flex-wrap items-baseline justify-center md:justify-start gap-2 sm:gap-3">
+            <span>{author.name}</span>
+            {author.pen_name && (
+              <span className="text-xl sm:text-2xl font-serif text-[var(--accent-gold)] font-normal">
+                (Ký danh: {author.pen_name})
+              </span>
+            )}
           </h1>
 
           <p className="font-poem-verse text-base sm:text-lg text-[var(--text-secondary)] leading-relaxed max-w-xl">
@@ -175,7 +180,7 @@ export function AuthorHeroWithAdminAccess({ author }: AuthorHeroProps) {
           </p>
 
           <div className="pt-2 flex items-center justify-center md:justify-start gap-3 text-xs font-mono text-[var(--text-muted)]">
-            <span>Chủ Quán & Tác Quyền: Hữu Thịnh</span>
+            <span>Tác Quyền: {author.name} {author.pen_name ? `(${author.pen_name})` : ""} • Wind</span>
           </div>
         </div>
       </div>

@@ -2,11 +2,11 @@ import { Author, Category, Collection, Poem } from "@/types/database";
 
 export const mockAuthor: Author = {
   id: "a0000000-0000-0000-0000-000000000001",
-  name: "Hữu Thịnh",
-  pen_name: "Hữu Thịnh",
-  slug: "huu-thinh",
+  name: "Thịnh",
+  pen_name: "Wind",
+  slug: "thinh-wind",
   period: "Văn học đương đại",
-  bio: "Nhà thơ Hữu Thịnh — Người gieo vần cho những miền ký ức và triết lý nhân sinh sâu lắng. Tác giả của nhiều thi phẩm trữ tình tiêu biểu gắn liền với vẻ đẹp tâm hồn Việt Nam.",
+  bio: "Tác giả Thịnh (Ký danh: Wind) — Người gieo vần cho những miền ký ức và triết lý nhân sinh sâu lắng. Tác giả của nhiều thi phẩm trữ tình tiêu biểu gắn liền với vẻ đẹp tâm hồn Việt Nam.",
   avatar_url: "/floral/flower-pink.png",
   created_at: new Date().toISOString(),
 };
