@@ -14,8 +14,7 @@ import {
   Eye,
   EyeOff,
   Loader2,
-  Info,
-  Sparkles,
+  X,
 } from "lucide-react";
 import type { Poem } from "@/types/database";
 
@@ -41,7 +40,7 @@ export default function AdminPoemsListPage() {
     setToast({ type, message });
     setTimeout(() => {
       setToast(null);
-    }, 4500);
+    }, 4000);
   };
 
   const filteredPoems = poems.filter((p) =>
@@ -77,7 +76,7 @@ export default function AdminPoemsListPage() {
 
       showToast(
         "success",
-        `Đã tự động lưu thành công! Bài "${poem.title}" hiện đã ${nextState ? "BẬT hiển thị" : "ẨN"} thẻ tác giả cho độc giả.`
+        `Đã ${nextState ? "bật" : "ẩn"} thẻ tác giả cho "${poem.title}".`
       );
     } catch (err: any) {
       // Rollback on error
@@ -86,7 +85,7 @@ export default function AdminPoemsListPage() {
       );
       showToast(
         "error",
-        err.message || "Lỗi khi lưu thay đổi lên cơ sở dữ liệu. Vui lòng thử lại!"
+        err.message || "Lỗi khi lưu thay đổi lên máy chủ."
       );
     } finally {
       setUpdatingId(null);
@@ -94,33 +93,32 @@ export default function AdminPoemsListPage() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto flex flex-col gap-8 pb-16 relative">
-      {/* Toast thông báo trạng thái tự động lưu */}
+    <div className="max-w-6xl mx-auto flex flex-col gap-6 pb-16 relative">
+      {/* Toast thông báo — Cân xứng hoàn hảo trên cả mobile (left-4 right-4) và desktop (sm:w-96) */}
       {toast && (
-        <div className="fixed top-6 right-6 z-50 max-w-md animate-in fade-in slide-in-from-top-4 duration-300">
+        <div className="fixed top-4 left-4 right-4 sm:left-auto sm:right-6 sm:w-96 z-50 pointer-events-none transition-all duration-200 animate-in fade-in slide-in-from-top-2">
           <div
-            className={`p-4 rounded-2xl shadow-xl backdrop-blur-md border flex items-start gap-3 text-xs font-serif ${
+            className={`pointer-events-auto p-3.5 rounded-xl border shadow-lg backdrop-blur-md flex items-center justify-between gap-3 text-xs font-serif ${
               toast.type === "success"
-                ? "bg-emerald-950/90 border-emerald-500/40 text-emerald-200"
-                : "bg-red-950/90 border-red-500/40 text-red-200"
+                ? "bg-[var(--bg-card)]/95 border-emerald-500/30 text-[var(--text-primary)] shadow-emerald-950/10"
+                : "bg-[var(--bg-card)]/95 border-red-500/30 text-[var(--text-primary)] shadow-red-950/10"
             }`}
           >
-            {toast.type === "success" ? (
-              <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
-            ) : (
-              <AlertCircle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
-            )}
-            <div className="flex-1">
-              <span className="font-bold block text-sm mb-0.5">
-                {toast.type === "success" ? "Tự Động Lưu Thành Công" : "Lỗi Cập Nhật"}
-              </span>
-              <p className="leading-relaxed">{toast.message}</p>
+            <div className="flex items-center gap-2.5 min-w-0">
+              {toast.type === "success" ? (
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+              ) : (
+                <AlertCircle className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" />
+              )}
+              <span className="truncate leading-snug font-medium">{toast.message}</span>
             </div>
             <button
+              type="button"
               onClick={() => setToast(null)}
-              className="text-white/60 hover:text-white text-xs font-mono px-1 py-0.5 rounded cursor-pointer"
+              className="p-1 rounded-md text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-black/5 dark:hover:bg-white/5 transition-colors shrink-0 cursor-pointer"
+              aria-label="Đóng"
             >
-              ✕
+              <X className="w-3.5 h-3.5" />
             </button>
           </div>
         </div>
@@ -148,38 +146,23 @@ export default function AdminPoemsListPage() {
         </Link>
       </div>
 
-      {/* Banner Hướng Dẫn Tính Năng Tự Động Lưu */}
-      <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-500/10 via-amber-500/10 to-transparent border border-emerald-500/25 flex items-start sm:items-center justify-between gap-4">
-        <div className="flex items-start sm:items-center gap-3">
-          <div className="p-2 rounded-xl bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 shrink-0">
-            <Sparkles className="w-4 h-4" />
-          </div>
-          <div className="text-xs">
-            <p className="font-serif font-bold text-[var(--text-primary)]">
-              Cơ chế Tự Động Lưu (Auto-Save):
-            </p>
-            <p className="font-mono text-[var(--text-secondary)] mt-0.5 leading-relaxed">
-              Khi bấm chuyển đổi <strong>Bật (Hiện)</strong> hoặc <strong>Tắt (Ẩn)</strong> thẻ tác giả ở bảng bên dưới, hệ thống sẽ <strong>tự động lưu trực tiếp</strong> vào máy chủ ngay lập tức mà không cần thêm nút lưu.
-            </p>
-          </div>
+      {/* Thanh tìm kiếm & Ghi chú tự động lưu tinh gọn (loại bỏ banner AI slop) */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+        <div className="relative flex-1">
+          <Search className="w-4 h-4 text-[var(--text-muted)] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Tìm kiếm theo tiêu đề bài thơ..."
+            className="w-full pl-10 pr-4 py-2.5 bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-xl text-xs font-mono text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--accent-green)] transition-colors shadow-xs"
+          />
         </div>
 
-        <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] text-[11px] font-mono text-[var(--text-secondary)] shrink-0">
-          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-          <span>Đồng bộ tức thì</span>
+        <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] text-[11px] font-mono text-[var(--text-secondary)] shrink-0 self-start sm:self-auto shadow-xs">
+          <span className="w-2 h-2 rounded-full bg-emerald-500" />
+          <span>Tự động lưu khi bật/ẩn thẻ tác giả</span>
         </div>
-      </div>
-
-      {/* Filter Bar */}
-      <div className="flex items-center gap-3 p-3.5 bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-2xl shadow-xs">
-        <Search className="w-4 h-4 text-[var(--text-muted)] ml-1" />
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Tìm kiếm theo tiêu đề bài thơ..."
-          className="bg-transparent border-none text-[var(--text-primary)] placeholder:text-[var(--text-muted)] text-xs font-mono focus:outline-none w-full"
-        />
       </div>
 
       {/* Bảng Thi phẩm */}
