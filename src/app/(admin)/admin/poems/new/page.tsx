@@ -38,6 +38,10 @@ export default function NewPoemPage() {
 
 function NewPoemFormContent() {
   const searchParams = useSearchParams();
+  const editId = searchParams.get("edit") || searchParams.get("id");
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [loadingEdit, setLoadingEdit] = useState(false);
+
   const initialType = searchParams.get("type") === "prose" ? "prose" : "poem";
   const [contentType, setContentType] = useState<"poem" | "prose">(initialType);
   const [title, setTitle] = useState("");
@@ -55,6 +59,36 @@ function NewPoemFormContent() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [importStatus, setImportStatus] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!editId) return;
+    setIsEditMode(true);
+    setLoadingEdit(true);
+
+    fetch("/api/poems")
+      .then((res) => res.json())
+      .then((json) => {
+        if (json.success && Array.isArray(json.data)) {
+          const found = json.data.find((p: any) => p.id === editId || p.slug === editId);
+          if (found) {
+            setTitle(found.title || "");
+            setSlug(found.slug || "");
+            setExcerpt(found.excerpt || "");
+            setPoemText(found.raw_text || "");
+            setShowAuthorInfo(found.show_author_info !== false);
+            if (found.collection_id) setCollectionId(found.collection_id);
+
+            const isProseType = ["tan_van", "van_xuoi", "but_ky", "doan_van"].includes(found.form_type);
+            setContentType(isProseType ? "prose" : "poem");
+            if (found.form_type) {
+              setSelectedCategories([found.form_type]);
+            }
+          }
+        }
+      })
+      .catch((e) => console.error("Lỗi nạp bài thơ để sửa:", e))
+      .finally(() => setLoadingEdit(false));
+  }, [editId]);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -262,26 +296,46 @@ function NewPoemFormContent() {
           .join("");
       }
 
-      const res = await fetch("/api/poems", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title,
-          slug,
-          form_type: primaryFormType,
-          category_id: primaryCategory?.id,
-          excerpt: excerpt || poemText.slice(0, 120),
-          content_html: stanzas,
-          raw_text: poemText,
-          audio_url: null,
-          show_author_info: showAuthorInfo,
-          collection_id: collectionId || null,
-        }),
-      });
+      let res: Response;
+      if (isEditMode && editId) {
+        res = await fetch("/api/poems", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            id: editId,
+            title,
+            slug,
+            form_type: primaryFormType,
+            category_id: primaryCategory?.id,
+            excerpt: excerpt || poemText.slice(0, 120),
+            content_html: stanzas,
+            raw_text: poemText,
+            show_author_info: showAuthorInfo,
+            collection_id: collectionId || null,
+          }),
+        });
+      } else {
+        res = await fetch("/api/poems", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            title,
+            slug,
+            form_type: primaryFormType,
+            category_id: primaryCategory?.id,
+            excerpt: excerpt || poemText.slice(0, 120),
+            content_html: stanzas,
+            raw_text: poemText,
+            audio_url: null,
+            show_author_info: showAuthorInfo,
+            collection_id: collectionId || null,
+          }),
+        });
+      }
 
       const json = await res.json();
       if (!res.ok || !json.success) {
-        throw new Error(json.error || "Không thể lưu thi phẩm");
+        throw new Error(json.error || (isEditMode ? "Không thể cập nhật thi phẩm" : "Không thể lưu thi phẩm"));
       }
 
       setSavedPoemSlug(json.data?.slug || slug);
@@ -307,10 +361,16 @@ function NewPoemFormContent() {
           </Link>
           <div>
             <h1 className="font-serif text-2xl font-bold text-[var(--text-primary)]">
-              {contentType === "prose" ? "Soạn Thảo Tản Văn Mới" : "Soạn Thảo Thi Phẩm Mới"}
+              {isEditMode
+                ? `Chỉnh Sửa: "${title || "Thi Phẩm"}"`
+                : contentType === "prose"
+                ? "Soạn Thảo Tản Văn Mới"
+                : "Soạn Thảo Thi Phẩm Mới"}
             </h1>
             <p className="text-xs font-mono text-[var(--text-secondary)]">
-              {contentType === "prose"
+              {isEditMode
+                ? "Cập nhật nội dung, tùy chọn hiển thị thẻ tác giả và bấm nút Lưu bên dưới"
+                : contentType === "prose"
                 ? "Biên tập tản văn, văn xuôi hoặc bút ký nghệ thuật lên hệ thống"
                 : "Biên tập bài thơ, chọn thể loại linh hoạt và xuất bản lên thi quán Thịnh (Wind)"}
             </p>
@@ -654,8 +714,14 @@ function NewPoemFormContent() {
           >
             Hủy bỏ
           </Link>
-          <TaiButton variant="primary" type="submit">
-            Xuất Bản Tác Phẩm
+          <TaiButton variant="primary" type="submit" disabled={isSubmitting}>
+            {isSubmitting
+              ? "Đang lưu..."
+              : isEditMode
+              ? "Lưu Thay Đổi Thi Phẩm"
+              : contentType === "prose"
+              ? "Xuất Bản Tản Văn"
+              : "Xuất Bản Thi Phẩm"}
           </TaiButton>
         </div>
       </form>

@@ -145,7 +145,7 @@ export default async function AdminDashboardPage() {
                       Xem
                     </Link>
                     <Link
-                      href={`/admin/poems`}
+                      href={`/admin/poems/new?edit=${poem.id}`}
                       className="text-[var(--accent-green)] dark:text-emerald-400 hover:underline"
                     >
                       Sửa

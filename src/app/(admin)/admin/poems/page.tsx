@@ -4,11 +4,27 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { mockPoems } from "@/data/mock-poetry";
 import { TaiButton } from "@/components/tai-ui/TaiButton";
-import { Plus, Search, Edit, Trash2, ExternalLink } from "lucide-react";
+import {
+  Plus,
+  Search,
+  Edit,
+  ExternalLink,
+  CheckCircle2,
+  AlertCircle,
+  Eye,
+  EyeOff,
+  Loader2,
+  Info,
+  Sparkles,
+} from "lucide-react";
+import type { Poem } from "@/types/database";
 
 export default function AdminPoemsListPage() {
-  const [poems, setPoems] = useState(mockPoems);
+  const [poems, setPoems] = useState<Poem[]>(mockPoems);
   const [search, setSearch] = useState("");
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [justSavedId, setJustSavedId] = useState<string | null>(null);
+  const [toast, setToast] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
   useEffect(() => {
     fetch("/api/poems")
@@ -21,25 +37,103 @@ export default function AdminPoemsListPage() {
       .catch(() => {});
   }, []);
 
+  const showToast = (type: "success" | "error", message: string) => {
+    setToast({ type, message });
+    setTimeout(() => {
+      setToast(null);
+    }, 4500);
+  };
+
   const filteredPoems = poems.filter((p) =>
     p.title.toLowerCase().includes(search.toLowerCase())
   );
 
-  const toggleAuthorInfo = (id: string) => {
-    setPoems(
-      poems.map((p) =>
-        p.id === id ? { ...p, show_author_info: !p.show_author_info } : p
-      )
+  const toggleAuthorInfo = async (poem: Poem) => {
+    const nextState = !poem.show_author_info;
+    setUpdatingId(poem.id);
+
+    // Optimistic UI update
+    setPoems((prev) =>
+      prev.map((p) => (p.id === poem.id ? { ...p, show_author_info: nextState } : p))
     );
+
+    try {
+      const res = await fetch("/api/poems", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: poem.id,
+          show_author_info: nextState,
+        }),
+      });
+
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        throw new Error(json.error || "Không thể cập nhật trạng thái");
+      }
+
+      setJustSavedId(poem.id);
+      setTimeout(() => setJustSavedId(null), 2500);
+
+      showToast(
+        "success",
+        `Đã tự động lưu thành công! Bài "${poem.title}" hiện đã ${nextState ? "BẬT hiển thị" : "ẨN"} thẻ tác giả cho độc giả.`
+      );
+    } catch (err: any) {
+      // Rollback on error
+      setPoems((prev) =>
+        prev.map((p) => (p.id === poem.id ? { ...p, show_author_info: poem.show_author_info } : p))
+      );
+      showToast(
+        "error",
+        err.message || "Lỗi khi lưu thay đổi lên cơ sở dữ liệu. Vui lòng thử lại!"
+      );
+    } finally {
+      setUpdatingId(null);
+    }
   };
 
   return (
-    <div className="max-w-6xl mx-auto flex flex-col gap-8 pb-16">
+    <div className="max-w-6xl mx-auto flex flex-col gap-8 pb-16 relative">
+      {/* Toast thông báo trạng thái tự động lưu */}
+      {toast && (
+        <div className="fixed top-6 right-6 z-50 max-w-md animate-in fade-in slide-in-from-top-4 duration-300">
+          <div
+            className={`p-4 rounded-2xl shadow-xl backdrop-blur-md border flex items-start gap-3 text-xs font-serif ${
+              toast.type === "success"
+                ? "bg-emerald-950/90 border-emerald-500/40 text-emerald-200"
+                : "bg-red-950/90 border-red-500/40 text-red-200"
+            }`}
+          >
+            {toast.type === "success" ? (
+              <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+            ) : (
+              <AlertCircle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
+            )}
+            <div className="flex-1">
+              <span className="font-bold block text-sm mb-0.5">
+                {toast.type === "success" ? "Tự Động Lưu Thành Công" : "Lỗi Cập Nhật"}
+              </span>
+              <p className="leading-relaxed">{toast.message}</p>
+            </div>
+            <button
+              onClick={() => setToast(null)}
+              className="text-white/60 hover:text-white text-xs font-mono px-1 py-0.5 rounded cursor-pointer"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-[var(--border-subtle)]">
         <div>
-          <h1 className="font-serif text-2xl font-bold text-[var(--text-primary)]">
+          <h1 className="font-serif text-2xl font-bold text-[var(--text-primary)] flex items-center gap-2.5">
             Danh Sách Thi Phẩm Đã Sáng Tác
+            <span className="text-xs font-mono font-normal px-2.5 py-0.5 rounded-full bg-[var(--accent-green)]/15 text-[var(--accent-green)] dark:text-emerald-400 border border-[var(--accent-green)]/30">
+              {poems.length} tác phẩm
+            </span>
           </h1>
           <p className="text-xs font-mono text-[var(--text-secondary)] mt-1">
             Quản lý toàn bộ bài thơ, tùy chỉnh hiển thị thông tin tác giả và lượt đọc
@@ -48,9 +142,32 @@ export default function AdminPoemsListPage() {
 
         <Link href="/admin/poems/new">
           <TaiButton variant="primary" size="sm">
-            Soạn Thơ Mới
+            <Plus className="w-4 h-4" />
+            <span>Soạn Thơ Mới</span>
           </TaiButton>
         </Link>
+      </div>
+
+      {/* Banner Hướng Dẫn Tính Năng Tự Động Lưu */}
+      <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-500/10 via-amber-500/10 to-transparent border border-emerald-500/25 flex items-start sm:items-center justify-between gap-4">
+        <div className="flex items-start sm:items-center gap-3">
+          <div className="p-2 rounded-xl bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 shrink-0">
+            <Sparkles className="w-4 h-4" />
+          </div>
+          <div className="text-xs">
+            <p className="font-serif font-bold text-[var(--text-primary)]">
+              Cơ chế Tự Động Lưu (Auto-Save):
+            </p>
+            <p className="font-mono text-[var(--text-secondary)] mt-0.5 leading-relaxed">
+              Khi bấm chuyển đổi <strong>Bật (Hiện)</strong> hoặc <strong>Tắt (Ẩn)</strong> thẻ tác giả ở bảng bên dưới, hệ thống sẽ <strong>tự động lưu trực tiếp</strong> vào máy chủ ngay lập tức mà không cần thêm nút lưu.
+            </p>
+          </div>
+        </div>
+
+        <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] text-[11px] font-mono text-[var(--text-secondary)] shrink-0">
+          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+          <span>Đồng bộ tức thì</span>
+        </div>
       </div>
 
       {/* Filter Bar */}
@@ -73,7 +190,14 @@ export default function AdminPoemsListPage() {
               <th className="py-3 px-4 min-w-[200px]">Bài thơ</th>
               <th className="py-3 px-4">Thể loại</th>
               <th className="py-3 px-4">Tác giả</th>
-              <th className="py-3 px-4">Hiện thẻ tác giả</th>
+              <th className="py-3 px-4 min-w-[170px]">
+                <div className="flex items-center gap-1.5">
+                  <span>Hiện thẻ tác giả</span>
+                  <span className="text-[10px] lowercase text-[var(--accent-green)] dark:text-emerald-400 font-normal">
+                    (tự động lưu)
+                  </span>
+                </div>
+              </th>
               <th className="py-3 px-4">Lượt đọc</th>
               <th className="py-3 px-4 text-right">Thao tác</th>
             </tr>
@@ -82,96 +206,131 @@ export default function AdminPoemsListPage() {
             {filteredPoems.length === 0 ? (
               <tr>
                 <td colSpan={6} className="py-12 text-center text-[var(--text-muted)]">
-                  <p className="font-serif text-base text-[var(--text-secondary)] mb-1">Chưa có thi phẩm nào</p>
-                  <p className="text-xs text-[var(--text-muted)] mb-4">Toàn bộ dữ liệu mẫu đã được xóa sạch. Hãy bấm nút dưới để tạo bài thơ đầu tiên.</p>
+                  <p className="font-serif text-base text-[var(--text-secondary)] mb-1">
+                    Chưa có thi phẩm nào
+                  </p>
+                  <p className="text-xs text-[var(--text-muted)] mb-4">
+                    Toàn bộ dữ liệu mẫu đã được xóa sạch. Hãy bấm nút dưới để tạo bài thơ đầu tiên.
+                  </p>
                   <Link href="/admin/poems/new" className="inline-block">
                     <TaiButton variant="primary" size="sm">
-                      Soạn Thơ Mới
+                      <Plus className="w-4 h-4" />
+                      <span>Soạn Thơ Mới</span>
                     </TaiButton>
                   </Link>
                 </td>
               </tr>
             ) : (
-              filteredPoems.map((poem) => (
-              <tr key={poem.id} className="hover:bg-[var(--text-primary)]/[0.02] transition-colors">
-                <td className="py-3.5 px-4 min-w-[200px] whitespace-normal">
-                  <div className="flex flex-col">
-                    <span className="font-serif font-bold text-base text-[var(--text-primary)]">
-                      {poem.title}
-                    </span>
-                    <span className="text-[11px] text-[var(--text-muted)] line-clamp-1 italic">
-                      “{poem.excerpt}”
-                    </span>
-                  </div>
-                </td>
-                <td className="py-3.5 px-4">
-                  {poem.form_type === "luc_bat" ? (
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-sans font-medium bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-emerald-500/20">
-                      Lục Bát
-                    </span>
-                  ) : poem.form_type === "song_that_luc_bat" ? (
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-sans font-medium bg-teal-500/10 text-teal-800 dark:text-teal-300 border border-teal-500/20">
-                      Song Thất Lục Bát
-                    </span>
-                  ) : poem.form_type === "that_ngon" ? (
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-sans font-medium bg-violet-500/10 text-violet-800 dark:text-violet-300 border border-violet-500/20">
-                      Đường Luật
-                    </span>
-                  ) : poem.form_type === "tan_van" || poem.form_type === "Tản Văn" ? (
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-sans font-medium bg-sky-500/10 text-sky-800 dark:text-sky-300 border border-sky-500/20">
-                      Tản Văn
-                    </span>
-                  ) : (
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-sans font-medium bg-amber-500/10 text-amber-800 dark:text-amber-300 border border-amber-500/20">
-                      Tự Do
-                    </span>
-                  )}
-                </td>
-                <td className="py-3.5 px-4 text-[var(--text-secondary)] font-medium">
-                  {poem.author?.name || "Khuyết danh"}
-                </td>
-                <td className="py-3.5 px-4">
-                  <button
-                    type="button"
-                    onClick={() => toggleAuthorInfo(poem.id)}
-                    className="cursor-pointer transition-transform active:scale-95"
-                    title="Bấm để bật/tắt hiển thị tác giả trên bài thơ này"
-                  >
-                    {poem.show_author_info ? (
-                      <span className="px-2.5 py-0.5 bg-[var(--accent-green)]/15 text-[var(--accent-green)] dark:text-emerald-400 border border-[var(--accent-green)]/30 text-[10px] rounded-md font-semibold">
-                        Bật (Hiện)
-                      </span>
-                    ) : (
-                      <span className="px-2.5 py-0.5 bg-[var(--text-primary)]/10 text-[var(--text-secondary)] text-[10px] rounded-md font-medium">
-                        Tắt (Ẩn)
-                      </span>
-                    )}
-                  </button>
-                </td>
-                <td className="py-3.5 px-4 text-[var(--text-secondary)] font-mono font-medium">
-                  {poem.view_count}
-                </td>
-                <td className="py-3.5 px-4 text-right">
-                  <div className="flex items-center justify-end gap-2">
-                    <Link
-                      href={`/poems/${poem.slug}`}
-                      target="_blank"
-                      className="p-1.5 rounded-md text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-black/5 dark:hover:bg-white/5 transition-all active:scale-90"
-                      title="Xem bài đăng"
-                    >
-                      <ExternalLink className="w-3.5 h-3.5" />
-                    </Link>
-                    <Link
-                      href="/admin/poems/new"
-                      className="p-1.5 rounded-md text-[var(--accent-green)] dark:text-emerald-400 hover:bg-[var(--accent-green)]/10 transition-all active:scale-90"
-                      title="Sửa bài thơ"
-                    >
-                      <Edit className="w-3.5 h-3.5" />
-                    </Link>
-                  </div>
-                </td>
-              </tr>
-            ))
+              filteredPoems.map((poem) => {
+                const isUpdating = updatingId === poem.id;
+                const isJustSaved = justSavedId === poem.id;
+
+                return (
+                  <tr key={poem.id} className="hover:bg-[var(--text-primary)]/[0.02] transition-colors">
+                    <td className="py-3.5 px-4 min-w-[200px] whitespace-normal">
+                      <div className="flex flex-col">
+                        <span className="font-serif font-bold text-base text-[var(--text-primary)]">
+                          {poem.title}
+                        </span>
+                        <span className="text-[11px] text-[var(--text-muted)] line-clamp-1 italic">
+                          “{poem.excerpt}”
+                        </span>
+                      </div>
+                    </td>
+                    <td className="py-3.5 px-4">
+                      {poem.form_type === "luc_bat" ? (
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-sans font-medium bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-emerald-500/20">
+                          Lục Bát
+                        </span>
+                      ) : poem.form_type === "song_that_luc_bat" ? (
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-sans font-medium bg-teal-500/10 text-teal-800 dark:text-teal-300 border border-teal-500/20">
+                          Song Thất Lục Bát
+                        </span>
+                      ) : poem.form_type === "that_ngon" ? (
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-sans font-medium bg-violet-500/10 text-violet-800 dark:text-violet-300 border border-violet-500/20">
+                          Đường Luật
+                        </span>
+                      ) : poem.form_type === "tan_van" || poem.form_type === "Tản Văn" ? (
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-sans font-medium bg-sky-500/10 text-sky-800 dark:text-sky-300 border border-sky-500/20">
+                          Tản Văn
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-sans font-medium bg-amber-500/10 text-amber-800 dark:text-amber-300 border border-amber-500/20">
+                          Tự Do
+                        </span>
+                      )}
+                    </td>
+                    <td className="py-3.5 px-4 text-[var(--text-secondary)] font-medium">
+                      {poem.author?.name
+                        ? poem.author.pen_name
+                          ? `${poem.author.name} (${poem.author.pen_name})`
+                          : poem.author.name
+                        : "Thịnh (Wind)"}
+                    </td>
+                    <td className="py-3.5 px-4">
+                      <button
+                        type="button"
+                        onClick={() => toggleAuthorInfo(poem)}
+                        disabled={isUpdating}
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-serif font-medium transition-all cursor-pointer active:scale-95 ${
+                          isUpdating
+                            ? "bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/30 animate-pulse cursor-wait"
+                            : isJustSaved
+                            ? "bg-emerald-500/20 text-emerald-800 dark:text-emerald-200 border border-emerald-500/50 shadow-xs"
+                            : poem.show_author_info
+                            ? "bg-[var(--accent-green)]/15 text-[var(--accent-green)] dark:text-emerald-400 border border-[var(--accent-green)]/35 hover:bg-[var(--accent-green)]/25"
+                            : "bg-[var(--text-primary)]/8 text-[var(--text-muted)] border border-[var(--border-subtle)] hover:bg-[var(--text-primary)]/15"
+                        }`}
+                        title="Bấm để chuyển đổi Ẩn/Hiện — Hệ thống sẽ tự động lưu ngay lập tức"
+                      >
+                        {isUpdating ? (
+                          <>
+                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                            <span>Đang lưu...</span>
+                          </>
+                        ) : isJustSaved ? (
+                          <>
+                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                            <span>✓ Đã lưu</span>
+                          </>
+                        ) : poem.show_author_info ? (
+                          <>
+                            <Eye className="w-3.5 h-3.5 text-[var(--accent-green)] dark:text-emerald-400" />
+                            <span>Bật (Hiện)</span>
+                          </>
+                        ) : (
+                          <>
+                            <EyeOff className="w-3.5 h-3.5 opacity-60" />
+                            <span>Tắt (Ẩn)</span>
+                          </>
+                        )}
+                      </button>
+                    </td>
+                    <td className="py-3.5 px-4 text-[var(--text-secondary)] font-mono font-medium">
+                      {poem.view_count}
+                    </td>
+                    <td className="py-3.5 px-4 text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <Link
+                          href={`/poems/${poem.slug}`}
+                          target="_blank"
+                          className="p-1.5 rounded-md text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-black/5 dark:hover:bg-white/5 transition-all active:scale-90"
+                          title="Xem trước bài thơ"
+                        >
+                          <ExternalLink className="w-3.5 h-3.5" />
+                        </Link>
+                        <Link
+                          href={`/admin/poems/new?edit=${poem.id}`}
+                          className="p-1.5 rounded-md text-[var(--accent-green)] dark:text-emerald-400 hover:bg-[var(--accent-green)]/10 transition-all active:scale-90"
+                          title="Chỉnh sửa nội dung bài thơ & lưu thủ công"
+                        >
+                          <Edit className="w-3.5 h-3.5" />
+                        </Link>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })
             )}
           </tbody>
         </table>

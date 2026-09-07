@@ -369,6 +369,87 @@ export async function createPoem(
   return { data: newPoem, error: null };
 }
 
+export async function updatePoem(
+  id: string,
+  poemData: Partial<Poem>
+): Promise<{ data: Poem | null; error: string | null }> {
+  let updatedPoem: Poem | null = null;
+
+  if (isSupabaseConfigured()) {
+    try {
+      const supabase = getSupabaseClient(true);
+      const payload: Record<string, any> = {
+        updated_at: new Date().toISOString(),
+      };
+
+      if (poemData.title !== undefined) payload.title = poemData.title;
+      if (poemData.slug !== undefined) payload.slug = poemData.slug;
+      if (poemData.form_type !== undefined) {
+        payload.form_type = FORM_TYPE_MAP[poemData.form_type] || poemData.form_type;
+      }
+      if (poemData.excerpt !== undefined) payload.excerpt = poemData.excerpt;
+      if (poemData.content_json !== undefined) payload.content_json = poemData.content_json;
+      if (poemData.content_html !== undefined) payload.content_html = poemData.content_html;
+      if (poemData.raw_text !== undefined) payload.raw_text = poemData.raw_text;
+      if (poemData.author_id !== undefined) payload.author_id = poemData.author_id;
+      if (poemData.show_author_info !== undefined) payload.show_author_info = Boolean(poemData.show_author_info);
+      if (poemData.category_id !== undefined) payload.category_id = poemData.category_id;
+      if (poemData.cover_image_url !== undefined) payload.cover_image_url = poemData.cover_image_url;
+      if (poemData.audio_url !== undefined) payload.audio_url = poemData.audio_url;
+      if (poemData.status !== undefined) payload.status = poemData.status;
+      if (poemData.is_featured !== undefined) payload.is_featured = poemData.is_featured;
+
+      const { data, error } = await supabase
+        .from("poems")
+        .update(payload)
+        .eq("id", id)
+        .select(`
+          *,
+          author:authors(*),
+          category:categories(*)
+        `)
+        .single();
+
+      if (error) {
+        console.error("Lỗi Supabase updatePoem:", error);
+        return { data: null, error: error.message };
+      }
+
+      if (data) {
+        updatedPoem = data as Poem;
+      }
+    } catch (e: any) {
+      console.error("Lỗi kết nối Supabase updatePoem:", e);
+      return { data: null, error: e.message };
+    }
+  }
+
+  // Cập nhật và lưu vào file local fallback
+  try {
+    const filePath = path.join(process.cwd(), "src/data/local-poems.json");
+    const existingPoems = getLocalStoredPoems();
+    const targetPoem = existingPoems.find((p) => p.id === id);
+    if (targetPoem) {
+      const merged: Poem = {
+        ...targetPoem,
+        ...poemData,
+        updated_at: new Date().toISOString(),
+      };
+      if (updatedPoem) {
+        merged.author = updatedPoem.author || merged.author;
+        merged.category = updatedPoem.category || merged.category;
+      }
+      const updatedList = existingPoems.map((p) => (p.id === id ? merged : p));
+      fs.writeFileSync(filePath, JSON.stringify(updatedList, null, 2), "utf-8");
+      if (!updatedPoem) updatedPoem = merged;
+    }
+  } catch (e) {
+    console.warn("Lỗi lưu local-poems.json trong updatePoem:", e);
+  }
+
+  return { data: updatedPoem, error: null };
+}
+
 // ==============================================================================
 // 2. COLLECTIONS (TUYỂN TẬP)
 // ==============================================================================

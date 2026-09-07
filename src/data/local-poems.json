@@ -18,25 +18,25 @@
     "view_count": 0,
     "published_at": "2026-09-05T11:40:30.379Z",
     "created_at": "2026-09-05T11:40:30.379Z",
-    "updated_at": "2026-09-05T11:40:30.379Z",
+    "updated_at": "2026-09-07T15:37:34.595Z",
     "author": {
       "id": "a0000000-0000-0000-0000-000000000001",
+      "bio": "Tác giả Thịnh (Ký danh: Wind) — Người gieo vần cho những miền ký ức và triết lý nhân sinh sâu lắng. Tác giả của các thi phẩm đương đại giàu cảm xúc trong không gian thi ca Wind.",
       "name": "Thịnh",
-      "pen_name": "Wind",
       "slug": "thinh-wind",
       "period": "Văn học đương đại",
-      "bio": "Tác giả Thịnh (Ký danh: Wind) — Người gieo vần cho những miền ký ức và triết lý nhân sinh sâu lắng. Tác giả của các thi phẩm đương đại giàu cảm xúc trong không gian thi ca Wind.",
+      "pen_name": "Wind",
       "avatar_url": "/floral/flower-pink.png",
       "created_at": "2026-09-04T13:29:52.622438+00:00",
       "updated_at": "2026-09-07T15:33:15.71202+00:00"
     },
     "category": {
-      "id": "cat-1",
+      "id": "c0000000-0000-0000-0000-000000000001",
       "name": "Thơ Lục Bát",
       "slug": "tho-luc-bat",
-      "description": "Điệu hồn dân tộc, niêm luật 6-8 truyền thống",
+      "created_at": "2026-09-04T13:29:52.622438+00:00",
       "sort_order": 1,
-      "created_at": "2026-09-05T11:19:56.488Z"
+      "description": "Điệu hồn dân tộc 6-8"
     }
   },
   {

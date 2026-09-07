@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { createPoem, getPoems } from "@/lib/data-service";
+import { createPoem, getPoems, updatePoem } from "@/lib/data-service";
 
 export async function GET(request: NextRequest) {
   try {
@@ -51,4 +51,44 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
+}
+
+export async function PATCH(request: NextRequest) {
+  try {
+    const cookieStore = await cookies();
+    const session = cookieStore.get("admin_session");
+    if (session?.value !== "authenticated") {
+      return NextResponse.json(
+        { success: false, error: "Yêu cầu quyền đăng nhập Admin" },
+        { status: 401 }
+      );
+    }
+
+    const body = await request.json();
+    const { id, ...updates } = body;
+
+    if (!id) {
+      return NextResponse.json(
+        { success: false, error: "Thiếu ID bài thơ cần cập nhật" },
+        { status: 400 }
+      );
+    }
+
+    const { data, error } = await updatePoem(id, updates);
+
+    if (error) {
+      return NextResponse.json({ success: false, error }, { status: 500 });
+    }
+
+    return NextResponse.json({ success: true, data });
+  } catch (error: any) {
+    return NextResponse.json(
+      { success: false, error: error.message || "Lỗi khi cập nhật bài thơ" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PUT(request: NextRequest) {
+  return PATCH(request);
 }
