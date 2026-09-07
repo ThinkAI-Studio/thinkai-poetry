@@ -210,9 +210,9 @@ function ShelfPlank() {
           <div className="hidden sm:block w-10 h-[1.5px] bg-gradient-to-r from-[#D4AF37]/70 to-transparent" />
         </div>
 
-        {/* Khắc chìm nhãn Thư phòng Thịnh và Thơ */}
+        {/* Khắc chìm nhãn Thư phòng Wind */}
         <div className="text-[10px] font-mono tracking-[0.25em] uppercase text-[#EAD0A0]/50 drop-shadow-[0_1px_1px_rgba(0,0,0,0.9)]">
-          Thịnh và Thơ • Tủ Sách Tác Quyền
+          Wind • Tủ Sách Tác Quyền
         </div>
 
         {/* Ke đồng cổ trang trí góc phải */}

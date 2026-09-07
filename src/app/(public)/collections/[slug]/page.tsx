@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: CollectionDetailPageProps) {
   const col = await getCollectionBySlug(slug);
   if (!col) return { title: "Không tìm thấy tuyển tập" };
   return {
-    title: `${col.title} | Thịnh và Thơ`,
+    title: `${col.title} | Wind`,
     description: col.description,
   };
 }

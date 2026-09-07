@@ -99,17 +99,17 @@ export function SiteHeader() {
       )}
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 md:px-8 flex items-center justify-between gap-4">
-        {/* Logo: Biểu tượng Thịnh và Thơ + Tên thương hiệu */}
+        {/* Logo: Biểu tượng Wind + Tên thương hiệu */}
         <Link
           href="/"
           onClick={handleLogoClick}
           className="flex items-center gap-2.5 sm:gap-3 group select-none cursor-pointer shrink-0"
-          title="Trở về đầu trang Thịnh và Thơ"
+          title="Trở về đầu trang Wind"
         >
           <div className="relative w-8 h-8 sm:w-9 sm:h-9 shrink-0 transition-transform duration-200 group-hover:scale-105 active:scale-95 drop-shadow-xs">
             <Image
               src="/thinh-va-tho-symbol.png"
-              alt="Thịnh và Thơ Logo"
+              alt="Wind Logo"
               fill
               priority
               className="object-contain"
@@ -117,7 +117,7 @@ export function SiteHeader() {
           </div>
           <div className="flex flex-col">
             <span className="font-serif text-lg sm:text-xl font-bold tracking-tight text-neutral-900 dark:text-[#EAE6DF] leading-none group-hover:text-[var(--accent-green)] dark:group-hover:text-[var(--accent-gold)] transition-colors">
-              Thịnh và Thơ
+              Wind
             </span>
             <span className="font-sans text-[9px] sm:text-[10px] tracking-[0.2em] uppercase text-neutral-500 dark:text-neutral-400 mt-0.5">
               Thi Quán Đương Đại

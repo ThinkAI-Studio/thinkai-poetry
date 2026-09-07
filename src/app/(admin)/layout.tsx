@@ -7,8 +7,8 @@ import { AdminHeaderActions } from "@/components/admin/AdminHeaderActions";
 import { AdminSidebarNav } from "@/components/admin/AdminSidebarNav";
 
 export const metadata = {
-  title: "Admin Studio | Thịnh và Thơ",
-  description: "Trung tâm quản trị nội dung thi ca và tuyển tập Thịnh và Thơ.",
+  title: "Admin Studio | Wind",
+  description: "Trung tâm quản trị nội dung thi ca và tuyển tập Wind.",
 };
 
 export default async function AdminLayout({
@@ -30,18 +30,18 @@ export default async function AdminLayout({
       <header className="h-14 border-b border-[var(--border-subtle)] bg-[var(--bg-card)]/90 px-4 sm:px-6 flex items-center justify-between z-30 sticky top-0 backdrop-blur-md transition-colors duration-200">
         <div className="flex items-center gap-3">
           <Link href="/admin" className="flex items-center gap-2.5 group">
-            {/* Logo Biểu tượng Thịnh và Thơ */}
+            {/* Logo Biểu tượng Wind */}
             <div className="relative w-8 h-8 rounded-lg overflow-hidden shrink-0 group-hover:scale-105 transition-transform select-none">
               <Image
                 src="/thinh-va-tho-symbol.png"
-                alt="Thịnh và Thơ Logo"
+                alt="Wind Logo"
                 fill
                 className="object-contain"
               />
             </div>
             <div className="flex flex-col">
               <span className="font-serif font-bold text-sm tracking-wide text-[var(--text-primary)]">
-                THỊNH VÀ THƠ
+                WIND
               </span>
               <span className="text-[10px] font-mono text-[var(--text-muted)] -mt-0.5">
                 Admin Studio

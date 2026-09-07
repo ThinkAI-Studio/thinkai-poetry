@@ -2,7 +2,7 @@ import React from "react";
 import { ComingSoonPage } from "@/components/lattice/ComingSoonPage";
 
 export const metadata = {
-  title: "Diễn Đàn Kiến Thức & Văn Học | Thịnh và Thơ",
+  title: "Diễn Đàn Kiến Thức & Văn Học | Wind",
   description: "Không gian đối thoại văn chương, bình thơ và chia sẻ cảm xúc nghệ thuật.",
 };
 

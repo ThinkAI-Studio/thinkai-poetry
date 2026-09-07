@@ -49,7 +49,7 @@ export function FloatingBookModal() {
         <div
           role="dialog"
           aria-modal="true"
-          aria-label="Không gian đọc sách Thịnh và Thơ"
+          aria-label="Không gian đọc sách Wind"
           className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 md:p-8 overflow-y-auto no-scrollbar"
         >
           {/* 1. LỚP NỀN LÀM MỜ BACKGROUND (BLUR BACKGROUND OVERLAY) */}

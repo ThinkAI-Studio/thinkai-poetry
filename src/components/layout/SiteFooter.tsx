@@ -14,13 +14,13 @@ export function SiteFooter() {
             <div className="relative w-7 h-7 shrink-0">
               <Image
                 src="/thinh-va-tho-symbol.png"
-                alt="Thịnh và Thơ Logo"
+                alt="Wind Logo"
                 fill
                 className="object-contain"
               />
             </div>
             <span className="font-serif font-bold text-lg text-neutral-900 dark:text-[#EAE6DF] tracking-tight">
-              Thịnh và Thơ
+              Wind
             </span>
           </div>
           <p className="font-serif italic text-sm text-neutral-600 dark:text-[#A6A39C] max-w-sm">
@@ -46,7 +46,7 @@ export function SiteFooter() {
 
         {/* Credit */}
         <div className="flex flex-col items-center md:items-end gap-1 text-xs font-sans text-neutral-500 dark:text-[#7E7B74]">
-          <span>© {new Date().getFullYear()} Thịnh và Thơ. Mọi quyền được bảo lưu.</span>
+          <span>© {new Date().getFullYear()} Wind. Mọi quyền được bảo lưu.</span>
           <span className="flex items-center gap-1">
             Thiết kế bởi{" "}
             <span className="text-[var(--accent-green)] dark:text-[var(--accent-gold)] font-medium">

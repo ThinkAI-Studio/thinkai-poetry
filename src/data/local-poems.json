@@ -1,6 +1,6 @@
 [
   {
-    "id": "poem-1788608430379",
+    "id": "f0000000-0000-0000-0000-000000000001",
     "title": "Tấm lòng bao dung ",
     "slug": "tam-long-bao-dung",
     "form_type": "tho-luc-bat",
@@ -8,7 +8,7 @@
     "content_json": {},
     "content_html": "<div class=\"stanza\"><p class=\"verse\">Hẹn giờ đồng hồ trôi qua,</p><p class=\"verse\">Trễ một tiếng rưỡi lòng sa ngại ngùng.</p><p class=\"verse\">Bước chân vội vã chạy cùng,</p><p class=\"verse\">Lòng lo anh Thịnh muôn phần ưu phiền.</p><p class=\"verse\">Nào ngờ anh mỉm cười hiền,</p><p class=\"verse\">Bao dung rót chén trà thanh đón chào.</p><p class=\"verse\">Thi ca hòa nhịp dạt dào,</p><p class=\"verse\">Muộn mằn bỗng hóa ngọt ngào tri âm.</p></div>",
     "raw_text": "Hẹn giờ đồng hồ trôi qua,\n  Trễ một tiếng rưỡi lòng sa ngại ngùng.\n   Bước chân vội vã chạy cùng,\n   Lòng lo anh Thịnh muôn phần ưu phiền.\n   Nào ngờ anh mỉm cười hiền,\n   Bao dung rót chén trà thanh đón chào.\n Thi ca hòa nhịp dạt dào,\n Muộn mằn bỗng hóa ngọt ngào tri âm.",
-    "author_id": "author-1",
+    "author_id": "a0000000-0000-0000-0000-000000000001",
     "show_author_info": true,
     "category_id": "c0000000-0000-0000-0000-000000000001",
     "cover_image_url": "/floral/flower-pink.png",
@@ -39,7 +39,7 @@
     }
   },
   {
-    "id": "poem-test-2",
+    "id": "f0000000-0000-0000-0000-000000000002",
     "title": "Chín Mươi Phút Muộn Mằn",
     "slug": "chin-muoi-phut-muon-man",
     "form_type": "tu_do",
@@ -47,9 +47,9 @@
     "content_json": {},
     "content_html": "<div class=\"stanza\"><p class=\"verse\">Chiếc kim giây quay chín mươi vòng muộn mằn,</p><p class=\"verse\">Em nín thở bước vào không gian thi ca.</p><p class=\"verse\">Tưởng nhành hoa rụng vì chờ đợi,</p><p class=\"verse\">Tưởng chén trà phai vị ban đầu.</p></div><div class=\"stanza\"><p class=\"verse\">Nhưng ánh mắt anh Hữu Thịnh vẫn dịu êm như nắng sớm,</p><p class=\"verse\">Không một lời trách móc, chỉ có nụ cười bao dung.</p><p class=\"verse\">Anh bảo: 'Thời gian trôi qua có thể muộn,</p><p class=\"verse\">Nhưng tri âm đến đúng lúc tâm ngộ vừa mở ra.'</p></div>",
     "raw_text": "Chiếc kim giây quay chín mươi vòng muộn mằn,\nEm nín thở bước vào không gian thi ca.\nTưởng nhành hoa rụng vì chờ đợi,\nTưởng chén trà phai vị ban đầu.\n\nNhưng ánh mắt anh Hữu Thịnh vẫn dịu êm như nắng sớm,\nKhông một lời trách móc, chỉ có nụ cười bao dung.\nAnh bảo: 'Thời gian trôi qua có thể muộn,\nNhưng tri âm đến đúng lúc tâm ngộ vừa mở ra.'",
-    "author_id": "author-1",
+    "author_id": "a0000000-0000-0000-0000-000000000001",
     "show_author_info": true,
-    "category_id": "cat-2",
+    "category_id": "c0000000-0000-0000-0000-000000000002",
     "cover_image_url": "/floral/flower-pink.png",
     "audio_url": null,
     "status": "published",
@@ -59,7 +59,7 @@
     "created_at": "2026-09-05T18:38:00.000Z",
     "updated_at": "2026-09-05T18:38:00.000Z",
     "author": {
-      "id": "author-1",
+      "id": "a0000000-0000-0000-0000-000000000001",
       "name": "Hữu Thịnh",
       "pen_name": "Hữu Thịnh",
       "slug": "huu-thinh",
@@ -69,16 +69,16 @@
       "created_at": "2026-09-04T17:50:44.109Z"
     },
     "category": {
-      "id": "cat-2",
+      "id": "c0000000-0000-0000-0000-000000000002",
       "name": "Thơ Tự Do",
       "slug": "tho-tu-do",
-      "description": "Ph phóng khoáng, nhịp điệu nội tâm",
+      "description": "Phóng khoáng, nhịp điệu nội tâm",
       "sort_order": 2,
       "created_at": "2026-09-04T17:50:44.109Z"
     }
   },
   {
-    "id": "prose-test-1",
+    "id": "f0000000-0000-0000-0000-000000000003",
     "title": "Khoảng Chờ Tươi Đẹp & Tấm Lòng Bao Dung",
     "slug": "khoang-cho-tuoi-dep-va-tam-long-bao-dung",
     "form_type": "tan_van",
@@ -86,9 +86,9 @@
     "content_json": {},
     "content_html": "<div class=\"prose-content\"><p>Chiều nay phố phường đông đúc, chiếc kim đồng hồ vô tình nhích qua chín mươi phút chênh chao. Tôi - em Minh - ngập ngùng bước từng bước ngập tràn áy náy đến điểm hẹn. Một tiếng rưỡi đi trễ là khoảng thời gian đủ dài để trà nguội, để lòng người kiên nhẫn nhất cũng có thể gợn chút ưu phiền.</p><p>Nhưng khi cánh cửa mở ra, thứ đón tôi không phải là khoảng trầm mặc dồn nén, mà là nụ cười bao dung ấm áp của anh Hữu Thịnh. Anh ung dung pha lại bình trà mới, tỏa ra làn hương mộc mạc thơm ngát. Với anh, thời gian không đo bằng sự vội vã của nhịp sống hiện đại, mà đo bằng sự chân thành của những tâm hồn đồng điệu.</p><p>Tấm lòng độ lượng và sự bao dung ấy như một khoảng lặng thi vị, biến sự muộn mằn thành một kỷ niệm đẹp trong hành trình thi ca. Nụ cười của anh nhắc tôi rằng, giữa thế gian hối hả, sự thấu hiểu và ấm áp huynh đệ chính là chất thơ đích thực nhất.</p></div>",
     "raw_text": "Chiều nay phố phường đông đúc, chiếc kim đồng hồ vô tình nhích qua chín mươi phút chênh chao. Tôi - em Minh - ngập ngùng bước từng bước ngập tràn áy náy đến điểm hẹn. Một tiếng rưỡi đi trễ là khoảng thời gian đủ dài để trà nguội, để lòng người kiên nhẫn nhất cũng có thể gợn chút ưu phiền.\n\nNhưng khi cánh cửa mở ra, thứ đón tôi không phải là khoảng trầm mặc dồn nén, mà là nụ cười bao dung ấm áp của anh Hữu Thịnh. Anh ung dung pha lại bình trà mới, tỏa ra làn hương mộc mạc thơm ngát. Với anh, thời gian không đo bằng sự vội vã của nhịp sống hiện đại, mà đo bằng sự chân thành của những tâm hồn đồng điệu.\n\nTấm lòng độ lượng và sự bao dung ấy như một khoảng lặng thi vị, biến sự muộn mằn thành một kỷ niệm đẹp trong hành trình thi ca. Nụ cười của anh nhắc tôi rằng, giữa thế gian hối hả, sự thấu hiểu và ấm áp huynh đệ chính là chất thơ đích thực nhất.",
-    "author_id": "author-1",
+    "author_id": "a0000000-0000-0000-0000-000000000001",
     "show_author_info": true,
-    "category_id": "cat-tan-van",
+    "category_id": "c0000000-0000-0000-0000-000000000005",
     "cover_image_url": "/floral/flower-pink.png",
     "audio_url": null,
     "status": "published",
@@ -98,7 +98,7 @@
     "created_at": "2026-09-05T18:38:00.000Z",
     "updated_at": "2026-09-05T18:38:00.000Z",
     "author": {
-      "id": "author-1",
+      "id": "a0000000-0000-0000-0000-000000000001",
       "name": "Hữu Thịnh",
       "pen_name": "Hữu Thịnh",
       "slug": "huu-thinh",
@@ -108,7 +108,7 @@
       "created_at": "2026-09-04T17:50:44.109Z"
     },
     "category": {
-      "id": "cat-tan-van",
+      "id": "c0000000-0000-0000-0000-000000000005",
       "name": "Tản Văn",
       "slug": "tan-van",
       "description": "Tùy bút & cảm xúc văn xuôi lắng đọng",

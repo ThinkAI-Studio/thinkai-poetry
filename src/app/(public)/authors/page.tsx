@@ -6,8 +6,8 @@ import { TiltCard } from "@/components/tai-ui/TiltCard";
 import { AuthorHeroWithAdminAccess } from "@/components/author/AuthorHeroWithAdminAccess";
 
 export const metadata = {
-  title: "Tác Giả | Thịnh và Thơ",
-  description: "Hồ sơ tác giả Hữu Thịnh và các cây bút thi ca đương đại. Thịnh và Thơ.",
+  title: "Tác Giả | Wind",
+  description: "Hồ sơ tác giả Hữu Thịnh và các cây bút thi ca đương đại. Wind.",
 };
 
 export default async function AuthorsPage() {

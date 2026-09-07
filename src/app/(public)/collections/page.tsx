@@ -7,8 +7,8 @@ import { TiltCard } from "@/components/tai-ui/TiltCard";
 import { BookMarked, Feather } from "lucide-react";
 
 export const metadata = {
-  title: "Tuyển Tập Thi Ca | Thịnh và Thơ",
-  description: "Khám phá các tập thơ, thi tuyển chọn lọc đặc sắc. Thịnh và Thơ.",
+  title: "Tuyển Tập Thi Ca | Wind",
+  description: "Khám phá các tập thơ, thi tuyển chọn lọc đặc sắc. Wind.",
 };
 
 export default async function CollectionsPage() {

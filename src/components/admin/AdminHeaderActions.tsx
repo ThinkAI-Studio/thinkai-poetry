@@ -89,7 +89,7 @@ export function AdminHeaderActions() {
           >
             <div className="text-[10px] font-mono uppercase tracking-widest text-[var(--text-muted)] pb-2 border-b border-[var(--border-subtle)] flex items-center justify-between">
               <span>Menu Quản Trị Admin</span>
-              <span className="text-[var(--accent-green)] dark:text-emerald-400 font-bold">Thịnh và Thơ Studio</span>
+              <span className="text-[var(--accent-green)] dark:text-emerald-400 font-bold">Wind Studio</span>
             </div>
 
             {NAV_ITEMS.map((item, idx) => {

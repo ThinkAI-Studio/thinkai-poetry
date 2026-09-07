@@ -21,7 +21,7 @@ export default async function AdminDashboardPage() {
             Bảng Điều Khiển Quản Trị
           </h1>
           <p className="text-xs font-mono text-[var(--text-secondary)] mt-1">
-            Hệ thống quản lý nội dung thi ca Thịnh và Thơ • ThinkAI Studio
+            Hệ thống quản lý nội dung thi ca Wind • ThinkAI Studio
           </p>
         </div>
 

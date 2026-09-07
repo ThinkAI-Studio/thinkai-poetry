@@ -12,7 +12,7 @@ export async function generateMetadata({ params }: PoemPageProps) {
   const poem = await getPoemBySlug(slug);
   if (!poem) return { title: "Không tìm thấy bài thơ" };
   return {
-    title: `${poem.title} | Thịnh và Thơ`,
+    title: `${poem.title} | Wind`,
     description: poem.excerpt || poem.raw_text.slice(0, 150),
   };
 }

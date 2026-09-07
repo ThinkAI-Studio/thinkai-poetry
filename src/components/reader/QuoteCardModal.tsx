@@ -96,11 +96,11 @@ export function QuoteCardModal({
 
       ctx.font = '16px "Be Vietnam Pro", sans-serif';
       ctx.fillStyle = isDark ? "#A1A1AA" : "#5A5A5A";
-      ctx.fillText(`Tác giả: ${resolvedAuthor} • Thịnh và Thơ`, canvas.width / 2, 565);
+      ctx.fillText(`Tác giả: ${resolvedAuthor} • Wind`, canvas.width / 2, 565);
 
       // Download
       const link = document.createElement("a");
-      link.download = `thinh-va-tho-${Date.now()}.png`;
+      link.download = `wind-${Date.now()}.png`;
       link.href = canvas.toDataURL("image/png");
       link.click();
     } catch (err) {
@@ -169,7 +169,7 @@ export function QuoteCardModal({
               <div className="mt-4 pt-3 border-t border-current/10 w-full flex flex-col items-center">
                 <span className="font-poem-heading font-bold text-sm">— {resolvedTitle} —</span>
                 <span className="text-[11px] font-mono opacity-70 mt-0.5">
-                  {resolvedAuthor} • Thịnh và Thơ
+                  {resolvedAuthor} • Wind
                 </span>
               </div>
             </div>

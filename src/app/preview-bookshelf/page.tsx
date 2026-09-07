@@ -36,15 +36,15 @@ function BookshelfPreviewContent() {
 export default function PreviewBookshelfPage() {
   return (
     <div className="min-h-screen bg-[#FDFBF7] dark:bg-[#0B0F0E] text-neutral-900 dark:text-neutral-100 transition-colors duration-300">
-      {/* 1. Header Nhận Diện Mới: "Thịnh và Thơ" + Công Tắc Xúc Giác ThemeSwitch */}
+      {/* 1. Header Nhận Diện Mới: "Wind" + Công Tắc Xúc Giác ThemeSwitch */}
       <header className="sticky top-0 z-50 w-full backdrop-blur-md bg-[#FDFBF7]/90 dark:bg-[#0B0F0E]/90 border-b border-neutral-200/80 dark:border-neutral-800/80 transition-colors">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
-          {/* Logo & Tên Thương Hiệu Thịnh và Thơ */}
+          {/* Logo & Tên Thương Hiệu Wind */}
           <Link href="/" className="flex items-center gap-3.5 group">
             <div className="relative w-10 h-10 shrink-0 group-hover:scale-105 transition-transform">
               <Image
                 src="/thinh-va-tho-symbol.png"
-                alt="Thịnh và Thơ Logo"
+                alt="Wind Logo"
                 fill
                 sizes="40px"
                 className="object-contain"
@@ -54,14 +54,14 @@ export default function PreviewBookshelfPage() {
             <div className="flex flex-col">
               <div className="flex items-center gap-2">
                 <span className="font-poem-heading text-2xl sm:text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100 group-hover:text-[#1E3F2E] dark:group-hover:text-[#4ade80] transition-colors">
-                  Thịnh và Thơ
+                  Wind
                 </span>
                 <span className="text-[10px] uppercase font-mono tracking-widest px-2.5 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950/70 text-amber-900 dark:text-amber-300 border border-amber-300/50 dark:border-amber-700/50 font-semibold">
                   Preview Nghiệm Thu
                 </span>
               </div>
               <span className="text-xs font-serif text-neutral-500 dark:text-neutral-400">
-                Thịnh và Thơ &bull; Không Gian Thi Ca Đương Đại
+                Wind &bull; Không Gian Thi Ca Đương Đại
               </span>
             </div>
           </Link>
@@ -123,7 +123,7 @@ export default function PreviewBookshelfPage() {
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                    <span><strong>Nhận diện chuẩn:</strong> Toàn bộ định vị là &ldquo;Thịnh và Thơ&rdquo; - Thơ Hữu Thịnh.</span>
+                    <span><strong>Nhận diện chuẩn:</strong> Toàn bộ định vị là &ldquo;Wind&rdquo; - Thơ Hữu Thịnh.</span>
                   </div>
                 </div>
               </div>
@@ -146,7 +146,7 @@ export default function PreviewBookshelfPage() {
       {/* 3. Hero Thi Ca Rút Gọn */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 pt-6 pb-10 text-center">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-mono uppercase tracking-widest text-[#1E3F2E] dark:text-[#4ade80] bg-[#1E3F2E]/8 dark:bg-[#4ade80]/10 border border-[#1E3F2E]/15 dark:border-[#4ade80]/20 mb-5">
-          <span>Thịnh và Thơ</span>
+          <span>Wind</span>
           <span>&bull;</span>
           <span>Thư Phòng Thơ Hữu Thịnh</span>
         </div>
@@ -173,7 +173,7 @@ export default function PreviewBookshelfPage() {
       <footer className="w-full border-t border-neutral-200/80 dark:border-neutral-800/80 py-10 bg-neutral-100/50 dark:bg-neutral-950/50 text-center text-xs text-neutral-500 dark:text-neutral-400 font-serif">
         <div className="max-w-6xl mx-auto px-4 flex flex-col items-center gap-2">
           <p className="font-medium text-neutral-700 dark:text-neutral-300">
-            Thịnh và Thơ &copy; {new Date().getFullYear()} &bull; Không gian thi ca đương đại của tác giả Hữu Thịnh
+            Wind &copy; {new Date().getFullYear()} &bull; Không gian thi ca đương đại của tác giả Hữu Thịnh
           </p>
           <p className="text-[11px] text-neutral-400 dark:text-neutral-500">
             Bản xem trước nghiệm thu &bull; Chưa merge vào luồng chính &bull; Tối ưu hóa 60fps Native Compositor

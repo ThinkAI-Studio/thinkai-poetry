@@ -192,7 +192,7 @@ export function AdminSidebarNav() {
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-pulse" />
               <span>Phiên làm việc bảo mật</span>
             </span>
-            <span className="block mt-0.5">Thịnh và Thơ • Studio</span>
+            <span className="block mt-0.5">Wind • Studio</span>
           </div>
         </div>
       </div>

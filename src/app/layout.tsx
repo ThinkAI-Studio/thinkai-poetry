@@ -30,8 +30,8 @@ const beVietnamPro = Be_Vietnam_Pro({
 });
 
 export const metadata: Metadata = {
-  title: "Thịnh và Thơ | Không Gian Thi Ca Đương Đại",
-  description: "Tuyển tập những tác phẩm thi ca đương đại, lắng đọng từng thanh âm và nhịp điệu tâm hồn. Thịnh và Thơ.",
+  title: "Wind | Không Gian Thi Ca Đương Đại",
+  description: "Tuyển tập những tác phẩm thi ca đương đại, lắng đọng từng thanh âm và nhịp điệu tâm hồn. Wind.",
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "any" },
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     apple: "/apple-touch-icon.png",
   },
   openGraph: {
-    title: "Thịnh và Thơ | Không Gian Thi Ca Đương Đại",
+    title: "Wind | Không Gian Thi Ca Đương Đại",
     description: "Tuyển tập những tác phẩm thi ca đương đại, lắng đọng từng thanh âm và nhịp điệu tâm hồn.",
     type: "website",
     locale: "vi_VN",

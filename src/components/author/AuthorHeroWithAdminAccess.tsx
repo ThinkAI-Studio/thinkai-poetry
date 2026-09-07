@@ -131,7 +131,7 @@ export function AuthorHeroWithAdminAccess({ author }: AuthorHeroProps) {
           <button
             type="button"
             onClick={() => setIsModalOpen(true)}
-            title="Nhấp vào đóa hoa để mở Cổng Quản Trị Viên (Thịnh và Thơ)"
+            title="Nhấp vào đóa hoa để mở Cổng Quản Trị Viên (Wind)"
             className={cn(
               "w-32 h-32 shrink-0 bg-[var(--bg-elevated)] border-2 border-[var(--border-subtle)] rounded-full flex items-center justify-center overflow-hidden shadow-md",
               "group-hover:border-[var(--accent-gold)] group-hover:scale-105 group-hover:shadow-[0_0_25px_rgba(197,160,89,0.3)] transition-all duration-300 cursor-pointer active:scale-95",
@@ -236,7 +236,7 @@ export function AuthorHeroWithAdminAccess({ author }: AuthorHeroProps) {
                     Cổng Quản Trị Thi Quán
                   </h2>
                   <p className="text-xs font-mono text-[var(--text-secondary)] mt-1 tracking-wider">
-                    Thịnh và Thơ • Không gian biên tập tác phẩm
+                    Wind • Không gian biên tập tác phẩm
                   </p>
                 </div>
               </div>
