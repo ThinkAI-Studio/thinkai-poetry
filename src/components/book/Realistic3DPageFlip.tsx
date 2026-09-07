@@ -68,7 +68,7 @@ function PageLeft({
       {/* Header trang trái */}
       <div className="flex items-center justify-between pb-3 border-b border-amber-900/10 dark:border-white/5 text-[11px] font-sans uppercase tracking-widest text-amber-900/60 dark:text-amber-200/50">
         <span className="font-serif font-bold text-neutral-800 dark:text-[#EAE6DF] tracking-wide">
-          <span>Wind</span>
+          <span>{poem.show_author_info !== false ? "Wind" : "Thi Tuyển"}</span>
         </span>
         <span className="font-mono text-xs text-neutral-500 dark:text-neutral-400">
           Trang {globalPageLeftNumber.toString().padStart(2, "0")}
@@ -173,7 +173,9 @@ function PageLeft({
       {/* Footer trang trái */}
       <div className="pt-3 border-t border-amber-900/10 dark:border-white/5 flex items-center justify-between text-[11px] font-sans text-neutral-500 dark:text-neutral-400">
         <span>← Lật về trước</span>
-        <span className="font-serif italic text-neutral-600 dark:text-neutral-300">Wind</span>
+        <span className="font-serif italic text-neutral-600 dark:text-neutral-300">
+          {poem.show_author_info !== false ? "Wind" : ""}
+        </span>
       </div>
     </div>
   );
@@ -293,7 +295,9 @@ function PageRight({
 
       {/* Footer trang phải */}
       <div className="pt-3 border-t border-amber-900/10 dark:border-white/5 flex items-center justify-between text-[11px] font-sans text-neutral-500 dark:text-neutral-400">
-        <span className="font-serif italic text-neutral-600 dark:text-neutral-300">Wind</span>
+        <span className="font-serif italic text-neutral-600 dark:text-neutral-300">
+          {poem.show_author_info !== false ? "Wind" : ""}
+        </span>
         <span className="font-medium text-neutral-700 dark:text-neutral-300">Lật tiếp →</span>
       </div>
     </div>
@@ -325,7 +329,7 @@ function PageMobile({
       {/* Header Mobile */}
       <div className="flex items-center justify-between pb-3 border-b border-amber-900/10 dark:border-white/5 text-[11px] font-sans uppercase tracking-widest text-amber-900/60 dark:text-amber-200/50">
         <span className="font-serif font-bold text-neutral-800 dark:text-[#EAE6DF]">
-          <span>Wind</span>
+          <span>{poem.show_author_info !== false ? "Wind" : "Thi Tuyển"}</span>
         </span>
         <span className="font-mono text-xs font-semibold text-neutral-600 dark:text-neutral-300">
           Trang {(currentSpreadIndex + 1).toString().padStart(2, "0")}/{totalSpreads.toString().padStart(2, "0")}
