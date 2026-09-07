@@ -104,46 +104,66 @@ export default function AdminPoemsListPage() {
                     </span>
                   </div>
                 </td>
-                <td className="py-3.5 px-4 text-[var(--text-secondary)]">
-                  {poem.form_type === "luc_bat" ? "Lục Bát" : poem.form_type === "that_ngon" ? "Đường Luật" : "Tự Do"}
+                <td className="py-3.5 px-4">
+                  {poem.form_type === "luc_bat" ? (
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-sans font-medium bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-emerald-500/20">
+                      Lục Bát
+                    </span>
+                  ) : poem.form_type === "song_that_luc_bat" ? (
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-sans font-medium bg-teal-500/10 text-teal-800 dark:text-teal-300 border border-teal-500/20">
+                      Song Thất Lục Bát
+                    </span>
+                  ) : poem.form_type === "that_ngon" ? (
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-sans font-medium bg-violet-500/10 text-violet-800 dark:text-violet-300 border border-violet-500/20">
+                      Đường Luật
+                    </span>
+                  ) : poem.form_type === "tan_van" || poem.form_type === "Tản Văn" ? (
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-sans font-medium bg-sky-500/10 text-sky-800 dark:text-sky-300 border border-sky-500/20">
+                      Tản Văn
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-sans font-medium bg-amber-500/10 text-amber-800 dark:text-amber-300 border border-amber-500/20">
+                      Tự Do
+                    </span>
+                  )}
                 </td>
-                <td className="py-3.5 px-4 text-[var(--text-secondary)]">
-                  {poem.author?.name}
+                <td className="py-3.5 px-4 text-[var(--text-secondary)] font-medium">
+                  {poem.author?.name || "Khuyết danh"}
                 </td>
                 <td className="py-3.5 px-4">
                   <button
                     type="button"
                     onClick={() => toggleAuthorInfo(poem.id)}
-                    className="cursor-pointer"
+                    className="cursor-pointer transition-transform active:scale-95"
                     title="Bấm để bật/tắt hiển thị tác giả trên bài thơ này"
                   >
                     {poem.show_author_info ? (
-                      <span className="px-2 py-0.5 bg-[var(--accent-green)]/15 text-[var(--accent-green)] dark:text-emerald-400 border border-[var(--accent-green)]/30 text-[10px] rounded-md font-medium">
+                      <span className="px-2.5 py-0.5 bg-[var(--accent-green)]/15 text-[var(--accent-green)] dark:text-emerald-400 border border-[var(--accent-green)]/30 text-[10px] rounded-md font-semibold">
                         Bật (Hiện)
                       </span>
                     ) : (
-                      <span className="px-2 py-0.5 bg-[var(--text-primary)]/10 text-[var(--text-secondary)] text-[10px] rounded-md font-medium">
+                      <span className="px-2.5 py-0.5 bg-[var(--text-primary)]/10 text-[var(--text-secondary)] text-[10px] rounded-md font-medium">
                         Tắt (Ẩn)
                       </span>
                     )}
                   </button>
                 </td>
-                <td className="py-3.5 px-4 text-[var(--text-secondary)] font-mono">
+                <td className="py-3.5 px-4 text-[var(--text-secondary)] font-mono font-medium">
                   {poem.view_count}
                 </td>
                 <td className="py-3.5 px-4 text-right">
-                  <div className="flex items-center justify-end gap-3">
+                  <div className="flex items-center justify-end gap-2">
                     <Link
                       href={`/poems/${poem.slug}`}
                       target="_blank"
-                      className="text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                      className="p-1.5 rounded-md text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-black/5 dark:hover:bg-white/5 transition-all active:scale-90"
                       title="Xem bài đăng"
                     >
                       <ExternalLink className="w-3.5 h-3.5" />
                     </Link>
                     <Link
                       href="/admin/poems/new"
-                      className="text-[var(--accent-green)] dark:text-emerald-400 hover:opacity-80"
+                      className="p-1.5 rounded-md text-[var(--accent-green)] dark:text-emerald-400 hover:bg-[var(--accent-green)]/10 transition-all active:scale-90"
                       title="Sửa bài thơ"
                     >
                       <Edit className="w-3.5 h-3.5" />

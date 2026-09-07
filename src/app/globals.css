@@ -239,17 +239,29 @@ html.theme-transitioning *::after {
 }
 
 .poem-luc-bat .verse-6,
+.poem-luc-bat .stanza p:nth-child(odd),
 .poem-luc-bat p:nth-child(odd) {
-  padding-left: 2ch;
+  padding-left: 2.5ch;
 }
 .poem-luc-bat .verse-8,
+.poem-luc-bat .stanza p:nth-child(even),
 .poem-luc-bat p:nth-child(even) {
   padding-left: 0ch;
 }
 
-.poem-song-that .verse-7-1 {
+.poem-song-that .verse-7-1,
+.poem-song-that .stanza p:nth-child(4n+1) {
   padding-left: 1.5ch;
 }
-.poem-song-that .verse-7-2 {
+.poem-song-that .verse-7-2,
+.poem-song-that .stanza p:nth-child(4n+2) {
   padding-left: 1.5ch;
+}
+.poem-song-that .verse-6,
+.poem-song-that .stanza p:nth-child(4n+3) {
+  padding-left: 3ch;
+}
+.poem-song-that .verse-8,
+.poem-song-that .stanza p:nth-child(4n) {
+  padding-left: 0ch;
 }

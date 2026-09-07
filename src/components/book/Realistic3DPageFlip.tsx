@@ -157,7 +157,7 @@ function PageLeft({
                     <p
                       key={lIdx}
                       className={cn(
-                        poem.form_type === "luc_bat" && lIdx % 2 === 0 && "pl-3 sm:pl-4"
+                        poem.form_type === "luc_bat" && lIdx % 2 === 0 && "pl-5 sm:pl-7"
                       )}
                     >
                       <HighlightText text={line} query={highlightedText} />
@@ -245,7 +245,7 @@ function PageRight({
                       <p
                         key={lIdx}
                         className={cn(
-                          poem.form_type === "luc_bat" && lIdx % 2 === 0 && "pl-3 sm:pl-4"
+                          poem.form_type === "luc_bat" && lIdx % 2 === 0 && "pl-5 sm:pl-7"
                         )}
                       >
                         <HighlightText text={line} query={highlightedText} />
@@ -391,7 +391,7 @@ function PageMobile({
                     <p
                       key={lIdx}
                       className={cn(
-                        poem.form_type === "luc_bat" && lIdx % 2 === 0 && "pl-3"
+                        poem.form_type === "luc_bat" && lIdx % 2 === 0 && "pl-4 sm:pl-6"
                       )}
                     >
                       <HighlightText text={line} query={highlightedText} />
@@ -424,7 +424,7 @@ function PageMobile({
                         <p
                           key={lIdx}
                           className={cn(
-                            poem.form_type === "luc_bat" && lIdx % 2 === 0 && "pl-3"
+                            poem.form_type === "luc_bat" && lIdx % 2 === 0 && "pl-4 sm:pl-6"
                           )}
                         >
                           <HighlightText text={line} query={highlightedText} />
@@ -574,7 +574,7 @@ export function Realistic3DPageFlip({
   }, [spreads, poems, onPageChange]);
 
   // Kích hoạt chuỗi lật trang 3D có quản lý Timer an toàn tuyệt đối
-  const triggerFlip = (dir: "next" | "prev", toSpreadIdx: number) => {
+  const triggerFlip = useCallback((dir: "next" | "prev", toSpreadIdx: number) => {
     if (isFlipping) return;
     if (toSpreadIdx < 0 || toSpreadIdx >= spreads.length) return;
 
@@ -589,39 +589,75 @@ export function Realistic3DPageFlip({
     flipTimerRef.current = setTimeout(() => {
       handleAnimationComplete(toSpreadIdx);
     }, 630);
-  };
+  }, [isFlipping, spreads.length, handleAnimationComplete]);
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     if (displayedSpreadIdx < spreads.length - 1 && !isFlipping) {
       const nextSpreadIdx = displayedSpreadIdx + 1;
       triggerFlip("next", nextSpreadIdx);
     }
-  };
+  }, [displayedSpreadIdx, spreads.length, isFlipping, triggerFlip]);
 
-  const handlePrev = () => {
+  const handlePrev = useCallback(() => {
     if (displayedSpreadIdx > 0 && !isFlipping) {
       const prevSpreadIdx = displayedSpreadIdx - 1;
       triggerFlip("prev", prevSpreadIdx);
     }
-  };
+  }, [displayedSpreadIdx, isFlipping, triggerFlip]);
 
-  // Cử chỉ vuốt màn hình cảm ứng
+  // Phím tắt bàn phím toàn cục (ArrowLeft / ArrowRight)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (
+        target &&
+        (target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.isContentEditable ||
+          target.closest("input, textarea, [contenteditable='true']"))
+      ) {
+        return;
+      }
+
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        handlePrev();
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        handleNext();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [handlePrev, handleNext]);
+
+  // Cử chỉ vuốt màn hình cảm ứng mượt mà (Touch / Swipe Physics)
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  const [touchStartY, setTouchStartY] = useState<number | null>(null);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchStartX(e.touches[0].clientX);
+    setTouchStartY(e.touches[0].clientY);
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
-    if (touchStartX === null) return;
+    if (touchStartX === null || touchStartY === null) return;
     const touchEndX = e.changedTouches[0].clientX;
-    const diff = touchStartX - touchEndX;
-    if (diff > 45) {
-      handleNext();
-    } else if (diff < -45) {
-      handlePrev();
+    const touchEndY = e.changedTouches[0].clientY;
+    const deltaX = touchStartX - touchEndX;
+    const deltaY = Math.abs(touchStartY - touchEndY);
+
+    // Chỉ lật trang khi vuốt ngang rõ ràng (|deltaX| > 45px và lướt ngang trội hơn lướt dọc)
+    if (Math.abs(deltaX) > 45 && Math.abs(deltaX) > deltaY * 1.2) {
+      if (deltaX > 45) {
+        handleNext();
+      } else if (deltaX < -45) {
+        handlePrev();
+      }
     }
     setTouchStartX(null);
+    setTouchStartY(null);
   };
 
   if (!poems || poems.length === 0 || spreads.length === 0) {

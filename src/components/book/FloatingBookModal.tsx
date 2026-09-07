@@ -23,17 +23,25 @@ export function FloatingBookModal() {
     currentPoem,
   } = usePoeticBook();
 
-  // Khóa scroll trang khi modal đang mở
+  // Khóa scroll trang và lắng nghe phím Escape khi modal đang mở
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === "Escape") {
+          e.preventDefault();
+          closeBook();
+        }
+      };
+      window.addEventListener("keydown", handleKeyDown);
+      return () => {
+        document.body.style.overflow = "";
+        window.removeEventListener("keydown", handleKeyDown);
+      };
     } else {
       document.body.style.overflow = "";
     }
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [isOpen]);
+  }, [isOpen, closeBook]);
 
   return (
     <AnimatePresence>
@@ -108,7 +116,7 @@ export function FloatingBookModal() {
               <button
                 type="button"
                 onClick={closeBook}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/90 dark:bg-[#1C1B18]/90 backdrop-blur-md border border-amber-900/20 dark:border-amber-500/20 text-neutral-600 dark:text-neutral-300 hover:text-black dark:hover:text-white transition-colors cursor-pointer shadow-lg text-xs font-mono"
+                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/90 dark:bg-[#1C1B18]/90 backdrop-blur-md border border-amber-900/20 dark:border-amber-500/20 text-neutral-600 dark:text-neutral-300 hover:text-black dark:hover:text-white transition-all hover:scale-105 active:scale-95 cursor-pointer shadow-lg text-xs font-mono focus-visible:outline-2 focus-visible:outline-[var(--color-focus)]"
               >
                 <X className="w-4 h-4" />
                 <span className="hidden sm:inline">Gập Sách (Esc)</span>

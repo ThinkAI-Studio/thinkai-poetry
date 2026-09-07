@@ -2,6 +2,7 @@
 
 import React from "react";
 import { motion } from "motion/react";
+import { BookOpen } from "lucide-react";
 import { FloralDecoration } from "@/components/lattice/FloralDecoration";
 import { CornerFloralBranches } from "@/components/effects/CornerFloralBranches";
 import { usePoeticBook } from "@/context/PoeticBookContext";
@@ -73,7 +74,7 @@ export default function HomePage() {
             <motion.div
               initial={false}
               animate={{ opacity: 1, y: 0 }}
-              className="w-full px-8 pt-8 pb-6 sm:px-9 sm:pt-9 sm:pb-7 rounded-2xl bg-white/95 dark:bg-[#181816]/95 text-neutral-900 dark:text-[#EAE6DF] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.8),0_15px_35px_rgba(0,0,0,0.05)] dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08),0_20px_50px_rgba(0,0,0,0.6)] backdrop-blur-md border border-neutral-200/80 dark:border-white/10 text-center relative z-20 transition-all duration-300 hover:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.9),0_20px_45px_rgba(0,0,0,0.08)]"
+              className="w-full px-8 pt-8 pb-6 sm:px-9 sm:pt-9 sm:pb-7 rounded-2xl bg-[#FAF8F5]/95 dark:bg-[#181816]/95 text-neutral-900 dark:text-[#EAE6DF] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.9),0_15px_35px_rgba(0,0,0,0.06)] dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08),0_20px_50px_rgba(0,0,0,0.7)] backdrop-blur-md border border-amber-950/10 dark:border-white/10 text-center relative z-20 transition-all duration-300 hover:shadow-[inset_0_1px_0_0_rgba(255,255,255,1),0_20px_45px_rgba(0,0,0,0.09)] dark:hover:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.12),0_25px_60px_rgba(0,0,0,0.8)]"
             >
               {/* Nội dung bài thơ */}
               <div className="space-y-4 font-poem-verse text-[14.5px] sm:text-[15px] leading-[1.8] text-neutral-800 dark:text-[#EAE6DF] select-none">
@@ -95,13 +96,14 @@ export default function HomePage() {
               </div>
 
               {/* Nút Mở Cuốn Sách Thơ 3D */}
-              <div className="mt-4 pt-4 border-t border-neutral-200/60 dark:border-white/10 flex items-center justify-center">
+              <div className="mt-5 pt-4 border-t border-amber-950/10 dark:border-white/10 flex items-center justify-center">
                 <button
                   type="button"
                   onClick={() => openBook()}
-                  className="inline-flex items-center justify-center text-xs font-serif tracking-wider text-[var(--accent-green)] dark:text-[var(--accent-gold)] hover:text-black dark:hover:text-white transition-colors cursor-pointer py-1 font-semibold focus-visible:outline-2 focus-visible:outline-[var(--color-focus)] rounded-sm"
+                  className="inline-flex items-center justify-center gap-2 px-5 py-2 rounded-full text-xs font-serif tracking-wider text-[var(--accent-green)] dark:text-[var(--accent-gold)] bg-amber-950/[0.03] dark:bg-white/[0.04] border border-amber-950/10 dark:border-white/10 hover:border-[var(--accent-green)] dark:hover:border-[var(--accent-gold)] hover:bg-[var(--accent-green)]/10 dark:hover:bg-[var(--accent-gold)]/15 transition-all duration-200 cursor-pointer font-semibold focus-visible:outline-2 focus-visible:outline-[var(--color-focus)] active:scale-[0.97] shadow-xs group"
                 >
-                  <span>Mở Cuốn Sách Thơ</span>
+                  <BookOpen className="w-3.5 h-3.5 transition-transform duration-200 group-hover:scale-110" />
+                  <span>Mở Cuốn Sách Thơ 3D</span>
                 </button>
               </div>
             </motion.div>
