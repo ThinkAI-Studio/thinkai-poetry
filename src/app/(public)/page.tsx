@@ -79,14 +79,16 @@ export default function HomePage() {
               {/* Nội dung bài thơ */}
               <div className="space-y-4 font-poem-verse text-[14.5px] sm:text-[15px] leading-[1.8] text-neutral-800 dark:text-[#EAE6DF] select-none">
                 <div className="space-y-1">
-                  <p>Gió xuân thổi nhẹ qua rèm,</p>
-                  <p>Nhành hoa hé nụ dịu êm đón ngày,</p>
-                  <p>Không gian thi ca đương đại.</p>
+                  <p>Những tháng ngày đã cũ</p>
+                  <p>Em nhắc lại làm gì?</p>
+                  <p>Do yêu thương chưa đủ</p>
+                  <p>Nên chúng mình rời đi</p>
                 </div>
                 <div className="space-y-1">
-                  <p>Dạt dào một tấm lòng son,</p>
-                  <p>Ngàn năm dẫu bước chân mòn nẻo xưa,</p>
-                  <p>Khí thiêng đất Việt ngàn năm.</p>
+                  <p>Hạnh phúc do em chọn</p>
+                  <p>Cớ sao phải nặng lòng?</p>
+                  <p>Bước qua bao mùa hạ</p>
+                  <p>Rồi lại trở về &ldquo;không&rdquo;.</p>
                 </div>
               </div>
 

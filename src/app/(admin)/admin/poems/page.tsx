@@ -243,27 +243,43 @@ export default function AdminPoemsListPage() {
                       </div>
                     </td>
                     <td className="py-3.5 px-4">
-                      {poem.form_type === "luc_bat" ? (
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-sans font-medium bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-emerald-500/20">
-                          Lục Bát
-                        </span>
-                      ) : poem.form_type === "song_that_luc_bat" ? (
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-sans font-medium bg-teal-500/10 text-teal-800 dark:text-teal-300 border border-teal-500/20">
-                          Song Thất Lục Bát
-                        </span>
-                      ) : poem.form_type === "that_ngon" ? (
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-sans font-medium bg-violet-500/10 text-violet-800 dark:text-violet-300 border border-violet-500/20">
-                          Đường Luật
-                        </span>
-                      ) : poem.form_type === "tan_van" || poem.form_type === "Tản Văn" ? (
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-sans font-medium bg-sky-500/10 text-sky-800 dark:text-sky-300 border border-sky-500/20">
-                          Tản Văn
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-sans font-medium bg-amber-500/10 text-amber-800 dark:text-amber-300 border border-amber-500/20">
-                          Tự Do
-                        </span>
-                      )}
+                      {(() => {
+                        const catName =
+                          poem.category?.name ||
+                          (poem.form_type === "luc_bat"
+                            ? "Lục Bát"
+                            : poem.form_type === "song_that_luc_bat"
+                            ? "Song Thất Lục Bát"
+                            : poem.form_type === "that_ngon"
+                            ? "Đường Luật"
+                            : poem.form_type === "tan_van" || poem.form_type === "Tản Văn"
+                            ? "Tản Văn"
+                            : "Tự Do");
+
+                        const isGreen = catName.includes("Lục Bát");
+                        const isTeal = catName.includes("Song Thất");
+                        const isViolet = catName.includes("Đường Luật") || catName.includes("7 chữ");
+                        const isSky = catName.includes("Tản Văn") || catName.includes("Văn Xuôi");
+                        const isRose = catName.includes("4 chữ") || catName.includes("5 chữ") || catName.includes("bài hát");
+
+                        const colorClasses = isGreen
+                          ? "bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border-emerald-500/20"
+                          : isTeal
+                          ? "bg-teal-500/10 text-teal-800 dark:text-teal-300 border-teal-500/20"
+                          : isViolet
+                          ? "bg-violet-500/10 text-violet-800 dark:text-violet-300 border-violet-500/20"
+                          : isSky
+                          ? "bg-sky-500/10 text-sky-800 dark:text-sky-300 border-sky-500/20"
+                          : isRose
+                          ? "bg-rose-500/10 text-rose-800 dark:text-rose-300 border-rose-500/20"
+                          : "bg-amber-500/10 text-amber-800 dark:text-amber-300 border-amber-500/20";
+
+                        return (
+                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-sans font-medium border ${colorClasses}`}>
+                            {catName}
+                          </span>
+                        );
+                      })()}
                     </td>
                     <td className="py-3.5 px-4 text-[var(--text-secondary)] font-medium">
                       {poem.author?.name

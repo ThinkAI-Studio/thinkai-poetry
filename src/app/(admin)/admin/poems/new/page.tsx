@@ -16,17 +16,19 @@ interface CategoryOption {
 }
 
 const DEFAULT_CATEGORY_OPTIONS: CategoryOption[] = [
-  { id: "c0000000-0000-0000-0000-000000000001", name: "Thơ Lục Bát (6 - 8)", slug: "luc_bat" },
-  { id: "c0000000-0000-0000-0000-000000000002", name: "Thơ Tự Do", slug: "tu_do" },
-  { id: "c0000000-0000-0000-0000-000000000003", name: "Thơ Đường Luật (Thất ngôn)", slug: "that_ngon" },
+  { id: "c0000000-0000-0000-0000-000000000001", name: "Thơ Lục Bát", slug: "tho-luc-bat" },
+  { id: "c0000000-0000-0000-0000-000000000002", name: "Thơ Tự Do", slug: "tho-tu-do" },
+  { id: "c0000000-0000-0000-0000-000000000003", name: "Thơ Đường Luật", slug: "tho-duong-luat" },
+  { id: "66b1e3b5-c676-43da-8c36-074620d0f049", name: "Thơ 4 chữ", slug: "tho-4-chu" },
+  { id: "5bf29223-387d-42e1-8b83-57b774a3e6da", name: "Thơ 5 chữ", slug: "tho-5-chu" },
+  { id: "675e8d86-f120-4131-9588-ea784830ec7a", name: "Thơ 7 chữ", slug: "tho-7-chu" },
+  { id: "c0000000-0000-0000-0000-000000000004", name: "Thơ Thiền & Tĩnh Tâm", slug: "tho-thien" },
+  { id: "7dada1b0-a649-4157-b9b6-08ba6c901b39", name: "Thơ theo lời bài hát", slug: "tho-theo-loi-bai-hat" },
+  { id: "c0000000-0000-0000-0000-000000000005", name: "Tản Văn (Tùy bút, Cảm xúc)", slug: "tan-van" },
   { id: "c0000000-0000-0000-0000-000000000001", name: "Song Thất Lục Bát", slug: "song_that_luc_bat" },
-  { id: "c0000000-0000-0000-0000-000000000005", name: "Tản Văn (Tùy bút, Cảm xúc)", slug: "tan_van" },
   { id: "c0000000-0000-0000-0000-000000000005", name: "Văn Xuôi Nghệ Thuật", slug: "van_xuoi" },
   { id: "c0000000-0000-0000-0000-000000000005", name: "Bút Ký / Hồi Ký", slug: "but_ky" },
   { id: "c0000000-0000-0000-0000-000000000005", name: "Đoạn Văn Triết Lý", slug: "doan_van" },
-  { id: "c0000000-0000-0000-0000-000000000004", name: "Thơ Thiền & Tĩnh Tâm", slug: "tho_thien" },
-  { id: "c0000000-0000-0000-0000-000000000002", name: "Thơ 4 chữ / 5 chữ", slug: "tho_4_5_chu" },
-  { id: "c0000000-0000-0000-0000-000000000003", name: "Thơ 7 chữ", slug: "tho_7_chu" },
 ];
 
 export default function NewPoemPage() {
@@ -48,10 +50,11 @@ function NewPoemFormContent() {
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
   const [categories, setCategories] = useState<CategoryOption[]>(DEFAULT_CATEGORY_OPTIONS);
-  const [selectedCategories, setSelectedCategories] = useState<string[]>(["luc_bat"]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(["tho-luc-bat"]);
   const [newCategoryName, setNewCategoryName] = useState("");
   const [isCreatingCategory, setIsCreatingCategory] = useState(false);
-  const [collectionId, setCollectionId] = useState(mockCollections[0]?.id || "");
+  const [availableCollections, setAvailableCollections] = useState<any[]>([]);
+  const [collectionId, setCollectionId] = useState("");
   const [excerpt, setExcerpt] = useState("");
   const [poemText, setPoemText] = useState("");
   const [showAuthorInfo, setShowAuthorInfo] = useState(true);
@@ -81,9 +84,36 @@ function NewPoemFormContent() {
             setStatus(found.status === "draft" ? "draft" : "published");
             if (found.collection_id) setCollectionId(found.collection_id);
 
-            const isProseType = ["tan_van", "van_xuoi", "but_ky", "doan_van"].includes(found.form_type);
+            const isProseType =
+              ["tan_van", "van_xuoi", "but_ky", "doan_van", "tan-van"].includes(found.form_type) ||
+              found.category?.slug === "tan-van";
             setContentType(isProseType ? "prose" : "poem");
-            if (found.form_type) {
+
+            const foundCatSlug =
+              found.category?.slug ||
+              (found.category_id === "5bf29223-387d-42e1-8b83-57b774a3e6da"
+                ? "tho-5-chu"
+                : found.category_id === "66b1e3b5-c676-43da-8c36-074620d0f049"
+                ? "tho-4-chu"
+                : found.category_id === "675e8d86-f120-4131-9588-ea784830ec7a"
+                ? "tho-7-chu"
+                : found.category_id === "7dada1b0-a649-4157-b9b6-08ba6c901b39"
+                ? "tho-theo-loi-bai-hat"
+                : found.category_id === "c0000000-0000-0000-0000-000000000001"
+                ? "tho-luc-bat"
+                : found.category_id === "c0000000-0000-0000-0000-000000000002"
+                ? "tho-tu-do"
+                : found.category_id === "c0000000-0000-0000-0000-000000000003"
+                ? "tho-duong-luat"
+                : found.category_id === "c0000000-0000-0000-0000-000000000004"
+                ? "tho-thien"
+                : found.category_id === "c0000000-0000-0000-0000-000000000005"
+                ? "tan-van"
+                : null);
+
+            if (foundCatSlug) {
+              setSelectedCategories([foundCatSlug]);
+            } else if (found.form_type) {
               setSelectedCategories([found.form_type]);
             }
           }
@@ -151,11 +181,11 @@ function NewPoemFormContent() {
 
         if (avgLineLength > 55 || lines.length <= 4) {
           setContentType("prose");
-          setSelectedCategories(["tan_van"]);
+          setSelectedCategories(["tan-van"]);
           setExcerpt(lines[0] ? lines[0].slice(0, 140) + "..." : "");
         } else {
           setContentType("poem");
-          setSelectedCategories(["luc_bat"]);
+          setSelectedCategories(["tho-luc-bat"]);
           setExcerpt(lines.slice(0, 2).join(" "));
         }
 
@@ -175,16 +205,29 @@ function NewPoemFormContent() {
       .then((res) => res.json())
       .then((json) => {
         if (json.success && json.data && json.data.length > 0) {
-          const existingSlugs = new Set(json.data.map((c: any) => c.slug));
+          const apiCats: CategoryOption[] = json.data.map((c: any) => ({
+            id: c.id,
+            name: c.name,
+            slug: c.slug,
+          }));
+          const existingSlugs = new Set(apiCats.map((c) => c.slug));
           const combined = [
-            ...json.data.map((c: any) => ({
-              id: c.id,
-              name: c.name,
-              slug: c.slug,
-            })),
+            ...apiCats,
             ...DEFAULT_CATEGORY_OPTIONS.filter((d) => !existingSlugs.has(d.slug)),
           ];
           setCategories(combined);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  // Load available collections from backend
+  useEffect(() => {
+    fetch("/api/collections")
+      .then((res) => res.json())
+      .then((json) => {
+        if (json.success && Array.isArray(json.data)) {
+          setAvailableCollections(json.data);
         }
       })
       .catch(() => {});
@@ -230,37 +273,47 @@ function NewPoemFormContent() {
       .replace(/\s+/g, "-");
 
     // Nếu đã có thể loại này thì chỉ việc chọn nó
-    if (categories.some((c) => c.slug === catSlug)) {
-      if (!selectedCategories.includes(catSlug)) {
-        setSelectedCategories((prev) => [...prev, catSlug]);
+    const existing = categories.find(
+      (c) => c.slug === catSlug || c.name.toLowerCase() === trimmed.toLowerCase()
+    );
+    if (existing) {
+      if (!selectedCategories.includes(existing.slug)) {
+        setSelectedCategories((prev) => [...prev, existing.slug]);
       }
       setNewCategoryName("");
       setIsCreatingCategory(false);
       return;
     }
 
-    const newOption: CategoryOption = {
-      id: `cat-${Date.now()}`,
-      name: trimmed,
-      slug: catSlug,
-    };
-
-    setCategories((prev) => [...prev, newOption]);
-    setSelectedCategories((prev) => [...prev, catSlug]);
-    setNewCategoryName("");
-    setIsCreatingCategory(false);
-
-    // Đồng bộ lên API categories
     try {
-      await fetch("/api/categories", {
+      const res = await fetch("/api/categories", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: trimmed }),
       });
-    } catch {}
+      const json = await res.json();
+      if (json.success && json.data) {
+        const createdCat: CategoryOption = {
+          id: json.data.id,
+          name: json.data.name,
+          slug: json.data.slug,
+        };
+        setCategories((prev) => {
+          const filtered = prev.filter((c) => c.slug !== createdCat.slug);
+          return [...filtered, createdCat];
+        });
+        setSelectedCategories([createdCat.slug]);
+        setNewCategoryName("");
+        setIsCreatingCategory(false);
+      } else {
+        setErrorMsg(json.error || "Không thể tạo thể loại mới");
+      }
+    } catch (err: any) {
+      setErrorMsg(err.message || "Lỗi khi tạo thể loại mới");
+    }
   };
 
-  const primaryFormType = selectedCategories[0] || "luc_bat";
+  const primaryFormType = selectedCategories[0] || "tho-luc-bat";
   const primaryCategory = categories.find((c) => c.slug === primaryFormType);
 
   const handleSave = async (e: React.FormEvent) => {
@@ -271,7 +324,7 @@ function NewPoemFormContent() {
     try {
       // Tự động phân tách khổ thơ hoặc đoạn văn tùy theo thể loại
       let stanzas = "";
-      if (contentType === "prose" || ["tan_van", "van_xuoi", "but_ky", "doan_van"].includes(primaryFormType)) {
+      if (contentType === "prose" || ["tan_van", "van_xuoi", "but_ky", "doan_van", "tan-van"].includes(primaryFormType)) {
         const paragraphs = poemText
           .split(/\n\s*\n/)
           .map((p) => p.trim())
@@ -287,7 +340,7 @@ function NewPoemFormContent() {
               .split("\n")
               .map((line) => line.trim())
               .filter(Boolean);
-            if (primaryFormType === "luc_bat") {
+            if (primaryFormType === "luc_bat" || primaryFormType === "tho-luc-bat") {
               const verses = lines
                 .map((l, i) => `<p class="verse ${i % 2 === 0 ? "verse-6" : "verse-8"}">${l}</p>`)
                 .join("");
@@ -309,7 +362,7 @@ function NewPoemFormContent() {
             title,
             slug,
             form_type: primaryFormType,
-            category_id: primaryCategory?.id,
+            category_id: primaryCategory?.id || undefined,
             excerpt: excerpt || poemText.slice(0, 120),
             content_html: stanzas,
             raw_text: poemText,
@@ -326,7 +379,7 @@ function NewPoemFormContent() {
             title,
             slug,
             form_type: primaryFormType,
-            category_id: primaryCategory?.id,
+            category_id: primaryCategory?.id || undefined,
             excerpt: excerpt || poemText.slice(0, 120),
             content_html: stanzas,
             raw_text: poemText,
@@ -625,7 +678,7 @@ function NewPoemFormContent() {
             <option value="" className="bg-[var(--bg-card)] text-[var(--text-primary)]">
               -- Tác phẩm độc lập --
             </option>
-            {mockCollections.map((c) => (
+            {availableCollections.map((c) => (
               <option key={c.id} value={c.id} className="bg-[var(--bg-card)] text-[var(--text-primary)]">
                 {c.title}
               </option>

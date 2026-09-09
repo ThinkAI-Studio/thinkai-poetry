@@ -60,6 +60,7 @@ export interface Poem {
   author?: Author | null;
   category?: Category | null;
   annotations?: Annotation[];
+  collection_id?: string | null;
 }
 
 export interface CollectionPoem {
