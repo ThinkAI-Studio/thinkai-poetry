@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, memo, useId } from "react";
+import React, { useState, useEffect, useMemo, memo, useId } from "react";
 import Image from "next/image";
 import { useReducedMotion } from "@/lib/motion";
 import { useSeason, Season } from "@/context/SeasonContext";
@@ -356,7 +356,7 @@ const DelicateFloralBranchSvg = memo(({ side, season }: BranchSvgProps) => {
 DelicateFloralBranchSvg.displayName = "DelicateFloralBranchSvg";
 
 /* =========================================================================
-   3. HỆ THỐNG HẠT VÀ LÁ RƠI (LIVING DRIFTING PARTICLES)
+   3. HỆ THỐNG HẠT VÀ HOA LÁ RƠI THEO MÙA (LIVING DRIFTING BOTANICAL PARTICLES)
    ========================================================================= */
 interface DriftingParticle {
   id: string;
@@ -373,7 +373,7 @@ interface DriftingParticle {
 const FallingDriftingParticle = memo(({ p }: { p: DriftingParticle }) => {
   return (
     <div
-      className={`absolute top-[-45px] pointer-events-none select-none z-10 ${!p.mobileVisible ? "hidden sm:block" : ""}`}
+      className={`absolute top-[-48px] pointer-events-none select-none z-10 ${!p.mobileVisible ? "hidden sm:block" : ""}`}
       style={{
         left: p.startX,
         animation: `fallingLeavesCascade ${p.duration}s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${p.delay}s infinite`,
@@ -386,16 +386,43 @@ const FallingDriftingParticle = memo(({ p }: { p: DriftingParticle }) => {
         <Image
           src={p.imgSrc}
           alt=""
-          width={28}
-          height={28}
-          className="drop-shadow-xs select-none object-contain"
-          style={{ width: "26px", height: "auto" }}
+          width={36}
+          height={36}
+          className="drop-shadow-xs select-none object-contain transition-opacity duration-300"
+          style={{ width: "32px", height: "auto" }}
         />
       </div>
     </div>
   );
 });
 FallingDriftingParticle.displayName = "FallingDriftingParticle";
+
+const FallingBurstParticle = memo(({ p }: { p: DriftingParticle }) => {
+  return (
+    <div
+      className="absolute top-[-35px] pointer-events-none select-none z-15"
+      style={{
+        left: p.startX,
+        animation: `fallingBurstCascade ${p.duration}s cubic-bezier(0.22, 0.61, 0.36, 1) ${p.delay}s forwards`,
+        ["--burst-drift-x" as any]: `${p.driftX}px`,
+        ["--burst-rot-start" as any]: `${p.initialRotate}deg`,
+        ["--burst-rot-end" as any]: `${p.initialRotate + 360}deg`,
+      }}
+    >
+      <div style={{ transform: `scale(${p.scale})` }}>
+        <Image
+          src={p.imgSrc}
+          alt=""
+          width={36}
+          height={36}
+          className="drop-shadow-xs select-none object-contain"
+          style={{ width: "32px", height: "auto" }}
+        />
+      </div>
+    </div>
+  );
+});
+FallingBurstParticle.displayName = "FallingBurstParticle";
 
 /* =========================================================================
    4. COMPONENT CHÍNH: CORNER FLORAL BRANCHES (GỌN GÀNG, TỐI ƯU 120FPS ZERO-LAG)
@@ -407,6 +434,108 @@ export function CornerFloralBranches() {
   const [burstParticles, setBurstParticles] = useState<DriftingParticle[]>([]);
   const { season } = useSeason();
   const prefersReduced = useReducedMotion();
+
+  // Khi đổi mùa: lập tức dọn sạch các cánh hoa/lá cũ để chuyển đổi hoa theo chủ đề mùa mới
+  useEffect(() => {
+    setBurstParticles([]);
+  }, [season]);
+
+  // Hạt hoa rụng lững lờ tự nhiên từ 2 cành theo chủ đề mùa hiện tại (Ambient Gentle Drift)
+  const ambientParticles: DriftingParticle[] = useMemo(() => {
+    const assets = seasonalAssetMap[season] || seasonalAssetMap.spring;
+    return [
+      // 1. Cành bên trái (Top-Left Branch)
+      {
+        id: `amb-${season}-l1`,
+        imgSrc: assets.pink,
+        startX: "7%",
+        driftX: 55,
+        duration: 8.8,
+        delay: 0.5,
+        scale: 1.0,
+        initialRotate: 20,
+        mobileVisible: true,
+      },
+      {
+        id: `amb-${season}-l2`,
+        imgSrc: assets.leaf1,
+        startX: "13%",
+        driftX: 80,
+        duration: 10.2,
+        delay: 3.5,
+        scale: 0.9,
+        initialRotate: -35,
+        mobileVisible: true,
+      },
+      {
+        id: `amb-${season}-l3`,
+        imgSrc: assets.yellow,
+        startX: "18%",
+        driftX: 50,
+        duration: 8.2,
+        delay: 6.8,
+        scale: 0.95,
+        initialRotate: 45,
+        mobileVisible: false,
+      },
+      {
+        id: `amb-${season}-l4`,
+        imgSrc: assets.leaf2,
+        startX: "10%",
+        driftX: 70,
+        duration: 9.5,
+        delay: 1.8,
+        scale: 0.88,
+        initialRotate: -15,
+        mobileVisible: false,
+      },
+      // 2. Cành bên phải (Top-Right Branch)
+      {
+        id: `amb-${season}-r1`,
+        imgSrc: assets.pink,
+        startX: "93%",
+        driftX: -60,
+        duration: 9.0,
+        delay: 2.0,
+        scale: 1.05,
+        initialRotate: -25,
+        mobileVisible: true,
+      },
+      {
+        id: `amb-${season}-r2`,
+        imgSrc: assets.leaf1,
+        startX: "86%",
+        driftX: -85,
+        duration: 10.5,
+        delay: 5.2,
+        scale: 0.92,
+        initialRotate: 35,
+        mobileVisible: true,
+      },
+      {
+        id: `amb-${season}-r3`,
+        imgSrc: assets.yellow,
+        startX: "80%",
+        driftX: -55,
+        duration: 8.5,
+        delay: 8.0,
+        scale: 0.95,
+        initialRotate: -40,
+        mobileVisible: false,
+      },
+      {
+        id: `amb-${season}-r4`,
+        imgSrc: assets.leaf2,
+        startX: "90%",
+        driftX: -75,
+        duration: 9.8,
+        delay: 4.2,
+        scale: 0.86,
+        initialRotate: 15,
+        mobileVisible: false,
+      },
+    ];
+  }, [season]);
 
   const handleBranchHover = () => {
     playLeafRustleSound("leaves", 0.10);
@@ -426,27 +555,33 @@ export function CornerFloralBranches() {
     setShakeSide(side);
     setTimeout(() => setShakeSide(null), 550);
 
-    const count = 18;
+    const count = 16;
     const isLeft = side === "left";
     const startXBase = isLeft ? 12 : 88;
     const assets = seasonalAssetMap[season] || seasonalAssetMap.spring;
+    // Đầy đủ 4 loài hoa & lá theo đúng mùa đã chọn
     const assetChoices = [assets.pink, assets.yellow, assets.leaf1, assets.leaf2];
 
     const newParticles: DriftingParticle[] = Array.from({ length: count }).map((_, i) => {
       return {
-        id: `burst-${Date.now()}-${i}-${Math.random()}`,
+        id: `burst-${season}-${Date.now()}-${i}`,
         imgSrc: assetChoices[i % assetChoices.length],
         startX: `${Math.max(2, Math.min(96, startXBase + (Math.random() - 0.5) * 16))}%`,
         driftX: (isLeft ? 1 : -1) * (Math.random() * 75 + 25) + (Math.random() - 0.5) * 35,
-        duration: 5.0 + Math.random() * 3.8,
-        delay: -(Math.random() * 0.35),
-        scale: 0.65 + Math.random() * 0.35,
+        duration: 5.2 + Math.random() * 2.5,
+        delay: Math.random() * 0.4,
+        scale: 0.85 + Math.random() * 0.35,
         initialRotate: Math.random() * 360,
         mobileVisible: true,
       };
     });
 
-    setBurstParticles((prev) => [...prev.slice(-26), ...newParticles]);
+    setBurstParticles(newParticles);
+
+    // Tự động dọn sạch hạt burst sau khi chu trình rơi hoàn tất (7.8s)
+    setTimeout(() => {
+      setBurstParticles((prev) => (prev === newParticles ? [] : prev));
+    }, 7800);
   };
 
   return (
@@ -471,6 +606,29 @@ export function CornerFloralBranches() {
           100% {
             transform: translate3d(calc(var(--leaf-drift-x, 40px) * 1.4), 105vh, 0)
               rotate(var(--leaf-rot-end, 360deg));
+            opacity: 0;
+          }
+        }
+
+        @keyframes fallingBurstCascade {
+          0% {
+            transform: translate3d(0, -35px, 0) rotate(var(--burst-rot-start, 0deg));
+            opacity: 0;
+          }
+          12% {
+            opacity: 1;
+          }
+          50% {
+            transform: translate3d(var(--burst-drift-x, 40px), 48vh, 0)
+              rotate(calc(var(--burst-rot-start, 0deg) + 180deg));
+            opacity: 0.9;
+          }
+          85% {
+            opacity: 0.75;
+          }
+          100% {
+            transform: translate3d(calc(var(--burst-drift-x, 40px) * 1.4), 105vh, 0)
+              rotate(var(--burst-rot-end, 360deg));
             opacity: 0;
           }
         }
@@ -599,8 +757,14 @@ export function CornerFloralBranches() {
         {/* --- HỆ THỐNG LÁ & CÁNH HOA RƠI LÃNG MẠN (CHỈ RENDER KHI ACTIVE) --- */}
         {!prefersReduced && isActive && (
           <div className="absolute inset-0 pointer-events-none overflow-hidden">
-            {burstParticles.map((particle) => (
+            {/* 1. Hoa & lá rụng tự nhiên từ 2 cành theo mùa (Ambient Cascade) */}
+            {ambientParticles.map((particle) => (
               <FallingDriftingParticle key={particle.id} p={particle} />
+            ))}
+
+            {/* 2. Chùm hoa & lá bay ra khi chạm vào cành theo mùa (Burst Cascade) */}
+            {burstParticles.map((particle) => (
+              <FallingBurstParticle key={particle.id} p={particle} />
             ))}
           </div>
         )}

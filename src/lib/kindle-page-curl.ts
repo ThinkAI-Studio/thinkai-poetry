@@ -18,25 +18,29 @@ interface PageCurlOptions {
 
 /**
  * Keyframe Polygons kéo bóc trang cũ từ góc dưới lên góc trên
+ * Toàn bộ các keyframes có chính xác 6 đỉnh (6-vertex polygon) để GPU browser
+ * nội suy toạ độ hoàn hảo 100%, không bị đứt đoạn hay mất hiệu ứng.
  */
 const FORWARD_BOTTOM_PEEL_POLYGONS = [
-  "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
-  "polygon(0% 0%, 100% 0%, 100% 75%, 75% 100%, 0% 100%)",
-  "polygon(0% 0%, 100% 0%, 100% 45%, 45% 100%, 0% 100%)",
-  "polygon(0% 0%, 100% 0%, 100% 15%, 15% 100%, 0% 100%)",
-  "polygon(0% 0%, 70% 0%, 0% 70%, 0% 0%)",
-  "polygon(0% 0%, 25% 0%, 0% 25%, 0% 0%)",
-  "polygon(0% 0%, 0% 0%, 0% 0%)",
+  "polygon(0% 0%, 100% 0%, 100% 50%, 100% 100%, 50% 100%, 0% 100%)",
+  "polygon(0% 0%, 100% 0%, 100% 75%, 100% 75%, 75% 100%, 0% 100%)",
+  "polygon(0% 0%, 100% 0%, 100% 50%, 100% 50%, 50% 100%, 0% 100%)",
+  "polygon(0% 0%, 100% 0%, 100% 25%, 100% 25%, 25% 100%, 0% 100%)",
+  "polygon(0% 0%, 80% 0%, 80% 0%, 0% 80%, 0% 80%, 0% 100%)",
+  "polygon(0% 0%, 40% 0%, 40% 0%, 0% 40%, 0% 40%, 0% 40%)",
+  "polygon(0% 0%, 15% 0%, 15% 0%, 0% 15%, 0% 15%, 0% 15%)",
+  "polygon(0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%)",
 ];
 
 const BACKWARD_BOTTOM_PEEL_POLYGONS = [
-  "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
-  "polygon(0% 0%, 100% 0%, 100% 100%, 25% 100%, 0% 75%)",
-  "polygon(0% 0%, 100% 0%, 100% 100%, 55% 100%, 0% 45%)",
-  "polygon(0% 0%, 100% 0%, 100% 100%, 85% 100%, 0% 15%)",
-  "polygon(0% 0%, 100% 0%, 100% 70%, 30% 0%)",
-  "polygon(0% 0%, 100% 0%, 100% 25%, 75% 0%)",
-  "polygon(100% 0%, 100% 0%, 100% 0%)",
+  "polygon(0% 0%, 100% 0%, 100% 100%, 50% 100%, 0% 100%, 0% 50%)",
+  "polygon(0% 0%, 100% 0%, 100% 100%, 25% 100%, 25% 100%, 0% 75%)",
+  "polygon(0% 0%, 100% 0%, 100% 100%, 50% 100%, 50% 100%, 0% 50%)",
+  "polygon(0% 0%, 100% 0%, 100% 100%, 75% 100%, 75% 100%, 0% 25%)",
+  "polygon(20% 0%, 100% 0%, 100% 100%, 100% 80%, 100% 80%, 20% 0%)",
+  "polygon(60% 0%, 100% 0%, 100% 40%, 100% 40%, 60% 0%, 60% 0%)",
+  "polygon(85% 0%, 100% 0%, 100% 15%, 100% 15%, 85% 0%, 85% 0%)",
+  "polygon(100% 0%, 100% 0%, 100% 0%, 100% 0%, 100% 0%, 100% 0%)",
 ];
 
 /**
@@ -100,22 +104,19 @@ export function executeKindlePageCurl({
     typeof window !== "undefined" &&
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  const isMobile =
-    typeof window !== "undefined" &&
-    (window.innerWidth < 768 || window.matchMedia("(pointer: coarse)").matches);
-
+  // Hỗ trợ View Transition trên mọi thiết bị hiện đại (Desktop, Tablet & Mobile)
   const supportsViewTransition =
     typeof document !== "undefined" &&
     "startViewTransition" in document &&
-    !prefersReduced &&
-    !isMobile;
+    !prefersReduced;
+
+  // Luôn phát âm thanh xúc giác giấy Dó
+  playKindleTactileAudio();
 
   if (!supportsViewTransition) {
     onCommit(targetTheme);
     return;
   }
-
-  playKindleTactileAudio();
 
   const isDarkTarget = targetTheme === "dark";
   const resolvedDirection = direction || (isDarkTarget ? "forward" : "backward");
@@ -123,28 +124,21 @@ export function executeKindlePageCurl({
   const peelPolygons = isForward
     ? FORWARD_BOTTOM_PEEL_POLYGONS
     : BACKWARD_BOTTOM_PEEL_POLYGONS;
-  // Motion dịu êm: 550ms (nhanh và dứt khoát hơn để không giam giữ DOM)
-  const duration = 550;
+  // Motion sang trọng, thi ca: 750ms
+  const duration = 750;
 
   // Tạm thời tắt CSS transitions trên live DOM để chụp ảnh snapshot tức thì, triệt tiêu hoàn toàn flicker
   document.documentElement.classList.add("theme-transitioning");
 
-  // Safety net: luôn cleanup sau 750ms
+  // Safety net: luôn cleanup sau 1000ms
   const safetyCleanup = setTimeout(() => {
     document.documentElement.classList.remove("theme-transitioning");
-  }, 750);
+  }, 1000);
 
   const cleanup = () => {
     clearTimeout(safetyCleanup);
     document.documentElement.classList.remove("theme-transitioning");
   };
-
-  // Nếu người dùng cuộn chuột hoặc vuốt màn hình khi đang transition -> hủy ngay để tránh khựng
-  const onUserScroll = () => {
-    cleanup();
-    window.removeEventListener("scroll", onUserScroll);
-  };
-  window.addEventListener("scroll", onUserScroll, { passive: true, once: true });
 
   try {
     const transition = (document as any).startViewTransition(() => {
