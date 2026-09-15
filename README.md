@@ -1,23 +1,31 @@
 <div align="center">
 
 # Thi Ca Anh Thịnh
-### Contemporary East Asian Poetry Platform · Wind Poetic Sanctuary
+<p><strong>Contemporary East Asian Poetry Platform · Wind Poetic Sanctuary</strong></p>
 
-[![Next.js](https://img.shields.io/badge/Next.js_15-000000?style=flat-square&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
-[![React](https://img.shields.io/badge/React_19-20232A?style=flat-square&logo=react&logoColor=61DAFB)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript_5-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS_v4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
-[![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=flat-square&logo=supabase&logoColor=white)](https://supabase.com/)
-[![Framer Motion](https://img.shields.io/badge/Motion_12-0055FF?style=flat-square&logo=framer&logoColor=white)](https://motion.dev/)
-[![Web Audio API](https://img.shields.io/badge/Web_Audio_API-E34F26?style=flat-square&logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API)
-[![Turbopack](https://img.shields.io/badge/Turbopack-000000?style=flat-square&logo=vercel&logoColor=white)](https://turbo.build/pack)
+<p>
+  <a href="https://nextjs.org/"><img src="https://img.shields.io/badge/Next.js_15-000000?style=flat-square&logo=nextdotjs&logoColor=white" alt="Next.js 15" /></a>
+  <a href="https://react.dev/"><img src="https://img.shields.io/badge/React_19-20232A?style=flat-square&logo=react&logoColor=61DAFB" alt="React 19" /></a>
+  <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript_5-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript 5" /></a>
+  <a href="https://tailwindcss.com/"><img src="https://img.shields.io/badge/Tailwind_CSS_v4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white" alt="Tailwind CSS v4" /></a>
+  <a href="https://supabase.com/"><img src="https://img.shields.io/badge/Supabase-3ECF8E?style=flat-square&logo=supabase&logoColor=white" alt="Supabase" /></a>
+  <a href="https://motion.dev/"><img src="https://img.shields.io/badge/Motion_12-0055FF?style=flat-square&logo=framer&logoColor=white" alt="Framer Motion" /></a>
+  <a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API"><img src="https://img.shields.io/badge/Web_Audio_API-E34F26?style=flat-square&logo=html5&logoColor=white" alt="Web Audio API" /></a>
+  <a href="https://turbo.build/pack"><img src="https://img.shields.io/badge/Turbopack-000000?style=flat-square&logo=vercel&logoColor=white" alt="Turbopack" /></a>
+</p>
 
-<p align="center">
+<p>
   A contemporary digital poetry sanctuary that harmonizes East Asian aesthetics with modern web engineering. <br/>
   Featuring a physics-driven 3D page-flip book, a dynamic four-season atmospheric ecosystem, an interactive multi-tier bookshelf, and a zero-asset procedural nature audio engine.
 </p>
 
-[Core Experiences](#core-experiences--product-features) • [Architecture](#technology-stack--architecture) • [Directory Structure](#directory-structure) • [Getting Started](#getting-started) • [Design Principles](#design-principles--craftsmanship)
+<p>
+  <a href="#core-experiences--product-features">Core Experiences</a> •
+  <a href="#technology-stack--architecture">Architecture</a> •
+  <a href="#directory-structure">Directory Structure</a> •
+  <a href="#getting-started">Getting Started</a> •
+  <a href="#design-principles--craftsmanship">Design Principles</a>
+</p>
 
 </div>
 
