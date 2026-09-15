@@ -471,8 +471,8 @@ export function FloralDecoration() {
       {/* GRADIENTS DÙNG CHUNG CỦA 4 MÙA */}
       <SharedSeasonalDefs />
 
-      {/* Cụm hoa bên trái (Left Cluster) - Chỉ hiện trên màn hình lớn để tránh đè nội dung mobile */}
-      <div className="floral-cluster hidden lg:block pointer-events-auto absolute bottom-[60px] left-0 h-[580px] w-[34vw] max-w-[460px]">
+      {/* Cụm hoa bên trái (Left Cluster) - Hiển thị 4 mùa với tỉ lệ co giãn responsive */}
+      <div className="floral-cluster pointer-events-auto absolute bottom-[20px] sm:bottom-[40px] lg:bottom-[60px] -left-14 xs:-left-10 sm:-left-4 lg:left-0 h-[480px] sm:h-[540px] lg:h-[580px] w-[50vw] sm:w-[42vw] lg:w-[34vw] max-w-[460px] origin-bottom-left scale-[0.68] xs:scale-[0.78] sm:scale-[0.88] lg:scale-100 opacity-75 sm:opacity-90 lg:opacity-100 transition-[transform,opacity] duration-500">
         {leftClusterPositions.map((pos, idx) => (
           <FloralNode
             key={`left-${idx}`}
@@ -486,8 +486,8 @@ export function FloralDecoration() {
         ))}
       </div>
 
-      {/* Cụm hoa bên phải (Right Cluster) - Chỉ hiện trên màn hình lớn */}
-      <div className="floral-cluster hidden lg:block pointer-events-auto absolute right-0 bottom-[60px] h-[580px] w-[34vw] max-w-[460px]">
+      {/* Cụm hoa bên phải (Right Cluster) - Ôm viền tự nhiên 4 mùa */}
+      <div className="floral-cluster pointer-events-auto absolute bottom-[20px] sm:bottom-[40px] lg:bottom-[60px] -right-14 xs:-right-10 sm:-right-4 lg:right-0 h-[480px] sm:h-[540px] lg:h-[580px] w-[50vw] sm:w-[42vw] lg:w-[34vw] max-w-[460px] origin-bottom-right scale-[0.68] xs:scale-[0.78] sm:scale-[0.88] lg:scale-100 opacity-75 sm:opacity-90 lg:opacity-100 transition-[transform,opacity] duration-500">
         <div className="relative h-full w-full">
           {rightClusterPositions.map((pos, idx) => (
             <FloralNode
@@ -503,8 +503,8 @@ export function FloralDecoration() {
         </div>
       </div>
 
-      {/* 5 CÁNH HOA / LÁ / BÔNG TUYẾT TRÔI LÃNG MẠN THEO MÙA - Chỉ hiện trên màn hình lớn để không đè chữ */}
-      <div className="hidden lg:block pointer-events-none absolute inset-0 select-none z-20 overflow-hidden">
+      {/* 5 CÁNH HOA / LÁ / BÔNG TUYẾT TRÔI LÃNG MẠN THEO MÙA */}
+      <div className="pointer-events-none absolute inset-0 select-none z-0 overflow-hidden">
         {[
           { id: "dp-1", x: "7%", y: "47%", rotate: 25, scale: 1.0, duration: 4.8 },
           { id: "dp-2", x: "16%", y: "53%", rotate: -18, scale: 1.1, duration: 5.2 },
