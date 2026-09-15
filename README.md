@@ -1,63 +1,62 @@
 # Thi Ca Anh Thịnh (Wind Poetic Platform)
 
-Một không gian thi ca đương đại kết hợp mỹ cảm Á Đông truyền thống và công nghệ web hiện đại. Nền tảng mang đến trải nghiệm đọc thơ tương tác cao cấp với cuốn sách 3D lật trang vật lý, hệ sinh thái khí quyển bốn mùa thời gian thực, giá sách thi ca đa tầng và bộ tổng hợp âm thanh thiên nhiên qua Web Audio API.
+A contemporary digital poetry sanctuary that harmonizes East Asian aesthetics with modern web engineering. The platform delivers an immersive reading experience centered around a physics-driven 3D page-flip book, a real-time four-season atmospheric ecosystem, an interactive multi-tier bookshelf, and a zero-asset procedural nature audio engine powered directly by the Web Audio API.
 
 ---
 
-## Trải Nghiệm & Tính Năng Sản Phẩm
+## Core Experiences & Product Features
 
-### 1. Cuốn Sách Thơ 3D Tương Tác Vật Lý
-- **Lật trang 3D đa góc nhìn**: Mô phỏng cảm giác lật giở từng trang sách giấy mỹ thuật, hỗ trợ kéo thả chuột, phím mũi tên và cử chỉ vuốt chạm trên thiết bị di động.
-- **Tứ quý tương tác theo mùa**:
-  - *Mùa Xuân*: Cánh hoa đào phai hồng phấn vương nhẹ gáy sách, chao cánh bay khi lật trang.
-  - *Mùa Hạ*: Vệt nắng vàng mật ong ấm áp xiên qua mặt giấy cùng hạt bụi phấn nắng bay lơ lửng.
-  - *Mùa Thu*: Chiếc lá phong đỏ hoặc đóa cúc vàng mắc vào mép sách, lật trang thổi bay vút lên cao.
-  - *Mùa Đông*: Hơi thở sương mai ngưng tụ viền bìa sách, tan dần khi chạm tay hoặc lật sách với âm thanh tinh thể rạn giòn.
-- **Điều hướng thi ca**: Chuyển bài đọc theo danh mục, tra cứu mục lục trực quan, tùy biến cỡ chữ và lưu bài thơ yêu thích.
+### 1. Interactive 3D Physics Book Reader
+- **Perspective Page Flip**: Recreates the tactile weight and curvature of fine-art parchment with drag-and-drop mouse physics, keyboard navigation, and mobile touch gestures.
+- **Four Seasons Book Affordances**:
+  - *Spring*: Fragrant peach petals settle delicately upon the book spine, fluttering into flight upon page turn.
+  - *Summer*: Warm golden sunlight beams slice across the text accompanied by drifting sun motes.
+  - *Autumn*: Crisp Momiji and yellow chrysanthemums catch along the book edge, swept aloft by page-flip gusts.
+  - *Winter*: Frosted condensation rings the book perimeter, melting away upon touch with micro-crystal fractures.
+- **Poetic Navigation**: Seamless jump across collections, interactive table of contents, customizable typography scales, and bookmarking.
 
-### 2. Khí Quyển 4 Mùa & Động Lực Học Thiên Nhiên
-- **Cành hoa góc màn hình phong cách Sora Lattice**:
-  - Tái hiện quy luật giải phẫu thực vật học với cành thuôn tự nhiên theo luật phân nhánh Leonardo da Vinci.
-  - Chi tiết vỏ cành sần sùi, mấu gỗ mun phong sương, đài hoa và nụ hoa điểm xuyết.
-  - Thích ứng động theo 4 mùa: Hoa đào phai & lộc non (Xuân), hoa sen & tán lá sum suê (Hạ), lá phong Momiji & ngân hạnh (Thu), cành khẳng khiu trút lá đọng sương muối (Đông).
-- **Thảm cỏ thực vật & Động lực học lá rụng**:
-  - Thảm cỏ thi ca thường trực viền chân màn hình tạo cảm giác tiếp đất tự nhiên.
-  - Đống lá mùa thu tích tụ trực tiếp trong lòng cỏ, kích hoạt chu kỳ gió lốc cuốn tung lá bay theo nhiều quỹ đạo rồi từ từ đáp xuống.
-  - Mùa đông với lá đọng băng giá viền sương tuyết, tương tác phát tiếng sương gãy vụn lách tách.
-- **Lớp phủ khí quyển thích ứng**: Sắc thái ánh sáng và viền mờ tương thích hài hòa cả Light Mode và Dark Mode, đảm bảo chuẩn tương phản đọc chữ WCAG AAA.
+### 2. Four-Season Dynamic Atmosphere & Natural Physics
+- **Corner Botanical Branches (Sora Lattice Aesthetic)**:
+  - Modeled according to Leonardo da Vinci's rule of botanical branching with natural organic tapering.
+  - Fine bark textures, weathered nodes, calyxes, and bud clusters tailored to each season.
+  - Dynamic seasonal transitions: Soft peach blossoms & tender buds (Spring), blooming lotuses & lush canopies (Summer), crimson Momiji & golden Ginkgo foliage (Autumn), and weathered gnarled branches bearing hoarfrost crystals (Winter).
+- **Botanical Grass Fringe & Ground Dynamics**:
+  - A persistent poetic grass bed anchors the lower viewport, providing a natural resting ground for fallen leaves.
+  - In Autumn, fallen foliage accumulates into four distinct mounds; probabilistic gusts of wind sweep the leaves into multi-directional scatter trajectories before they gracefully settle back down.
+  - In Winter, frozen leaves rimmed with rime frost adhere firmly to the ground, triggering subtle crystal crunch acoustics when clicked.
+- **Adaptive Contrast Overlays**: Season-specific ambient vignettes calibrated for both Light and Dark modes while strictly preserving WCAG AAA reading contrast.
 
-### 3. Giá Sách Thi Ca Đa Tầng (Multi-tier Bookshelf)
-- Bố cục giá sách gỗ mộc nhiều tầng, phân loại theo tuyển tập và chủ đề sáng tác.
-- Tương tác xem gáy sách 3D, hiệu ứng rút sách mượt mà và chuyển đổi linh hoạt sang chế độ đọc toàn màn hình.
+### 3. Curated Multi-Tier Bookshelf
+- Multi-tier natural wood shelf layout categorized by poetry collections and thematic anthologies.
+- 3D spine inspection, pull-out interactions, and one-click transitions into focused full-screen reading.
 
-### 4. Bộ Tổng Hợp Âm Thanh Tự Nhiên (Zero-Asset Web Audio)
-- Không sử dụng file âm thanh ngoại vi (mp3/wav), loại bỏ hoàn toàn tải trọng mạng và độ trễ tải file.
-- Sử dụng Web Audio API (Oscillators, Bandpass Filters, Exponential Gain Curves, Pink/White Noise Buffers) để tái tạo chân thực:
-  - Tiếng gió lốc cuốn lá khô xào xạc.
-  - Tiếng tinh thể băng sương rạn vỡ giòn tan.
-  - Tiếng lật trang sách giấy thủ công.
+### 4. Zero-Asset Procedural Audio Engine
+- Built entirely on the native Web Audio API (Oscillators, Bandpass Filters, Exponential Gain Curves, and White/Pink Noise Buffers), eliminating external audio asset overhead:
+  - Organic wind whirlwinds and rustling dry leaves.
+  - Sub-millisecond frost fracture acoustics.
+  - Tactile paper page turn resonance.
 
-### 5. Quản Trị & Biên Tập Nội Dung (Admin Workspace)
-- Quản lý toàn diện bài thơ, tản văn, danh mục và tác giả.
-- Cơ chế bật/tắt hiển thị tác phẩm (Publish / Draft) cập nhật tức thì.
-- Kiến trúc lưu trữ kép (Dual-layer persistence): Đồng bộ trực tiếp với cơ sở dữ liệu Supabase, tự động chuyển đổi sang Local JSON Store khi chạy môi trường độc lập.
+### 5. Editorial & Administration Workspace
+- End-to-end editorial pipeline for poems, prose, collections, and author credentials.
+- Instant toggle between published and draft states with real-time UI synchronization.
+- Dual-layer data resilience: Direct synchronization with Supabase, seamlessly falling back to a local JSON data store when running standalone.
 
 ---
 
-## Kiến Trúc Công Nghệ
+## Technology Stack & Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                   Next.js 15 (App Router)                   │
 │         React 19 Server Components & Turbopack Engine        │
 ├──────────────────────────────┬──────────────────────────────┤
-│ Giao Diện & Trải Nghiệm      │ Động Lực Học & Đồ Họa        │
+│ Interface & Typography       │ Motion & Vector Mathematics  │
 │ • Tailwind CSS v4            │ • Lenis Inertial Scroll      │
 │ • Typography: EB Garamond,   │ • Motion (Framer Motion v12) │
-│   Be Vietnam Pro, Lora       │ • SVG Vector Mathematics     │
-│ • Radix UI Primitives        │ • Hardware-accelerated CSS   │
+│   Be Vietnam Pro, Lora       │ • SVG Vector Calculus        │
+│ • Radix UI Primitives        │ • GPU-Accelerated Keyframes  │
 ├──────────────────────────────┼──────────────────────────────┤
-│ Dữ Liệu & Hậu Tầng           │ Âm Thanh & Tương Tác         │
+│ Data Layer & Persistence     │ Acoustics & Accessibility    │
 │ • Supabase SSR & Database    │ • Web Audio API Synthesis    │
 │ • Local JSON Fallback Store  │ • Reading Zone Hysteresis    │
 │ • Next.js Route Handlers     │ • Reduced Motion Safe Mode   │
@@ -66,113 +65,113 @@ Một không gian thi ca đương đại kết hợp mỹ cảm Á Đông truy�
 
 ---
 
-## Cấu Trúc Thư Mục
+## Directory Structure
 
 ```
 .
 ├── public/
-│   ├── floral/               # Tài nguyên hoa, lá và tinh thể 4 mùa
-│   └── fonts/                # Phông chữ thi ca tối ưu cho web
+│   ├── floral/               # Seasonal botanicals, leaves & crystal assets
+│   └── fonts/                # Web-optimized literary typefaces
 ├── scripts/
-│   ├── generate_seasonal_floral.py  # Script toán học sinh hoa lá 4 mùa
-│   └── seed.mjs              # Script khởi tạo dữ liệu mẫu Supabase
+│   ├── generate_seasonal_floral.py  # Algorithmic seasonal asset generator
+│   └── seed.mjs              # Supabase database seeder
 ├── src/
 │   ├── app/
-│   │   ├── (admin)/          # Không gian quản trị biên tập
-│   │   ├── (public)/         # Giao diện thi quán công khai
-│   │   │   ├── collections/  # Trang danh mục & tuyển tập thơ
-│   │   │   ├── poems/        # Trang chi tiết bài thơ & giao diện đọc
-│   │   │   └── page.tsx      # Trang chủ thi quán
-│   │   ├── api/              # Route handlers (CRUD thơ, tuyển tập, auth)
+│   │   ├── (admin)/          # Editorial curation workspace
+│   │   ├── (public)/         # Public poetry showcase & reader views
+│   │   │   ├── collections/  # Collection catalogs and archive views
+│   │   │   ├── poems/        # Dedicated poem reader routes
+│   │   │   └── page.tsx      # Platform landing experience
+│   │   ├── api/              # Server Route Handlers (CRUD, Auth, Sync)
 │   │   ├── globals.css       # Design tokens, keyframes & animations
 │   │   └── layout.tsx        # Root layout, providers & font configuration
 │   ├── components/
-│   │   ├── book/             # Cuốn sách 3D, lật trang & tương tác mùa
-│   │   ├── bookshelf/        # Giá sách thi ca đa tầng
-│   │   ├── effects/          # Khí quyển 4 mùa, cành hoa, thảm cỏ, gió tuyết
-│   │   ├── layout/           # SiteHeader, SiteFooter, Theme/Season switch
-│   │   └── reader/           # Thanh công cụ đọc thơ, ghi chú, chia sẻ
+│   │   ├── book/             # 3D book canvas, page turn & season physics
+│   │   ├── bookshelf/        # Multi-tier interactive bookshelf
+│   │   ├── effects/          # 4-season atmosphere, branches, grass, snow
+│   │   ├── layout/           # SiteHeader, SiteFooter, Theme/Season switchers
+│   │   └── reader/           # Floating reading bar, notes, share utilities
 │   ├── context/
-│   │   └── SeasonContext.tsx # Trạng thái mùa và điều phối khí quyển toàn app
+│   │   └── SeasonContext.tsx # Central season state & atmospheric coordinator
 │   ├── data/
-│   │   ├── local-collections.json  # Dữ liệu tuyển tập dự phòng cục bộ
-│   │   └── local-poems.json        # Dữ liệu bài thơ dự phòng cục bộ
+│   │   ├── local-collections.json  # Offline collections fallback dataset
+│   │   └── local-poems.json        # Offline poems fallback dataset
 │   ├── hooks/
-│   │   └── useReadingZone.ts # Kiểm soát ngưỡng cuộn đồng bộ Header & Cành hoa
+│   │   └── useReadingZone.ts # Scroll hysteresis boundary controller
 │   ├── lib/
-│   │   ├── data-service.ts   # Tầng truy xuất dữ liệu trừu tượng (DB + Local)
-│   │   ├── nature-audio.ts   # Bộ tổng hợp âm thanh Web Audio API
-│   │   └── poem-genre.ts     # Phân loại thể loại thi ca & trắc nghiệm điệu
+│   │   ├── data-service.ts   # Unified data access layer (Supabase + Local)
+│   │   ├── nature-audio.ts   # Procedural Web Audio API sound synthesizers
+│   │   └── poem-genre.ts     # Poetry categorization & meter classification
 │   └── types/
-│       └── database.ts       # Định nghĩa kiểu dữ liệu TypeScript
+│       └── database.ts       # Database schema & TypeScript definitions
 └── package.json
 ```
 
 ---
 
-## Khởi Chạy Dự Án
+## Getting Started
 
-### Yêu Cầu Môi Trường
-- Node.js 20.x trở lên
-- Trình quản lý gói: `npm`, `pnpm`, hoặc `yarn`
+### Prerequisites
+- Node.js 20.x or higher
+- Package manager: `npm`, `pnpm`, or `yarn`
 
-### Cài Đặt
+### Installation
 
-1. Sao chép mã nguồn:
+1. Clone the repository:
    ```bash
    git clone <repository-url>
    cd anhthinh
    ```
 
-2. Cài đặt các thư viện phụ thuộc:
+2. Install dependencies:
    ```bash
    npm install
    ```
 
-3. Cấu hình biến môi trường (tùy chọn nếu kết nối Supabase):
-   Tạo tệp `.env.local` ở thư mục gốc:
+3. Configure environment variables (optional for Supabase cloud sync):
+   Create a `.env.local` file at the root:
    ```env
    NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
    NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
    SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
    ADMIN_PASSWORD=your_secure_admin_password
    ```
-   *Lưu ý: Nếu không cấu hình Supabase, hệ thống tự động sử dụng kho dữ liệu cục bộ trong `src/data/`.*
+   *Note: If no Supabase credentials are provided, the platform automatically defaults to the offline local JSON store.*
 
-4. Chạy môi trường phát triển:
+4. Start the development server:
    ```bash
    npm run dev
    ```
-   Truy cập giao diện tại `http://localhost:3000`.
+   Open `http://localhost:3000` in your browser.
 
-5. Kiểm tra mã nguồn và biên dịch sản phẩm:
+5. Validate codebase & production build:
    ```bash
-   # Kiểm tra kiểu TypeScript
+   # Type check verification
    npx tsc --noEmit
 
-   # Biên dịch bản phát hành
+   # Create production build
    npm run build
 
-   # Chạy thử bản phát hành
+   # Start production server
    npm run start
    ```
 
 ---
 
-## Nguyên Tắc Thiết Kế & Thẩm Mỹ
+## Design Principles & Craftsmanship
 
-1. **Thẩm mỹ Sora Lattice & Á Đông đương đại**: Mọi chi tiết hoa lá, nét cành và hoa văn đều lấy cảm hứng từ tranh thủy mặc và nghệ thuật hoa ép tự nhiên, giữ nét thanh nhã, không rườm rà.
-2. **Ưu tiên chất thơ và trải nghiệm đọc**:
-   - Vùng đọc trung tâm luôn được bảo vệ độ trong trẻo và tương phản cao nhất.
-   - Hiệu ứng khí quyển phân bố ở các rìa và góc màn hình, tạo không khí bảng lảng mà không gây xao nhãng con chữ.
-3. **Tiết chế & Tự nhiên**:
-   - Chuyển động sử dụng hàm gia tốc mượt mà (`cubic-bezier`), biên độ dịch chuyển vi mô.
-   - Hỗ trợ đầy đủ `prefers-reduced-motion` cho người dùng nhạy cảm với chuyển động.
-4. **Không phụ thuộc tài nguyên nặng**: Tối ưu hóa hiệu năng 60fps qua GPU transforms, CSS vectorization và tổng hợp âm thanh tại chỗ.
+1. **Sora Lattice & Contemporary East Asian Aesthetics**: Every branch curve, petal texture, and lattice framing draws from classical ink wash paintings and pressed flower craft—cultivating restraint, balance, and poise.
+2. **Text-First Reading Sanctity**:
+   - The central reading viewport remains pristine with uncompromising typographic clarity.
+   - Atmospheric effects are weighted toward viewport margins and perimeter zones to evoke poetic ambiance without visual clutter.
+3. **Restraint & Organic Motion**:
+   - Transitions leverage custom cubic-bezier easing curves with microscopic translational offsets.
+   - Full compliance with `prefers-reduced-motion` for motion-sensitive readers.
+4. **Performance Integrity**: Native 60fps performance achieved via hardware-accelerated CSS transforms, GPU layering, and procedural synthesis over network round-trips.
 
 ---
 
-## Bản Quyền & Giấy Phép
+## License & Intellectual Property
 
-Nội dung thi ca và hình ảnh nghệ thuật thuộc quyền sở hữu của **Thi Ca Anh Thịnh**.  
-Mã nguồn phát triển dưới giấy phép nội bộ của **ThinkAI Studio**.
+Poetry, literary texts, and artistic visual assets are copyright of **Thi Ca Anh Thịnh**.  
+Platform architecture and engineering developed under internal license by **ThinkAI Studio**.
