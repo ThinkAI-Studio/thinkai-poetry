@@ -129,6 +129,19 @@ export function AdminHeaderActions() {
                 </motion.div>
               );
             })}
+
+            {/* Tùy chọn điều chỉnh Mùa thi ca trên Mobile Admin */}
+            <div className="flex items-center justify-between pt-3 mt-1 border-t border-[var(--border-subtle)] normal-case">
+              <div className="flex flex-col">
+                <span className="text-xs font-serif font-medium text-[var(--text-primary)]">
+                  Mùa thi ca
+                </span>
+                <span className="text-[10px] font-mono text-[var(--text-muted)] lowercase">
+                  Sắc cảnh giao diện
+                </span>
+              </div>
+              <SeasonSwitch />
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

@@ -2,7 +2,6 @@ import React from "react";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SmoothScroll } from "@/components/tai-ui/SmoothScroll";
-import { PageTransition } from "@/components/layout/PageTransition";
 import { PoeticBookProvider } from "@/context/PoeticBookContext";
 import { SeasonProvider } from "@/context/SeasonContext";
 import { FloatingBookModal } from "@/components/book/FloatingBookModal";
@@ -28,7 +27,7 @@ export default async function PublicLayout({
           <SeasonAtmosphere />
           <SiteHeader />
           <main className="flex-1 pt-14 sm:pt-20">
-            <PageTransition>{children}</PageTransition>
+            {children}
           </main>
           <PoeticGrassFringe />
           <SiteFooter />

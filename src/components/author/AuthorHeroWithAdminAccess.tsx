@@ -150,13 +150,13 @@ export function AuthorHeroWithAdminAccess({ author }: AuthorHeroProps) {
             </div>
           </button>
 
-          {/* Huy hiệu Triện Son nhỏ nhắn gắn mép hoa */}
+          {/* Nút biểu tượng bảo mật nhỏ nhắn cạnh ảnh đại diện */}
           <div
             onClick={() => setIsModalOpen(true)}
-            title="Cổng Quản Trị"
-            className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-[var(--accent-vermilion)] text-white flex items-center justify-center shadow-md border-2 border-[var(--bg-card)] cursor-pointer hover:scale-110 transition-transform active:scale-95"
+            title="Cổng Quản Trị Wind"
+            className="absolute -bottom-0.5 -right-0.5 w-7 h-7 rounded-full bg-[var(--bg-card)] border border-[var(--border-subtle)] text-[var(--text-muted)] hover:text-[var(--text-primary)] flex items-center justify-center shadow-xs cursor-pointer hover:scale-105 transition-transform"
           >
-            <KeyRound className="w-3.5 h-3.5" />
+            <Lock className="w-3.5 h-3.5 opacity-70" />
           </div>
         </div>
 
@@ -186,7 +186,7 @@ export function AuthorHeroWithAdminAccess({ author }: AuthorHeroProps) {
       </div>
 
       {/* =================================================================== */}
-      {/* 2. HỘP ĐĂNG NHẬP NỔI BẢO MẬT CHUẨN CHỈNH (ADMIN FLOAT BOX)           */}
+      {/* 2. HỘP ĐĂNG NHẬP NỔI BẢO MẬT (QUIET LUXURY ADMIN FLOAT BOX)         */}
       {/* =================================================================== */}
       <AnimatePresence>
         {isModalOpen && (
@@ -201,47 +201,53 @@ export function AuthorHeroWithAdminAccess({ author }: AuthorHeroProps) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.25 }}
+              transition={{ duration: 0.2 }}
               onClick={() => !loading && setIsModalOpen(false)}
-              className="absolute inset-0 bg-black/70 backdrop-blur-md cursor-pointer"
+              className="absolute inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm cursor-pointer"
             />
 
             {/* Hộp thoại nổi (Float Box) */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.92, y: 20 }}
+              initial={{ opacity: 0, scale: 0.96, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.94, y: 15 }}
-              transition={SPRINGS.bouncy}
-              className="relative z-10 w-full max-w-md bg-[var(--bg-card)] border border-[var(--border-strong)] rounded-3xl p-6 sm:p-8 shadow-[0_25px_70px_rgba(0,0,0,0.45)] flex flex-col gap-6 text-[var(--text-primary)] backdrop-blur-xl"
+              exit={{ opacity: 0, scale: 0.97, y: 8 }}
+              transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
+              className="relative z-10 w-full max-w-[360px] bg-[#FAF8F5] dark:bg-[#181816] border border-amber-950/10 dark:border-white/10 rounded-2xl p-6 sm:p-7 shadow-2xl flex flex-col gap-5 text-[var(--text-primary)]"
             >
               {/* Nút đóng */}
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
                 disabled={loading}
-                className="absolute top-5 right-5 p-2 rounded-full text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--text-primary)]/10 transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-[var(--accent-gold)]"
+                className="absolute top-4 right-4 p-1.5 rounded-lg text-neutral-400 hover:text-neutral-900 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-[var(--color-focus)]"
                 aria-label="Đóng hộp thoại"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
 
               {/* Header Cổng Quản Trị */}
-              <div className="flex flex-col items-center text-center gap-3 pt-2">
-                {/* Con dấu Triện Son Khắc Chữ T */}
-                <div className="relative w-14 h-14 rounded-2xl bg-[var(--accent-vermilion)] text-amber-100 flex items-center justify-center shadow-lg border-2 border-amber-300/40 select-none">
-                  <span className="font-serif text-2xl font-bold tracking-tight">T</span>
-                  <div className="absolute inset-1 border border-amber-200/20 rounded-xl pointer-events-none" />
+              <div className="flex flex-col items-center text-center gap-2.5 pt-1">
+                {/* Biểu tượng thương hiệu Wind thanh lịch */}
+                <div className="relative w-10 h-10 rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 flex items-center justify-center shadow-xs select-none">
+                  <div className="relative w-5 h-5">
+                    <Image
+                      src="/thinh-va-tho-symbol.png"
+                      alt="Wind"
+                      fill
+                      className="object-contain invert dark:invert-0"
+                    />
+                  </div>
                 </div>
 
                 <div>
                   <h2
                     id="admin-dialog-title"
-                    className="font-poem-heading text-2xl font-bold text-[var(--text-primary)] tracking-tight"
+                    className="font-serif text-lg font-bold text-neutral-900 dark:text-[#EAE6DF] tracking-tight"
                   >
-                    Cổng Quản Trị Thi Quán
+                    Xác thực quản trị
                   </h2>
-                  <p className="text-xs font-mono text-[var(--text-secondary)] mt-1 tracking-wider">
-                    Wind • Không gian biên tập tác phẩm
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
+                    Nhập mật khẩu để truy cập bảng quản trị Wind
                   </p>
                 </div>
               </div>
@@ -249,25 +255,25 @@ export function AuthorHeroWithAdminAccess({ author }: AuthorHeroProps) {
               {/* Thông báo lỗi / Khóa bảo mật */}
               {error && (
                 <motion.div
-                  initial={{ opacity: 0, y: -5 }}
+                  initial={{ opacity: 0, y: -4 }}
                   animate={{ opacity: 1, y: 0 }}
                   className={cn(
-                    "p-3.5 rounded-xl border text-xs font-mono flex items-start gap-2.5",
+                    "p-3 rounded-xl border text-xs flex items-start gap-2 leading-relaxed",
                     lockoutSeconds > 0
-                      ? "bg-amber-500/10 border-amber-500/40 text-amber-700 dark:text-amber-200"
-                      : "bg-red-500/10 border-red-500/40 text-red-700 dark:text-red-200"
+                      ? "bg-amber-500/10 border-amber-500/30 text-amber-800 dark:text-amber-200"
+                      : "bg-red-500/10 border-red-500/30 text-red-700 dark:text-red-300"
                   )}
                 >
                   {lockoutSeconds > 0 ? (
-                    <Clock className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+                    <Clock className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
                   ) : (
-                    <AlertCircle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
+                    <AlertCircle className="w-3.5 h-3.5 text-red-500 shrink-0 mt-0.5" />
                   )}
-                  <div className="flex-1 leading-relaxed">
+                  <div className="flex-1">
                     <span>{error}</span>
                     {lockoutSeconds > 0 && (
-                      <span className="block font-bold text-amber-600 dark:text-amber-300 mt-1">
-                        Thời gian mở lại: {lockoutSeconds}s
+                      <span className="block font-semibold mt-0.5">
+                        Thử lại sau {lockoutSeconds} giây
                       </span>
                     )}
                   </div>
@@ -277,12 +283,12 @@ export function AuthorHeroWithAdminAccess({ author }: AuthorHeroProps) {
               {/* Thông báo thành công */}
               {success && (
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
+                  initial={{ opacity: 0, scale: 0.96 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="p-4 rounded-xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-800 dark:text-emerald-200 text-xs font-mono flex items-center justify-center gap-2"
+                  className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-800 dark:text-emerald-200 text-xs flex items-center justify-center gap-2"
                 >
-                  <ShieldCheck className="w-4 h-4 text-emerald-500" />
-                  <span>Xác thực thành công! Đang mở cửa thư phòng...</span>
+                  <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                  <span>Xác thực thành công. Đang chuyển hướng...</span>
                 </motion.div>
               )}
 
@@ -291,11 +297,11 @@ export function AuthorHeroWithAdminAccess({ author }: AuthorHeroProps) {
                 <div className="flex flex-col gap-1.5">
                   <label
                     htmlFor="admin-password"
-                    className="text-xs font-mono uppercase tracking-wider text-[var(--text-secondary)] flex items-center justify-between"
+                    className="text-xs font-medium text-neutral-700 dark:text-neutral-300 flex items-center justify-between"
                   >
-                    <span>Mật khẩu quản trị</span>
+                    <span>Mật khẩu</span>
                     {remainingAttempts !== null && remainingAttempts > 0 && (
-                      <span className="text-[11px] text-amber-600 dark:text-amber-400 lowercase">
+                      <span className="text-[11px] text-amber-600 dark:text-amber-400 font-normal">
                         ({remainingAttempts} lần thử còn lại)
                       </span>
                     )}
@@ -310,21 +316,21 @@ export function AuthorHeroWithAdminAccess({ author }: AuthorHeroProps) {
                       disabled={loading || lockoutSeconds > 0 || success}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      placeholder="Nhập mật khẩu quản trị..."
-                      className="w-full py-3.5 pl-4 pr-11 bg-[var(--bg-page)] border border-[var(--border-strong)] focus:border-[var(--accent-gold)] focus:ring-1 focus:ring-[var(--accent-gold)] text-[var(--text-primary)] font-mono text-sm rounded-xl outline-none transition-colors disabled:opacity-50 placeholder:text-[var(--text-muted)]/70"
+                      placeholder="Nhập mật khẩu..."
+                      className="w-full py-2.5 pl-3.5 pr-10 bg-white dark:bg-[#121211] border border-neutral-300/80 dark:border-white/15 focus:border-neutral-900 dark:focus:border-white focus:ring-1 focus:ring-neutral-900 dark:focus:ring-white text-neutral-900 dark:text-neutral-100 font-mono text-sm tracking-wider rounded-xl outline-none transition-all disabled:opacity-50 placeholder:text-neutral-400 placeholder:font-sans placeholder:tracking-normal"
                     />
 
                     <button
                       type="button"
                       tabIndex={-1}
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors p-1"
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 transition-colors p-1 cursor-pointer"
                       aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
                     >
                       {showPassword ? (
-                        <EyeOff className="w-4 h-4" />
+                        <EyeOff className="w-3.5 h-3.5" />
                       ) : (
-                        <Eye className="w-4 h-4" />
+                        <Eye className="w-3.5 h-3.5" />
                       )}
                     </button>
                   </div>
@@ -335,28 +341,25 @@ export function AuthorHeroWithAdminAccess({ author }: AuthorHeroProps) {
                   type="submit"
                   disabled={loading || lockoutSeconds > 0 || success || !password}
                   className={cn(
-                    "w-full py-3.5 px-4 rounded-xl font-mono text-xs uppercase tracking-wider font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md",
-                    "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-gold)]",
+                    "w-full py-2.5 px-4 rounded-xl text-xs font-medium transition-all flex items-center justify-center gap-2 cursor-pointer shadow-xs",
+                    "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus)]",
                     success
                       ? "bg-emerald-600 text-white"
-                      : "bg-[var(--accent-green)] hover:bg-[var(--accent-green-hover)] text-white active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+                      : "bg-neutral-900 hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-100 text-white dark:text-neutral-950 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed"
                   )}
                 >
                   {loading ? (
                     <span className="flex items-center gap-2">
-                      <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      <span>Đang đối chiếu khóa mật...</span>
+                      <span className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                      <span>Đang kiểm tra...</span>
                     </span>
                   ) : success ? (
-                    <span className="flex items-center gap-2">
-                      <ShieldCheck className="w-4 h-4" />
-                      <span>Mở khóa thành công</span>
+                    <span className="flex items-center gap-1.5">
+                      <ShieldCheck className="w-3.5 h-3.5" />
+                      <span>Đã xác thực</span>
                     </span>
                   ) : (
-                    <>
-                      <span>Tiến Vào Quản Trị</span>
-                      <ArrowRight className="w-4 h-4" />
-                    </>
+                    <span>Đăng nhập</span>
                   )}
                 </button>
               </form>
