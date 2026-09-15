@@ -1,1005 +1,456 @@
 "use client";
 
-import React, { useState, useEffect, memo } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import React, { useState, memo, useId } from "react";
+import Image from "next/image";
 import { useReducedMotion } from "@/lib/motion";
+import { useSeason, Season } from "@/context/SeasonContext";
+import { useReadingZone } from "@/hooks/useReadingZone";
+import { playLeafRustleSound, playBranchShakeSound } from "@/lib/nature-audio";
+import { cn } from "@/lib/utils";
 
 /* =========================================================================
-   1. ĐỊNH NGHĨA VECTOR LÁ PHONG ĐỎ & HOA ĐÀO NGHỆ THUẬT (JAPANESE MOMIJI & SAKURA)
-   Được thiết kế tinh xảo theo ảnh mẫu Kage: Nhánh cây gân guốc có đốt sần,
-   các chùm lá phong 7 thùy xòe đa tầng và cụm hoa đào nở rộ cùng nụ non.
+   1. BẢNG TÀI NGUYÊN SORA LATTICE RASTER 4 MÙA (100% LATTICE ASSETS)
    ========================================================================= */
+const seasonalAssetMap: Record<Season, { pink: string; yellow: string; leaf1: string; leaf2: string }> = {
+  spring: {
+    pink: "/floral/flower-pink.png",
+    yellow: "/floral/flower-yellow.png",
+    leaf1: "/floral/leaf-1.png",
+    leaf2: "/floral/leaf-2.png",
+  },
+  summer: {
+    pink: "/floral/summer-lotus-pink.png",
+    yellow: "/floral/summer-flower-yellow.png",
+    leaf1: "/floral/summer-leaf-1.png",
+    leaf2: "/floral/summer-leaf-2.png",
+  },
+  autumn: {
+    pink: "/floral/autumn-momiji-pink.png",
+    yellow: "/floral/autumn-flower-yellow.png",
+    leaf1: "/floral/autumn-leaf-1.png",
+    leaf2: "/floral/autumn-leaf-2.png",
+  },
+  winter: {
+    pink: "/floral/winter-camellia-pink.png",
+    yellow: "/floral/winter-flower-white.png",
+    leaf1: "/floral/winter-leaf-1.png",
+    leaf2: "/floral/winter-leaf-2.png",
+  },
+};
 
-// Chiếc lá phong đơn lẻ 7 thùy chuẩn xác (Momiji Single Leaf)
-const MomijiLeaf = memo(
-  ({
-    x,
-    y,
-    scale = 1,
-    rotate = 0,
-    variant = "crimson",
-    opacity = 0.96,
-  }: {
-    x: number;
-    y: number;
-    scale?: number;
-    rotate?: number;
-    variant?: "crimson" | "scarlet" | "amber" | "ruby" | "coral";
-    opacity?: number;
-  }) => {
-    return (
-      <g
-        transform={`translate(${x}, ${y}) rotate(${rotate}) scale(${scale})`}
-        opacity={opacity}
-      >
-        {/* Cuống lá phong cong tự nhiên */}
-        <path
-          d="M 0,0 C -0.8,7 -1.2,16 0,23"
-          stroke="url(#momijiStemGrad)"
-          strokeWidth="1.2"
-          fill="none"
-          strokeLinecap="round"
-        />
-        {/* Thân lá phong 7 thùy xẻ sâu tinh xảo */}
-        <path
-          d="M 0,2
-             C -2,-3 -4,-8 -7,-14 C -6,-10 -5,-7 -4,-4
-             C -7,-8 -12,-12 -17,-13 C -13,-9 -10,-6 -8,-3
-             C -13,-5 -19,-5 -24,-2 C -19,0 -15,1 -11,3
-             C -17,7 -21,13 -22,19 C -18,15 -14,11 -10,8
-             C -13,14 -12,21 -8,25 C -6,19 -5,14 -4,9
-             L 0,27
-             L 4,9 C 5,14 6,19 8,25 C 12,21 13,14 10,8
-             C 14,11 18,15 22,19 C 21,13 17,7 11,3
-             C 15,1 19,0 24,-2 C 19,-5 13,-5 8,-3
-             C 10,-6 13,-9 17,-13 C 12,-12 7,-8 4,-4
-             C 5,-7 6,-10 7,-14 C 4,-8 2,-3 0,2 Z"
-          fill={`url(#momiji-grad-${variant})`}
-          stroke="rgba(0,0,0,0.22)"
-          strokeWidth="0.5"
-        />
-        {/* Gân lá phát sáng tinh tế */}
-        <path
-          d="M 0,22 L 0,1
-             M 0,17 L -10,4
-             M 0,17 L 10,4
-             M 0,13 L -13,-4
-             M 0,13 L 13,-4
-             M 0,8 L -8,-9
-             M 0,8 L 8,-9"
-          stroke="rgba(255, 240, 210, 0.42)"
-          strokeWidth="0.7"
-          strokeLinecap="round"
-        />
-      </g>
-    );
-  }
-);
-MomijiLeaf.displayName = "MomijiLeaf";
+/* =========================================================================
+   2. CÀNH HOA THƯ PHÁP THANH NHÃ (DELICATE CALLIGRAPHIC FLORAL BRANCH)
+   - Thân cành thanh mảnh (stroke 1.5px - 2.5px), uốn lượn phong cách thủy mặc
+   - Trên các nhánh dăm gắn trực tiếp các đóa hoa và lá Sora Lattice raster
+   - Đồng bộ hoàn toàn với phong cách Sora Lattice 100%
+   ========================================================================= */
+interface BranchSvgProps {
+  side: "left" | "right";
+  season: Season;
+}
 
-// Chiếc lá phong nghiêng góc 3/4 (Perspective Momiji Leaf - tạo độ lồi lõm chân thực)
-const MomijiLeafAngle = memo(
-  ({
-    x,
-    y,
-    scale = 1,
-    rotate = 0,
-    variant = "scarlet",
-  }: {
-    x: number;
-    y: number;
-    scale?: number;
-    rotate?: number;
-    variant?: "crimson" | "scarlet" | "amber" | "ruby" | "coral";
-  }) => {
-    return (
-      <g transform={`translate(${x}, ${y}) rotate(${rotate}) scale(${scale})`}>
-        <path
-          d="M 0,0 C 1,6 1.5,14 0,20"
-          stroke="url(#momijiStemGrad)"
-          strokeWidth="1.1"
-          fill="none"
-          strokeLinecap="round"
-        />
-        <path
-          d="M 0,2
-             C -2,-3 -3,-7 -5,-13 C -4,-9 -3,-6 -2,-4
-             C -4,-7 -7,-10 -11,-11 C -8,-8 -6,-5 -5,-3
-             C -8,-4 -12,-4 -15,-2 C -12,0 -9,1 -7,2
-             C -10,6 -12,11 -12,16 C -10,13 -8,10 -6,7
-             C -7,12 -6,17 -4,21 C -3,16 -2,12 -1,8
-             L 0,22
-             L 3,8 C 4,12 5,16 6,20 C 8,16 9,11 7,7
-             C 9,9 12,12 14,14 C 13,10 11,6 8,3
-             C 10,2 12,1 15,-1 C 12,-3 9,-3 6,-2
-             C 7,-4 9,-7 11,-9 C 8,-9 5,-6 3,-3
-             C 3,-6 4,-8 5,-11 C 3,-7 2,-3 0,2 Z"
-          fill={`url(#momiji-grad-${variant})`}
-          stroke="rgba(0,0,0,0.2)"
-          strokeWidth="0.45"
-        />
-        <path
-          d="M 0,18 L 0,2 M 0,14 L -8,3 M 0,14 L 7,3 M 0,10 L -10,-4 M 0,10 L 9,-4"
-          stroke="rgba(255, 235, 200, 0.35)"
-          strokeWidth="0.65"
-          strokeLinecap="round"
-        />
-      </g>
-    );
-  }
-);
-MomijiLeafAngle.displayName = "MomijiLeafAngle";
+const DelicateFloralBranchSvg = memo(({ side, season }: BranchSvgProps) => {
+  const assets = seasonalAssetMap[season] || seasonalAssetMap.spring;
+  const isLeft = side === "left";
+  const gradId = useId();
 
-// Cụm 3-4 lá phong đan cài tự nhiên (Momiji Foliage Cluster - triệt tiêu sự đơn điệu)
-const MomijiCluster = memo(
-  ({
-    x,
-    y,
-    scale = 1,
-    rotate = 0,
-    mainVariant = "crimson",
-  }: {
-    x: number;
-    y: number;
-    scale?: number;
-    rotate?: number;
-    mainVariant?: "crimson" | "scarlet" | "amber" | "ruby";
-  }) => {
-    return (
-      <g transform={`translate(${x}, ${y}) rotate(${rotate}) scale(${scale})`}>
-        {/* Lá phụ góc sau (đậm hơn, tạo chiều sâu 3D) */}
-        <MomijiLeaf
-          x={-14}
-          y={-6}
-          scale={0.78}
-          rotate={-38}
-          variant="ruby"
-          opacity={0.88}
-        />
-        {/* Lá phụ bên phải (sáng màu hơn, như đón nắng trăng) */}
-        <MomijiLeafAngle
-          x={16}
-          y={-4}
-          scale={0.82}
-          rotate={35}
-          variant={mainVariant === "crimson" ? "scarlet" : "amber"}
-        />
-        {/* Lá non nhỏ ở đọt */}
-        <MomijiLeaf
-          x={2}
-          y={-18}
-          scale={0.58}
-          rotate={-12}
-          variant="coral"
-          opacity={0.92}
-        />
-        {/* Lá chính nở rộ ở tiền cảnh */}
-        <MomijiLeaf
-          x={0}
-          y={0}
-          scale={1.05}
-          rotate={6}
-          variant={mainVariant}
-          opacity={0.98}
-        />
-      </g>
-    );
-  }
-);
-MomijiCluster.displayName = "MomijiCluster";
+  // Bảng màu thân cành theo mùa (Mực tàu cổ, cành liễu, cành phong, cành tuyết mai)
+  const barkConfig = {
+    spring: {
+      start: "#23120C",
+      mid: "#452418",
+      end: "#653723",
+      ridge: "#8D533A",
+      calyx: "#26130D",
+      bud: "#F472B6",
+      frost: null,
+    },
+    summer: {
+      start: "#0F2012",
+      mid: "#18361E",
+      end: "#274D2D",
+      ridge: "#3E7346",
+      calyx: "#102313",
+      bud: "#F43F5E",
+      frost: null,
+    },
+    autumn: {
+      start: "#22100A",
+      mid: "#3C1D13",
+      end: "#552B1C",
+      ridge: "#7E432E",
+      calyx: "#220F09",
+      bud: "#F59E0B",
+      frost: null,
+    },
+    winter: {
+      start: "#121720",
+      mid: "#1E2938",
+      end: "#2F3E50",
+      ridge: "#5A6E85",
+      calyx: "#131A24",
+      bud: "#E2E8F0",
+      frost: "rgba(226, 232, 240, 0.75)",
+    },
+  }[season];
 
-// Hoa đào nở nhìn nghiêng 3/4 (Profile Sakura)
-const SakuraProfile = memo(
-  ({
-    x,
-    y,
-    scale = 1,
-    rotate = 0,
-  }: {
-    x: number;
-    y: number;
-    scale?: number;
-    rotate?: number;
-  }) => {
-    return (
-      <g transform={`translate(${x}, ${y}) rotate(${rotate}) scale(${scale})`}>
-        {/* Đài hoa đỏ sẫm ở cuống */}
-        <path
-          d="M 0,0 C -3,3 -4,7 0,10 C 4,7 3,3 0,0 Z"
-          fill="#4A0E17"
-        />
-        <circle cx="-3" cy="4" r="1.5" fill="#6B1322" />
-        <circle cx="3" cy="4" r="1.5" fill="#6B1322" />
-        {/* Cánh hoa nhìn nghiêng uốn lượn */}
-        <path
-          d="M -1,2 C -7,-3 -12,-9 -8,-16 C -3,-18 2,-15 5,-9 C 6,-3 2,1 -1,2 Z"
-          fill="url(#sakuraPetalGrad)"
-          stroke="rgba(240,160,180,0.5)"
-          strokeWidth="0.5"
-        />
-        <path
-          d="M 2,1 C 7,-3 12,-7 11,-15 C 6,-18 0,-16 -3,-10 C -4,-4 0,0 2,1 Z"
-          fill="url(#sakuraPetalGrad)"
-          opacity="0.95"
-          stroke="rgba(240,160,180,0.4)"
-          strokeWidth="0.5"
-        />
-        {/* Nhụy vươn ra khỏi cánh */}
-        <line x1="0" y1="-2" x2="-4" y2="-12" stroke="#B45309" strokeWidth="0.8" />
-        <line x1="1" y1="-2" x2="3" y2="-13" stroke="#B45309" strokeWidth="0.8" />
-        <circle cx="-4" cy="-12" r="1.2" fill="#FBBF24" />
-        <circle cx="3" cy="-13" r="1.2" fill="#FBBF24" />
-      </g>
-    );
-  }
-);
-SakuraProfile.displayName = "SakuraProfile";
+  return (
+    <svg
+      viewBox="0 0 490 410"
+      fill="none"
+      className="w-full h-full select-none pointer-events-none drop-shadow-sm"
+      preserveAspectRatio={isLeft ? "xMinYMin meet" : "xMaxYMin meet"}
+    >
+      <defs>
+        <linearGradient id={`branchBark-${gradId}`} x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor={barkConfig.start} />
+          <stop offset="50%" stopColor={barkConfig.mid} />
+          <stop offset="100%" stopColor={barkConfig.end} />
+        </linearGradient>
+        <linearGradient id={`branchRidge-${gradId}`} x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor={barkConfig.ridge} stopOpacity="0.85" />
+          <stop offset="100%" stopColor={barkConfig.ridge} stopOpacity="0.4" />
+        </linearGradient>
+      </defs>
 
-// Hoa đào chính diện 5 cánh thanh tao với chi tiết nhụy tinh xảo
-const CherryBlossomFlower = memo(
-  ({
-    x,
-    y,
-    scale = 1,
-    rotate = 0,
-    isOpen = true,
-  }: {
-    x: number;
-    y: number;
-    scale?: number;
-    rotate?: number;
-    isOpen?: boolean;
-  }) => {
-    if (!isOpen) {
-      // Nụ hoa đào e ấp nở
-      return (
-        <g transform={`translate(${x}, ${y}) rotate(${rotate}) scale(${scale})`}>
-          {/* Cuống nụ */}
-          <path d="M 0,2 C -1,5 -1,9 0,12" stroke="#3D1A16" strokeWidth="1.2" fill="none" />
-          <circle cx="0" cy="2" r="2.2" fill="#4C0D17" />
-          {/* Cánh nụ màu hồng thắm hé mở */}
+      {/* Nhóm lật gương cho bên phải */}
+      <g transform={isLeft ? undefined : "scale(-1, 1) translate(-490, 0)"}>
+        {/* --- TẦNG 1: HẬU CẢNH MỜ ẢO TẠO CHIỀU SÂU (BACKGROUND DEPTH TWIGS) --- */}
+        <g opacity="0.4">
           <path
-            d="M 0,1 C -4,-3 -4,-8 -1,-13 C 2,-9 3,-4 0,1 Z"
-            fill="url(#sakuraBudGrad)"
-            stroke="rgba(120,20,30,0.5)"
-            strokeWidth="0.6"
+            d="M 35,-8 Q 140,16 250,6 T 390,-8"
+            stroke={`url(#branchBark-${gradId})`}
+            strokeWidth="2.4"
+            strokeLinecap="round"
           />
           <path
-            d="M -1,-1 C -4,-5 -2,-10 2,-11 C 1,-6 1,-2 -1,-1 Z"
-            fill="url(#sakuraPetalGrad)"
-            opacity="0.9"
+            d="M 55,38 Q 45,140 22,230"
+            stroke={`url(#branchBark-${gradId})`}
+            strokeWidth="2.2"
+            strokeLinecap="round"
+          />
+          {/* Hoa hậu cảnh mờ */}
+          <image href={assets.yellow} x={235} y={-8} width={22} height={22} opacity="0.75" />
+          <image href={assets.pink} x={375} y={-22} width={24} height={24} opacity="0.7" />
+          <image href={assets.leaf1} x={18} y={220} width={20} height={20} opacity="0.65" />
+        </g>
+
+        {/* --- TẦNG 2: THÂN CHÍNH KHÉP KÍN CỔ THỤ CÓ ĐỘ THUÔN SINH HỌC (TAPERED TRUNK) --- */}
+        {/* Thân cành mẹ: gốc dày 14px thuôn mượt về 3.5px ở ngọn */}
+        <path
+          d="M -15,4 C 45,6 115,28 185,72 C 255,116 320,178 395,218 C 435,236 462,233 485,232
+             C 485,236 460,241 425,228 C 355,188 290,126 220,82 C 150,38 80,18 -15,18 Z"
+          fill={`url(#branchBark-${gradId})`}
+        />
+
+        {/* Sống lưng khối 3D (Top-Ridge Highlight) */}
+        <path
+          d="M -10,8 C 50,9 120,31 190,75 C 260,119 324,181 398,221 C 432,237 458,234 480,233"
+          stroke={`url(#branchRidge-${gradId})`}
+          strokeWidth="1.6"
+          strokeLinecap="round"
+        />
+
+        {/* Viền băng tuyết phủ trên sống cành mùa đông */}
+        {barkConfig.frost && (
+          <path
+            d="M -10,7 C 50,8 120,30 190,74 C 260,118 324,180 398,220 C 432,236 458,233 480,232"
+            stroke={barkConfig.frost}
+            strokeWidth="1.4"
+            strokeLinecap="round"
+          />
+        )}
+
+        {/* --- TẦNG 3: NHÁNH THỨ CẤP VỮNG CHÃI & CÀNH DĂM SẮC NÉT --- */}
+        {/* 1. Nhánh thứ cấp vươn ngang trên (4.8px -> 3.2px) */}
+        <path
+          d="M 115,38 Q 165,18 235,16 Q 295,14 365,5"
+          stroke={`url(#branchBark-${gradId})`}
+          strokeWidth="4.8"
+          strokeLinecap="round"
+        />
+        <path
+          d="M 235,16 Q 275,-5 335,-8"
+          stroke={`url(#branchBark-${gradId})`}
+          strokeWidth="3.2"
+          strokeLinecap="round"
+        />
+        <path
+          d="M 285,50 Q 335,34 390,38"
+          stroke={`url(#branchBark-${gradId})`}
+          strokeWidth="3.2"
+          strokeLinecap="round"
+        />
+
+        {/* 2. Nhánh thứ cấp giữa thân (4.2px -> 3.0px) */}
+        <path
+          d="M 195,76 Q 235,55 305,62"
+          stroke={`url(#branchBark-${gradId})`}
+          strokeWidth="4.2"
+          strokeLinecap="round"
+        />
+        <path
+          d="M 330,178 Q 365,215 375,275"
+          stroke={`url(#branchBark-${gradId})`}
+          strokeWidth="3.0"
+          strokeLinecap="round"
+        />
+
+        {/* 3. Nhánh thứ cấp rủ xuống dưới (5.0px -> 3.0px) */}
+        <path
+          d="M 260,126 C 248,175 224,220 200,265 C 180,300 170,340 165,385"
+          stroke={`url(#branchBark-${gradId})`}
+          strokeWidth="4.8"
+          strokeLinecap="round"
+        />
+        <path
+          d="M 224,220 Q 255,255 260,305"
+          stroke={`url(#branchBark-${gradId})`}
+          strokeWidth="3.0"
+          strokeLinecap="round"
+        />
+        <path
+          d="M 200,265 Q 170,285 145,335"
+          stroke={`url(#branchBark-${gradId})`}
+          strokeWidth="2.8"
+          strokeLinecap="round"
+        />
+
+        {/* --- TẦNG 4: CUỐNG HOA & ĐÀI HOA THỰC VẬT HỌC (PEDICELS & CALYXES) --- */}
+        {/* Cuống nối vào hoa đỉnh */}
+        <path d="M 345,6 Q 348,0 350,-8" stroke={`url(#branchBark-${gradId})`} strokeWidth="2.6" strokeLinecap="round" />
+        <path d="M 347,-6 Q 350,-9 353,-6" stroke={barkConfig.calyx} strokeWidth="2.2" strokeLinecap="round" />
+
+        {/* Cuống nối hoa ngang */}
+        <path d="M 230,16 Q 232,11 235,6" stroke={`url(#branchBark-${gradId})`} strokeWidth="2.6" strokeLinecap="round" />
+        <path d="M 372,36 Q 376,31 380,26" stroke={`url(#branchBark-${gradId})`} strokeWidth="2.6" strokeLinecap="round" />
+
+        {/* Cuống nối hoa giữa thân */}
+        <path d="M 135,33 Q 140,31 145,30" stroke={`url(#branchBark-${gradId})`} strokeWidth="2.6" strokeLinecap="round" />
+        <path d="M 288,58 Q 291,55 295,52" stroke={`url(#branchBark-${gradId})`} strokeWidth="2.6" strokeLinecap="round" />
+
+        {/* Cuống & Đài hoa chính đại trung tâm */}
+        <path d="M 215,82 Q 220,87 225,92" stroke={`url(#branchBark-${gradId})`} strokeWidth="2.8" strokeLinecap="round" />
+        <path d="M 221,94 Q 225,89 229,94" stroke={barkConfig.calyx} strokeWidth="2.4" strokeLinecap="round" />
+
+        {/* Cuống cụm ngọn */}
+        <path d="M 318,152 Q 321,148 325,145" stroke={`url(#branchBark-${gradId})`} strokeWidth="2.6" strokeLinecap="round" />
+        <path d="M 405,224 Q 410,221 415,218" stroke={`url(#branchBark-${gradId})`} strokeWidth="2.6" strokeLinecap="round" />
+        <path d="M 462,231 Q 466,228 470,226" stroke={`url(#branchBark-${gradId})`} strokeWidth="2.6" strokeLinecap="round" />
+
+        {/* Cuống cụm nhánh rủ */}
+        <path d="M 238,192 Q 241,188 245,185" stroke={`url(#branchBark-${gradId})`} strokeWidth="2.6" strokeLinecap="round" />
+        <path d="M 252,301 Q 253,298 255,295" stroke={`url(#branchBark-${gradId})`} strokeWidth="2.6" strokeLinecap="round" />
+        <path d="M 164,372 Q 163,376 162,380" stroke={`url(#branchBark-${gradId})`} strokeWidth="2.6" strokeLinecap="round" />
+
+        {/* --- TẦNG 5: NỤ HOA SINH THÁI ĐIỂM XUYẾT (ECOLOGICAL BUDS) --- */}
+        {/* Nụ 1: Đầu cành ngang trên */}
+        <g transform="translate(370, 4) rotate(15)">
+          <circle cx="0" cy="0" r="3.2" fill={barkConfig.bud} opacity="0.95" />
+          <path d="M -2,2 Q 0,4 2,2" stroke={barkConfig.calyx} strokeWidth="1.4" fill="none" />
+        </g>
+        {/* Nụ 2: Chồi hé trên nhánh dăm */}
+        <g transform="translate(395, 41) rotate(-20)">
+          <circle cx="0" cy="0" r="2.8" fill={barkConfig.bud} opacity="0.9" />
+          <path d="M -1.8,1.8 Q 0,3.5 1.8,1.8" stroke={barkConfig.calyx} strokeWidth="1.2" fill="none" />
+        </g>
+        {/* Nụ 3: Đầu nhánh rủ dưới */}
+        <g transform="translate(138, 342) rotate(35)">
+          <circle cx="0" cy="0" r="3.0" fill={barkConfig.bud} opacity="0.92" />
+          <path d="M -2,2 Q 0,3.8 2,2" stroke={barkConfig.calyx} strokeWidth="1.3" fill="none" />
+        </g>
+
+        {/* --- TẦNG 6: HOA & LÁ SORA LATTICE GẮN CHẮC CHẮN TRÊN MẤU CÀNH --- */}
+        {/* 1. Cặp hoa đỉnh trên */}
+        <g transform="translate(350, -8) rotate(15)">
+          <image href={assets.pink} x={-16} y={-16} width={34} height={34} />
+        </g>
+        {season !== "winter" && (
+          <g transform="translate(325, -20) rotate(-25)">
+            <image href={assets.leaf1} x={-11} y={-11} width={24} height={24} />
+          </g>
+        )}
+
+        {/* 2. Cụm nhánh ngang trên */}
+        <g transform="translate(235, 6) rotate(-12)">
+          <image href={assets.yellow} x={-14} y={-14} width={30} height={30} />
+        </g>
+        <g transform="translate(380, 26) rotate(22)">
+          <image href={assets.pink} x={-15} y={-15} width={32} height={32} />
+        </g>
+        {season !== "winter" && (
+          <g transform="translate(400, 36) rotate(45)">
+            <image href={assets.leaf2} x={-10} y={-10} width={22} height={22} />
+          </g>
+        )}
+
+        {/* 3. Cụm nhánh giữa thân */}
+        <g transform="translate(145, 30) rotate(8)">
+          <image href={assets.pink} x={-15} y={-15} width={32} height={32} />
+        </g>
+        {season !== "winter" && (
+          <g transform="translate(125, 46) rotate(-30)">
+            <image href={assets.leaf1} x={-11} y={-11} width={23} height={23} />
+          </g>
+        )}
+        <g transform="translate(295, 52) rotate(18)">
+          <image href={assets.yellow} x={-14} y={-14} width={30} height={30} />
+        </g>
+
+        {/* 4. Đóa hoa lớn nở rộ trung tâm cành */}
+        <g transform="translate(225, 92) rotate(-10)">
+          <image href={assets.pink} x={-18} y={-18} width={38} height={38} />
+        </g>
+        {season !== "winter" && (
+          <g transform="translate(252, 105) rotate(35)">
+            <image href={assets.leaf2} x={-12} y={-12} width={25} height={25} />
+          </g>
+        )}
+
+        {/* 5. Cụm ngọn cành vươn ra khung màn hình */}
+        <g transform="translate(325, 145) rotate(14)">
+          <image href={assets.yellow} x={-15} y={-15} width={32} height={32} />
+        </g>
+        <g transform="translate(415, 218) rotate(-16)">
+          <image href={assets.pink} x={-17} y={-17} width={36} height={36} />
+        </g>
+        <g transform="translate(470, 226) rotate(25)">
+          <image href={assets.yellow} x={-13} y={-13} width={28} height={28} />
+        </g>
+        {/* Duy nhất 1 chiếc lá khô co quắp bám sót lại trên cành mùa đông, các mùa khác hiển thị đầy đặn */}
+        <g transform="translate(490, 230) rotate(-10)">
+          <image
+            href={assets.leaf1}
+            x={-11}
+            y={-11}
+            width={season === "winter" ? 17 : 23}
+            height={season === "winter" ? 17 : 23}
+            opacity={season === "winter" ? 0.6 : 1}
           />
         </g>
-      );
-    }
 
-    return (
-      <g transform={`translate(${x}, ${y}) rotate(${rotate}) scale(${scale})`}>
-        {/* 5 Cánh hoa đào với rãnh chẻ nhẹ ở đầu cánh */}
-        {[0, 72, 144, 216, 288].map((angle, idx) => (
-          <path
-            key={idx}
-            transform={`rotate(${angle})`}
-            d="M 0,0 C -5,-7 -9,-13 -7,-18 C -3,-20 0,-18 0,-16 C 0,-18 3,-20 7,-18 C 9,-13 5,-7 0,0 Z"
-            fill="url(#sakuraPetalGrad)"
-            stroke="rgba(240, 160, 180, 0.45)"
-            strokeWidth="0.5"
-          />
-        ))}
-        {/* Tâm hoa đào & Nhụy hoa vàng kim */}
-        <circle cx="0" cy="0" r="3.4" fill="#D97706" />
-        <circle cx="0" cy="0" r="1.8" fill="#FEF3C7" />
-        {[0, 36, 72, 108, 144, 180, 216, 252, 288, 324].map((angle, idx) => (
-          <g key={idx} transform={`rotate(${angle})`}>
-            <line
-              x1="0"
-              y1="0"
-              x2="0"
-              y2="-6"
-              stroke="#B45309"
-              strokeWidth="0.75"
-              strokeLinecap="round"
-            />
-            <circle cx="0" cy="-6.2" r="0.9" fill="#FEF08A" />
+        {/* 6. Cụm nhánh rủ xuống tao nhã */}
+        <g transform="translate(245, 185) rotate(-25)">
+          <image href={assets.pink} x={-15} y={-15} width={32} height={32} />
+        </g>
+        {season !== "winter" && (
+          <g transform="translate(268, 202) rotate(40)">
+            <image href={assets.leaf2} x={-11} y={-11} width={24} height={24} />
           </g>
-        ))}
+        )}
+        <g transform="translate(255, 295) rotate(16)">
+          <image href={assets.yellow} x={-14} y={-14} width={30} height={30} />
+        </g>
+        {season !== "winter" && (
+          <g transform="translate(142, 330) rotate(-35)">
+            <image href={assets.leaf1} x={-11} y={-11} width={24} height={24} />
+          </g>
+        )}
+        <g transform="translate(162, 380) rotate(12)">
+          <image href={assets.pink} x={-16} y={-16} width={33} height={33} />
+        </g>
       </g>
-    );
-  }
-);
-CherryBlossomFlower.displayName = "CherryBlossomFlower";
-
-// Cụm hoa đào gắn trực tiếp lên thân cành (đặc trưng tranh thủy mặc Á Đông)
-const BlossomTwigCluster = memo(
-  ({
-    x,
-    y,
-    scale = 1,
-    rotate = 0,
-  }: {
-    x: number;
-    y: number;
-    scale?: number;
-    rotate?: number;
-  }) => {
-    return (
-      <g transform={`translate(${x}, ${y}) rotate(${rotate}) scale(${scale})`}>
-        {/* Mắt gỗ nâu nơi hoa mọc */}
-        <ellipse cx="0" cy="0" rx="3.5" ry="2" fill="#2E1D16" />
-        {/* Nụ nhỏ cạnh hoa */}
-        <CherryBlossomFlower x={-14} y={-5} scale={0.7} rotate={-30} isOpen={false} />
-        {/* Hoa nhìn nghiêng */}
-        <SakuraProfile x={13} y={-6} scale={0.82} rotate={25} />
-        {/* Hoa nở bung chính diện */}
-        <CherryBlossomFlower x={0} y={0} scale={1.05} rotate={15} isOpen={true} />
-      </g>
-    );
-  }
-);
-BlossomTwigCluster.displayName = "BlossomTwigCluster";
-
-/* =========================================================================
-   2. BỘ ĐỊNH NGHĨA GRADIENT VÀ FILTER SVG ĐA TẦNG (RICH SHADERS)
-   ========================================================================= */
-const SharedBranchDefs = memo(() => (
-  <svg width="0" height="0" className="absolute pointer-events-none">
-    <defs>
-      {/* Vỏ thân cành cây gỗ mun / trà trầm Á Đông */}
-      <linearGradient id="branchBarkGrad" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stopColor="#18120E" />
-        <stop offset="25%" stopColor="#2A1E17" />
-        <stop offset="55%" stopColor="#3E2C22" />
-        <stop offset="85%" stopColor="#251A14" />
-        <stop offset="100%" stopColor="#140E0A" />
-      </linearGradient>
-
-      {/* Ánh trăng viền sống cành (Rim Light Highlight) */}
-      <linearGradient id="branchRimLightGrad" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stopColor="rgba(255,245,225,0.22)" />
-        <stop offset="50%" stopColor="rgba(255,230,190,0.12)" />
-        <stop offset="100%" stopColor="rgba(0,0,0,0)" />
-      </linearGradient>
-
-      {/* Vỏ thân nhành con mảnh gân guốc */}
-      <linearGradient id="twigBarkGrad" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stopColor="#38261C" />
-        <stop offset="60%" stopColor="#221711" />
-        <stop offset="100%" stopColor="#120C08" />
-      </linearGradient>
-
-      {/* Cuống lá phong */}
-      <linearGradient id="momijiStemGrad" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stopColor="#991B1B" />
-        <stop offset="100%" stopColor="#3B1515" />
-      </linearGradient>
-
-      {/* Biến thể 1: Crimson (Đỏ thắm kinh điển ngả rượu vang) */}
-      <linearGradient id="momiji-grad-crimson" x1="0" y1="1" x2="0" y2="0">
-        <stop offset="0%" stopColor="#681014" />
-        <stop offset="40%" stopColor="#991B1B" />
-        <stop offset="75%" stopColor="#DC2626" />
-        <stop offset="100%" stopColor="#F87171" />
-      </linearGradient>
-
-      {/* Biến thể 2: Scarlet (Đỏ tươi rực ánh lửa) */}
-      <linearGradient id="momiji-grad-scarlet" x1="0" y1="1" x2="0" y2="0">
-        <stop offset="0%" stopColor="#831414" />
-        <stop offset="45%" stopColor="#DC2626" />
-        <stop offset="80%" stopColor="#EA580C" />
-        <stop offset="100%" stopColor="#FBBF24" />
-      </linearGradient>
-
-      {/* Biến thể 3: Amber (Hổ phách lá thu ngả vàng nghệ) */}
-      <linearGradient id="momiji-grad-amber" x1="0" y1="1" x2="0" y2="0">
-        <stop offset="0%" stopColor="#78350F" />
-        <stop offset="45%" stopColor="#D97706" />
-        <stop offset="80%" stopColor="#F59E0B" />
-        <stop offset="100%" stopColor="#FEF08A" />
-      </linearGradient>
-
-      {/* Biến thể 4: Ruby (Hồng ngọc trầm mặc) */}
-      <linearGradient id="momiji-grad-ruby" x1="0" y1="1" x2="0" y2="0">
-        <stop offset="0%" stopColor="#4C0519" />
-        <stop offset="45%" stopColor="#831843" />
-        <stop offset="80%" stopColor="#BE185D" />
-        <stop offset="100%" stopColor="#FB7185" />
-      </linearGradient>
-
-      {/* Biến thể 5: Coral (Cam đào đọt non tươi mát) */}
-      <linearGradient id="momiji-grad-coral" x1="0" y1="1" x2="0" y2="0">
-        <stop offset="0%" stopColor="#9A3412" />
-        <stop offset="50%" stopColor="#EA580C" />
-        <stop offset="85%" stopColor="#FB923C" />
-        <stop offset="100%" stopColor="#FED7AA" />
-      </linearGradient>
-
-      {/* Gradient cánh hoa đào (Sakura Blush mềm mại) */}
-      <radialGradient id="sakuraPetalGrad" cx="50%" cy="85%" r="75%">
-        <stop offset="0%" stopColor="#FFF1F2" />
-        <stop offset="35%" stopColor="#FFE4E6" />
-        <stop offset="75%" stopColor="#FDA4AF" />
-        <stop offset="100%" stopColor="#F43F5E" />
-      </radialGradient>
-
-      {/* Gradient nụ hoa đào */}
-      <linearGradient id="sakuraBudGrad" x1="0" y1="1" x2="0" y2="0">
-        <stop offset="0%" stopColor="#881337" />
-        <stop offset="60%" stopColor="#E11D48" />
-        <stop offset="100%" stopColor="#FDA4AF" />
-      </linearGradient>
-
-    </defs>
-  </svg>
-));
-SharedBranchDefs.displayName = "SharedBranchDefs";
-
-/* =========================================================================
-   3. CÀNH HOA GÓC TRÁI HEADER (LEFT CORNER BRANCH)
-   Thân cành gân guốc, đốt sần, nhiều nhánh con vươn tự nhiên,
-   không đơn điệu với sự phối hợp giữa chùm lá Momiji và hoa đào nở rộ.
-   ========================================================================= */
-const LeftCornerBranchSvg = memo(() => {
-  return (
-    <svg
-      viewBox="0 0 490 410"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className="w-full h-full select-none pointer-events-none drop-shadow-md"
-      preserveAspectRatio="xMinYMin meet"
-    >
-      {/* 1. TẦNG NHÁNH HẬU CẢNH (Background Depth Twigs - Mờ nhẹ tạo chiều sâu) */}
-      <g opacity="0.65">
-        <path
-          d="M 120,40 C 150,22 195,15 240,18 C 265,20 285,14 315,8"
-          stroke="url(#twigBarkGrad)"
-          strokeWidth="3.2"
-          strokeLinecap="round"
-        />
-        <path
-          d="M 85,75 C 95,120 85,165 70,210 C 60,240 68,275 80,310"
-          stroke="url(#twigBarkGrad)"
-          strokeWidth="2.8"
-          strokeLinecap="round"
-        />
-        <path
-          d="M 220,110 C 255,145 285,175 305,215"
-          stroke="url(#twigBarkGrad)"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-        />
-        {/* Lá phong xa xôi */}
-        <MomijiLeaf x={315} y={10} scale={0.65} rotate={20} variant="amber" opacity={0.6} />
-        <MomijiLeaf x={80} y={310} scale={0.6} rotate={-25} variant="ruby" opacity={0.6} />
-        <MomijiLeaf x={305} y={215} scale={0.65} rotate={40} variant="crimson" opacity={0.6} />
-      </g>
-
-      {/* 2. TẦNG THÂN CHÍNH GÂN GUỐC (Main Organic Trunk with knots & ridges) */}
-      <g>
-        {/* Thân cây dáng bonsai cổ thụ uốn lượn có độ vuốt thon (Tapering) */}
-        <path
-          d="M -15,-10 
-             C 40,20 85,42 140,65 
-             C 195,88 250,110 305,148 
-             C 345,175 385,205 425,245 
-             C 445,265 460,285 475,305"
-          stroke="url(#branchBarkGrad)"
-          strokeWidth="14"
-          strokeLinecap="round"
-        />
-
-        {/* Khớp đốt sần sùi (Bark Knots) */}
-        <ellipse cx="138" cy="64" rx="9" ry="6" fill="#1C130D" transform="rotate(-15 138 64)" />
-        <ellipse cx="140" cy="63" rx="6.5" ry="3.8" fill="#3B2A20" transform="rotate(-15 140 63)" />
-        <ellipse cx="304" cy="147" rx="8" ry="5.5" fill="#1C130D" transform="rotate(-25 304 147)" />
-        <ellipse cx="305" cy="146" rx="5.5" ry="3.2" fill="#3B2A20" transform="rotate(-25 305 146)" />
-
-        {/* Vân sáng phản chiếu dọc sống lưng cành cây */}
-        <path
-          d="M -5,-5 C 45,22 90,45 138,62 M 145,66 C 200,90 252,112 302,145 M 310,150 C 350,178 390,210 430,250"
-          stroke="url(#branchRimLightGrad)"
-          strokeWidth="3.2"
-          strokeLinecap="round"
-        />
-
-        {/* Rãnh nứt vỏ cây tự nhiên */}
-        <path
-          d="M 50,28 C 75,38 98,48 115,55 M 210,95 C 235,105 260,118 280,132"
-          stroke="rgba(0,0,0,0.4)"
-          strokeWidth="1.2"
-          strokeLinecap="round"
-        />
-
-        {/* NHÁNH PHỤ 1: Vươn bổng lên phía trên (Upper Arching Twig) */}
-        <path
-          d="M 140,65 
-             C 175,45 220,32 265,30 
-             C 295,28 320,38 345,55"
-          stroke="url(#branchBarkGrad)"
-          strokeWidth="7"
-          strokeLinecap="round"
-        />
-        <path
-          d="M 260,30 C 285,15 315,10 345,15 C 365,18 385,26 400,38"
-          stroke="url(#twigBarkGrad)"
-          strokeWidth="3.8"
-          strokeLinecap="round"
-        />
-        <path
-          d="M 345,55 C 370,68 390,88 405,110"
-          stroke="url(#twigBarkGrad)"
-          strokeWidth="2.8"
-          strokeLinecap="round"
-        />
-
-        {/* NHÁNH PHỤ 2: Rủ xuống thanh thoát góc trái (Weeping Left Shoot) */}
-        <path
-          d="M 85,42 
-             C 70,95 58,145 46,195 
-             C 38,235 42,275 55,315"
-          stroke="url(#branchBarkGrad)"
-          strokeWidth="6.8"
-          strokeLinecap="round"
-        />
-        <path
-          d="M 55,160 C 75,200 90,240 98,280 C 102,305 98,330 90,350"
-          stroke="url(#twigBarkGrad)"
-          strokeWidth="3.5"
-          strokeLinecap="round"
-        />
-        <path
-          d="M 48,255 C 35,290 28,320 22,345"
-          stroke="url(#twigBarkGrad)"
-          strokeWidth="2.2"
-          strokeLinecap="round"
-        />
-
-        {/* NHÁNH PHỤ 3: Nhánh giữa vươn xuống (Center Drooping Twig) */}
-        <path
-          d="M 235,102 
-             C 255,145 265,190 258,235 
-             C 252,270 235,305 215,340"
-          stroke="url(#branchBarkGrad)"
-          strokeWidth="5.5"
-          strokeLinecap="round"
-        />
-        <path
-          d="M 260,175 C 295,205 320,245 338,285"
-          stroke="url(#twigBarkGrad)"
-          strokeWidth="3.2"
-          strokeLinecap="round"
-        />
-
-        {/* NHÁNH PHỤ 4: Ngọn cành vươn vào lòng sách thơ (Inward Sweeping Tip) */}
-        <path
-          d="M 365,190 
-             C 405,202 445,218 478,240"
-          stroke="url(#twigBarkGrad)"
-          strokeWidth="4.2"
-          strokeLinecap="round"
-        />
-        <path
-          d="M 425,245 C 445,280 460,315 470,345"
-          stroke="url(#twigBarkGrad)"
-          strokeWidth="2.8"
-          strokeLinecap="round"
-        />
-      </g>
-
-      {/* 3. TẦNG CHÙM HOA ĐÀO NỞ RỘ & NỤ XUÂN (Sakura Clusters) */}
-      {/* Cụm hoa trên thân cành chính */}
-      <BlossomTwigCluster x={140} y={62} scale={1.1} rotate={-10} />
-      <BlossomTwigCluster x={305} y={145} scale={1.05} rotate={20} />
-      <CherryBlossomFlower x={235} y={100} scale={0.92} rotate={-15} isOpen={true} />
-      <CherryBlossomFlower x={365} y={188} scale={0.98} rotate={32} isOpen={true} />
-      <SakuraProfile x={200} y={90} scale={0.85} rotate={-25} />
-      <SakuraProfile x={335} y={165} scale={0.88} rotate={18} />
-
-      {/* Hoa và nụ trên nhánh vươn lên */}
-      <BlossomTwigCluster x={265} y={28} scale={0.95} rotate={15} />
-      <CherryBlossomFlower x={345} y={14} scale={0.85} rotate={-12} isOpen={true} />
-      <CherryBlossomFlower x={395} y={25} scale={0.7} rotate={40} isOpen={false} />
-      <SakuraProfile x={340} y={55} scale={0.8} rotate={-35} />
-
-      {/* Hoa và nụ trên nhánh rủ trái */}
-      <BlossomTwigCluster x={52} y={180} scale={0.92} rotate={-25} />
-      <CherryBlossomFlower x={95} y={260} scale={0.88} rotate={35} isOpen={true} />
-      <CherryBlossomFlower x={50} y={310} scale={0.72} rotate={-10} isOpen={false} />
-      <CherryBlossomFlower x={88} y={345} scale={0.68} rotate={15} isOpen={false} />
-      <SakuraProfile x={75} y={215} scale={0.82} rotate={-18} />
-
-      {/* Hoa và nụ ở nhánh giữa & ngọn cành */}
-      <CherryBlossomFlower x={256} y={225} scale={0.85} rotate={-12} isOpen={true} />
-      <CherryBlossomFlower x={220} y={325} scale={0.78} rotate={22} isOpen={true} />
-      <CherryBlossomFlower x={335} y={275} scale={0.82} rotate={-28} isOpen={true} />
-      <CherryBlossomFlower x={430} y={242} scale={0.95} rotate={-18} isOpen={true} />
-      <CherryBlossomFlower x={472} y={238} scale={0.75} rotate={25} isOpen={false} />
-      <CherryBlossomFlower x={465} y={335} scale={0.7} rotate={-15} isOpen={false} />
-
-      {/* 4. TẦNG CHÙM LÁ PHONG ĐỎ ĐA SẮC MOMIJI (Foliage Clusters with Overlaps) */}
-      {/* Cụm lá vòm trên */}
-      <MomijiCluster x={290} y={22} scale={1.05} rotate={12} mainVariant="crimson" />
-      <MomijiCluster x={360} y={25} scale={0.9} rotate={-20} mainVariant="scarlet" />
-      <MomijiCluster x={385} y={85} scale={0.85} rotate={30} mainVariant="amber" />
-
-      {/* Cụm lá nhánh rủ bên trái */}
-      <MomijiCluster x={45} y={130} scale={1.1} rotate={-45} mainVariant="scarlet" />
-      <MomijiCluster x={40} y={225} scale={0.98} rotate={-28} mainVariant="crimson" />
-      <MomijiCluster x={88} y={210} scale={0.9} rotate={20} mainVariant="ruby" />
-      <MomijiCluster x={58} y={300} scale={0.85} rotate={-15} mainVariant="crimson" />
-      <MomijiCluster x={92} y={330} scale={0.75} rotate={15} mainVariant="amber" />
-      <MomijiLeaf x={24} y={345} scale={0.72} rotate={-35} variant="scarlet" />
-
-      {/* Cụm lá nhánh giữa vươn xuống */}
-      <MomijiCluster x={175} y={85} scale={1.15} rotate={-12} mainVariant="crimson" />
-      <MomijiCluster x={245} y={150} scale={1.0} rotate={28} mainVariant="ruby" />
-      <MomijiCluster x={255} y={205} scale={0.92} rotate={-18} mainVariant="crimson" />
-      <MomijiCluster x={215} y={290} scale={0.88} rotate={15} mainVariant="scarlet" />
-      <MomijiCluster x={315} y={235} scale={0.9} rotate={35} mainVariant="scarlet" />
-      <MomijiCluster x={335} y={295} scale={0.78} rotate={10} mainVariant="amber" />
-
-      {/* Cụm lá ngọn vươn vào khung sách thơ */}
-      <MomijiCluster x={355} y={170} scale={1.1} rotate={-10} mainVariant="crimson" />
-      <MomijiCluster x={415} y={195} scale={0.98} rotate={25} mainVariant="scarlet" />
-      <MomijiCluster x={465} y={225} scale={0.88} rotate={-15} mainVariant="ruby" />
-      <MomijiCluster x={445} y={295} scale={0.82} rotate={20} mainVariant="amber" />
-      <MomijiLeaf x={478} y={315} scale={0.7} rotate={40} variant="crimson" />
     </svg>
   );
 });
-LeftCornerBranchSvg.displayName = "LeftCornerBranchSvg";
+DelicateFloralBranchSvg.displayName = "DelicateFloralBranchSvg";
 
 /* =========================================================================
-   4. CÀNH HOA GÓC PHẢI HEADER (RIGHT CORNER BRANCH)
-   Bố cục bất đối xứng tự nhiên, vươn thanh thoát từ góc trên bên phải,
-   nhiều nhánh con đan xen, hoa và lá phong đỏ rực rỡ phong vị Á Đông.
+   3. HỆ THỐNG HẠT VÀ LÁ RƠI (LIVING DRIFTING PARTICLES)
    ========================================================================= */
-const RightCornerBranchSvg = memo(() => {
-  return (
-    <svg
-      viewBox="0 0 490 410"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className="w-full h-full select-none pointer-events-none drop-shadow-md"
-      preserveAspectRatio="xMaxYMin meet"
-    >
-      {/* 1. TẦNG NHÁNH HẬU CẢNH (Background Depth Twigs) */}
-      <g opacity="0.65">
-        <path
-          d="M 370,40 C 340,22 295,15 250,18 C 225,20 205,14 175,8"
-          stroke="url(#twigBarkGrad)"
-          strokeWidth="3.2"
-          strokeLinecap="round"
-        />
-        <path
-          d="M 405,75 C 395,120 405,165 420,210 C 430,240 422,275 410,310"
-          stroke="url(#twigBarkGrad)"
-          strokeWidth="2.8"
-          strokeLinecap="round"
-        />
-        <path
-          d="M 270,110 C 235,145 205,175 185,215"
-          stroke="url(#twigBarkGrad)"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-        />
-        {/* Lá phong xa xôi */}
-        <MomijiLeaf x={175} y={10} scale={0.65} rotate={-20} variant="amber" opacity={0.6} />
-        <MomijiLeaf x={410} y={310} scale={0.6} rotate={25} variant="ruby" opacity={0.6} />
-        <MomijiLeaf x={185} y={215} scale={0.65} rotate={-40} variant="crimson" opacity={0.6} />
-      </g>
-
-      {/* 2. TẦNG THÂN CHÍNH GÂN GUỐC PHÍA PHẢI */}
-      <g>
-        {/* Thân chính vươn cong từ góc phải trên vào trung tâm */}
-        <path
-          d="M 505,-10 
-             C 450,20 405,42 350,65 
-             C 295,88 240,110 185,148 
-             C 145,175 105,205 65,245 
-             C 45,265 30,285 15,305"
-          stroke="url(#branchBarkGrad)"
-          strokeWidth="14"
-          strokeLinecap="round"
-        />
-
-        {/* Khớp đốt sần sùi thân phải */}
-        <ellipse cx="352" cy="64" rx="9" ry="6" fill="#1C130D" transform="rotate(15 352 64)" />
-        <ellipse cx="350" cy="63" rx="6.5" ry="3.8" fill="#3B2A20" transform="rotate(15 350 63)" />
-        <ellipse cx="186" cy="147" rx="8" ry="5.5" fill="#1C130D" transform="rotate(25 186 147)" />
-        <ellipse cx="185" cy="146" rx="5.5" ry="3.2" fill="#3B2A20" transform="rotate(25 185 146)" />
-
-        {/* Vân sáng phản chiếu sống cành */}
-        <path
-          d="M 495,-5 C 445,22 400,45 352,62 M 345,66 C 290,90 238,112 188,145 M 180,150 C 140,178 100,210 60,250"
-          stroke="url(#branchRimLightGrad)"
-          strokeWidth="3.2"
-          strokeLinecap="round"
-        />
-
-        {/* Rãnh nứt vỏ cây */}
-        <path
-          d="M 440,28 C 415,38 392,48 375,55 M 280,95 C 255,105 230,118 210,132"
-          stroke="rgba(0,0,0,0.4)"
-          strokeWidth="1.2"
-          strokeLinecap="round"
-        />
-
-        {/* NHÁNH PHỤ 1 PHẢI: Vươn ngang lên trên */}
-        <path
-          d="M 350,65 
-             C 315,45 270,32 225,30 
-             C 195,28 170,38 145,55"
-          stroke="url(#branchBarkGrad)"
-          strokeWidth="7"
-          strokeLinecap="round"
-        />
-        <path
-          d="M 230,30 C 205,15 175,10 145,15 C 125,18 105,26 90,38"
-          stroke="url(#twigBarkGrad)"
-          strokeWidth="3.8"
-          strokeLinecap="round"
-        />
-        <path
-          d="M 145,55 C 120,68 100,88 85,110"
-          stroke="url(#twigBarkGrad)"
-          strokeWidth="2.8"
-          strokeLinecap="round"
-        />
-
-        {/* NHÁNH PHỤ 2 PHẢI: Rủ xuống thanh thoát góc phải */}
-        <path
-          d="M 405,42 
-             C 420,95 432,145 444,195 
-             C 452,235 448,275 435,315"
-          stroke="url(#branchBarkGrad)"
-          strokeWidth="6.8"
-          strokeLinecap="round"
-        />
-        <path
-          d="M 435,160 C 415,200 400,240 392,280 C 388,305 392,330 400,350"
-          stroke="url(#twigBarkGrad)"
-          strokeWidth="3.5"
-          strokeLinecap="round"
-        />
-        <path
-          d="M 442,255 C 455,290 462,320 468,345"
-          stroke="url(#twigBarkGrad)"
-          strokeWidth="2.2"
-          strokeLinecap="round"
-        />
-
-        {/* NHÁNH PHỤ 3 PHẢI: Nhánh giữa vươn xuống */}
-        <path
-          d="M 255,102 
-             C 235,145 225,190 232,235 
-             C 238,270 255,305 275,340"
-          stroke="url(#branchBarkGrad)"
-          strokeWidth="5.5"
-          strokeLinecap="round"
-        />
-        <path
-          d="M 230,175 C 195,205 170,245 152,285"
-          stroke="url(#twigBarkGrad)"
-          strokeWidth="3.2"
-          strokeLinecap="round"
-        />
-
-        {/* NHÁNH PHỤ 4 PHẢI: Ngọn cành vươn vào lòng sách thơ bên phải */}
-        <path
-          d="M 125,190 
-             C 85,202 45,218 12,240"
-          stroke="url(#twigBarkGrad)"
-          strokeWidth="4.2"
-          strokeLinecap="round"
-        />
-        <path
-          d="M 65,245 C 45,280 30,315 20,345"
-          stroke="url(#twigBarkGrad)"
-          strokeWidth="2.8"
-          strokeLinecap="round"
-        />
-      </g>
-
-      {/* 3. TẦNG CHÙM HOA ĐÀO NỞ RỘ TRÊN CÀNH PHẢI */}
-      <BlossomTwigCluster x={350} y={62} scale={1.1} rotate={10} />
-      <BlossomTwigCluster x={185} y={145} scale={1.05} rotate={-20} />
-      <CherryBlossomFlower x={255} y={100} scale={0.92} rotate={15} isOpen={true} />
-      <CherryBlossomFlower x={125} y={188} scale={0.98} rotate={-32} isOpen={true} />
-      <SakuraProfile x={290} y={90} scale={0.85} rotate={25} />
-      <SakuraProfile x={155} y={165} scale={0.88} rotate={-18} />
-
-      {/* Hoa và nụ nhánh trên phải */}
-      <BlossomTwigCluster x={225} y={28} scale={0.95} rotate={-15} />
-      <CherryBlossomFlower x={145} y={14} scale={0.85} rotate={12} isOpen={true} />
-      <CherryBlossomFlower x={95} y={25} scale={0.7} rotate={-40} isOpen={false} />
-      <SakuraProfile x={150} y={55} scale={0.8} rotate={35} />
-
-      {/* Hoa và nụ nhánh rủ phải */}
-      <BlossomTwigCluster x={438} y={180} scale={0.92} rotate={25} />
-      <CherryBlossomFlower x={395} y={260} scale={0.88} rotate={-35} isOpen={true} />
-      <CherryBlossomFlower x={440} y={310} scale={0.72} rotate={10} isOpen={false} />
-      <CherryBlossomFlower x={402} y={345} scale={0.68} rotate={-15} isOpen={false} />
-      <SakuraProfile x={415} y={215} scale={0.82} rotate={18} />
-
-      {/* Hoa và nụ nhánh giữa & ngọn cành phải */}
-      <CherryBlossomFlower x={234} y={225} scale={0.85} rotate={12} isOpen={true} />
-      <CherryBlossomFlower x={270} y={325} scale={0.78} rotate={-22} isOpen={true} />
-      <CherryBlossomFlower x={155} y={275} scale={0.82} rotate={28} isOpen={true} />
-      <CherryBlossomFlower x={60} y={242} scale={0.95} rotate={18} isOpen={true} />
-      <CherryBlossomFlower x={18} y={238} scale={0.75} rotate={-25} isOpen={false} />
-      <CherryBlossomFlower x={25} y={335} scale={0.7} rotate={15} isOpen={false} />
-
-      {/* 4. TẦNG CHÙM LÁ PHONG ĐỎ MOMIJI CÀNH PHẢI */}
-      <MomijiCluster x={200} y={22} scale={1.05} rotate={-12} mainVariant="crimson" />
-      <MomijiCluster x={130} y={25} scale={0.9} rotate={20} mainVariant="scarlet" />
-      <MomijiCluster x={105} y={85} scale={0.85} rotate={-30} mainVariant="amber" />
-
-      {/* Cụm lá nhánh rủ phải */}
-      <MomijiCluster x={445} y={130} scale={1.1} rotate={45} mainVariant="scarlet" />
-      <MomijiCluster x={450} y={225} scale={0.98} rotate={28} mainVariant="crimson" />
-      <MomijiCluster x={402} y={210} scale={0.9} rotate={-20} mainVariant="ruby" />
-      <MomijiCluster x={432} y={300} scale={0.85} rotate={15} mainVariant="crimson" />
-      <MomijiCluster x={398} y={330} scale={0.75} rotate={-15} mainVariant="amber" />
-      <MomijiLeaf x={466} y={345} scale={0.72} rotate={35} variant="scarlet" />
-
-      {/* Cụm lá nhánh giữa phải */}
-      <MomijiCluster x={315} y={85} scale={1.15} rotate={12} mainVariant="crimson" />
-      <MomijiCluster x={245} y={150} scale={1.0} rotate={-28} mainVariant="ruby" />
-      <MomijiCluster x={235} y={205} scale={0.92} rotate={18} mainVariant="crimson" />
-      <MomijiCluster x={275} y={290} scale={0.88} rotate={-15} mainVariant="scarlet" />
-      <MomijiCluster x={175} y={235} scale={0.9} rotate={-35} mainVariant="scarlet" />
-      <MomijiCluster x={155} y={295} scale={0.78} rotate={-10} mainVariant="amber" />
-
-      {/* Cụm lá ngọn vươn vào khung sách thơ bên phải */}
-      <MomijiCluster x={135} y={170} scale={1.1} rotate={10} mainVariant="crimson" />
-      <MomijiCluster x={75} y={195} scale={0.98} rotate={-25} mainVariant="scarlet" />
-      <MomijiCluster x={25} y={225} scale={0.88} rotate={15} mainVariant="ruby" />
-      <MomijiCluster x={45} y={295} scale={0.82} rotate={-20} mainVariant="amber" />
-      <MomijiLeaf x={12} y={315} scale={0.7} rotate={-40} variant="crimson" />
-    </svg>
-  );
-});
-RightCornerBranchSvg.displayName = "RightCornerBranchSvg";
-
-/* =========================================================================
-   5. HỆ THỐNG LÁ & CÁNH HOA RƠI TỰ NHIÊN ĐA DẠNG (LIVING PETAL DRIFT)
-   Chao lượn 3D trong không gian, có cả cánh hoa đơn, cặp cánh hoa và lá phong
-   nhỏ xoay lật trong luồng gió thi ca.
-   ========================================================================= */
-interface FallingParticleConfig {
+interface DriftingParticle {
   id: string;
-  type: "maple" | "sakura-petal" | "sakura-pair";
+  imgSrc: string;
   startX: string;
   driftX: number;
   duration: number;
   delay: number;
   scale: number;
   initialRotate: number;
-  variant?: "crimson" | "scarlet" | "amber" | "ruby";
   mobileVisible?: boolean;
 }
 
-const FALLING_PARTICLES: FallingParticleConfig[] = [
-  // Hạt rơi từ cành bên trái (lan tỏa tự nhiên, nhẹ nhàng, tối ưu GPU)
-  { id: "fp-1", type: "sakura-petal", startX: "6%", driftX: 45, duration: 9.2, delay: -1.8, scale: 0.95, initialRotate: 25, mobileVisible: true },
-  { id: "fp-2", type: "maple", startX: "14%", driftX: 65, duration: 11.5, delay: -5.5, scale: 0.78, initialRotate: -35, variant: "crimson", mobileVisible: true },
-  { id: "fp-3", type: "sakura-pair", startX: "24%", driftX: 35, duration: 9.8, delay: -3.2, scale: 0.88, initialRotate: 45, mobileVisible: false },
-
-  // Hạt rơi từ cành bên phải (lan tỏa tự nhiên, nhẹ nhàng, tối ưu GPU)
-  { id: "fp-4", type: "sakura-petal", startX: "92%", driftX: -45, duration: 8.8, delay: -2.2, scale: 0.9, initialRotate: -30, mobileVisible: true },
-  { id: "fp-5", type: "maple", startX: "84%", driftX: -60, duration: 12.0, delay: -6.8, scale: 0.75, initialRotate: 40, variant: "ruby", mobileVisible: true },
-  { id: "fp-6", type: "sakura-pair", startX: "76%", driftX: -38, duration: 10.2, delay: -4.0, scale: 0.85, initialRotate: 20, mobileVisible: false },
-];
-
-const FallingDriftingParticle = memo(({ p }: { p: FallingParticleConfig }) => {
+const FallingDriftingParticle = memo(({ p }: { p: DriftingParticle }) => {
   return (
     <div
-      className={`absolute top-[-45px] pointer-events-none select-none z-10 ${
-        !p.mobileVisible ? "hidden sm:block" : ""
-      }`}
+      className={`absolute top-[-45px] pointer-events-none select-none z-10 ${!p.mobileVisible ? "hidden sm:block" : ""}`}
       style={{
         left: p.startX,
-        animation: `fallingLeavesCascade ${p.duration}s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite`,
-        animationDelay: `${p.delay}s`,
+        animation: `fallingLeavesCascade ${p.duration}s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${p.delay}s infinite`,
         ["--leaf-drift-x" as any]: `${p.driftX}px`,
         ["--leaf-rot-start" as any]: `${p.initialRotate}deg`,
         ["--leaf-rot-end" as any]: `${p.initialRotate + 360}deg`,
       }}
     >
-      {p.type === "maple" ? (
-        <svg
-          width="28"
-          height="32"
-          viewBox="-25 -20 50 50"
-          className="drop-shadow-xs"
-          style={{ transform: `scale(${p.scale})` }}
-        >
-          <MomijiLeaf
-            x={0}
-            y={0}
-            scale={1}
-            rotate={0}
-            variant={p.variant || "crimson"}
-            opacity={0.92}
-          />
-        </svg>
-      ) : p.type === "sakura-pair" ? (
-        /* Cặp cánh hoa đào quấn quýt chao lượn */
-        <svg
-          width="28"
-          height="28"
-          viewBox="0 0 32 32"
-          className="drop-shadow-xs"
-          style={{ transform: `scale(${p.scale})` }}
-        >
-          <path
-            d="M 12,2 C 7,8 1,15 1,22 C 1,27 6,30 12,30 C 18,30 23,27 23,22 C 23,15 17,8 12,2 Z"
-            fill="url(#sakuraPetalGrad)"
-            opacity="0.92"
-            transform="rotate(-15 12 16)"
-          />
-          <path
-            d="M 18,6 C 14,11 9,16 9,21 C 9,25 13,27 18,27 C 23,27 26,25 26,21 C 26,16 22,11 18,6 Z"
-            fill="url(#sakuraPetalGrad)"
-            opacity="0.85"
-            transform="rotate(25 18 17)"
-          />
-        </svg>
-      ) : (
-        /* Cánh hoa đào đơn bay lượn */
-        <svg
-          width="20"
-          height="26"
-          viewBox="0 0 24 30"
-          className="drop-shadow-xs"
-          style={{ transform: `scale(${p.scale})` }}
-        >
-          <path
-            d="M 12,2 C 7,8 1,15 1,22 C 1,27 6,30 12,30 C 18,30 23,27 23,22 C 23,15 17,8 12,2 Z"
-            fill="url(#sakuraPetalGrad)"
-            opacity="0.94"
-          />
-        </svg>
-      )}
+      <div style={{ transform: `scale(${p.scale})` }}>
+        <Image
+          src={p.imgSrc}
+          alt=""
+          width={28}
+          height={28}
+          className="drop-shadow-xs select-none object-contain"
+          style={{ width: "26px", height: "auto" }}
+        />
+      </div>
     </div>
   );
 });
 FallingDriftingParticle.displayName = "FallingDriftingParticle";
 
 /* =========================================================================
-   6. COMPONENT CHÍNH: CORNER FLORAL BRANCHES (GÓC HEADER CÀNH HOA TỰ NHIÊN)
-   - Tối ưu chuyển động mọc cành / thu cành theo nhịp thở hữu cơ
-   - Hỗ trợ đa màn hình từ Mobile (<380px) đến Desktop Ultrawide
+   4. COMPONENT CHÍNH: CORNER FLORAL BRANCHES (GỌN GÀNG, TỐI ƯU 120FPS ZERO-LAG)
    ========================================================================= */
 export function CornerFloralBranches() {
-  const [isActive, setIsActive] = useState(false);
+  const isReadingZone = useReadingZone();
+  const isActive = isReadingZone;
+  const [shakeSide, setShakeSide] = useState<"left" | "right" | null>(null);
+  const [burstParticles, setBurstParticles] = useState<DriftingParticle[]>([]);
+  const { season } = useSeason();
   const prefersReduced = useReducedMotion();
 
-  // Lắng nghe vùng sách bằng IntersectionObserver - hoàn toàn không tốn CPU/layout reflow
-  useEffect(() => {
-    const bookElem = document.getElementById("khong-gian-sach-tho");
-    if (!bookElem) return;
+  const handleBranchHover = () => {
+    playLeafRustleSound("leaves", 0.10);
+  };
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsActive(entry.isIntersecting);
-      },
-      {
-        rootMargin: "-120px 0px 0px 0px",
-        threshold: 0,
-      }
-    );
+  const handleBranchClick = (side: "left" | "right", e: React.MouseEvent) => {
+    e.stopPropagation();
 
-    observer.observe(bookElem);
-    return () => observer.disconnect();
-  }, []);
+    playBranchShakeSound(0.18);
+
+    if (typeof navigator !== "undefined" && navigator.vibrate) {
+      try {
+        navigator.vibrate([18, 35, 20]);
+      } catch {}
+    }
+
+    setShakeSide(side);
+    setTimeout(() => setShakeSide(null), 550);
+
+    const count = 18;
+    const isLeft = side === "left";
+    const startXBase = isLeft ? 12 : 88;
+    const assets = seasonalAssetMap[season] || seasonalAssetMap.spring;
+    const assetChoices = [assets.pink, assets.yellow, assets.leaf1, assets.leaf2];
+
+    const newParticles: DriftingParticle[] = Array.from({ length: count }).map((_, i) => {
+      return {
+        id: `burst-${Date.now()}-${i}-${Math.random()}`,
+        imgSrc: assetChoices[i % assetChoices.length],
+        startX: `${Math.max(2, Math.min(96, startXBase + (Math.random() - 0.5) * 16))}%`,
+        driftX: (isLeft ? 1 : -1) * (Math.random() * 75 + 25) + (Math.random() - 0.5) * 35,
+        duration: 5.0 + Math.random() * 3.8,
+        delay: -(Math.random() * 0.35),
+        scale: 0.65 + Math.random() * 0.35,
+        initialRotate: Math.random() * 360,
+        mobileVisible: true,
+      };
+    });
+
+    setBurstParticles((prev) => [...prev.slice(-26), ...newParticles]);
+  };
 
   return (
     <>
-      {/* 1. TOÀN CỤC SVG SHADERS & GRADIENTS */}
-      <SharedBranchDefs />
-
-      {/* 2. STYLE HOẠT ẢNH THI CA: ĐUNG ĐƯA THEO GIÓ & RỤNG LÁ (GPU ACCELERATED 2D) */}
       <style jsx global>{`
         @keyframes fallingLeavesCascade {
           0% {
@@ -1010,7 +461,7 @@ export function CornerFloralBranches() {
             opacity: 0.95;
           }
           50% {
-            transform: translate3d(var(--leaf-drift-x, 45px), 48vh, 0)
+            transform: translate3d(var(--leaf-drift-x, 40px), 48vh, 0)
               rotate(calc(var(--leaf-rot-start, 0deg) + 160deg));
             opacity: 0.9;
           }
@@ -1018,41 +469,40 @@ export function CornerFloralBranches() {
             opacity: 0.75;
           }
           100% {
-            transform: translate3d(calc(var(--leaf-drift-x, 45px) * 1.5), 105vh, 0)
+            transform: translate3d(calc(var(--leaf-drift-x, 40px) * 1.4), 105vh, 0)
               rotate(var(--leaf-rot-end, 360deg));
             opacity: 0;
           }
         }
 
-        /* Chuyển động gió thoảng đa hài tự nhiên (Multi-harmonic Natural Breeze) */
         @keyframes organicBranchBreezeLeft {
-          0%, 100% {
-            transform: rotate(0deg) translate3d(0, 0, 0);
-          }
-          25% {
-            transform: rotate(0.8deg) translate3d(1.5px, 1px, 0);
-          }
-          50% {
-            transform: rotate(-0.4deg) translate3d(-0.8px, 0.5px, 0);
-          }
-          75% {
-            transform: rotate(0.5deg) translate3d(1px, -0.4px, 0);
-          }
+          0%, 100% { transform: rotate(0deg) translate3d(0, 0, 0); }
+          25% { transform: rotate(0.7deg) translate3d(1.2px, 0.8px, 0); }
+          50% { transform: rotate(-0.3deg) translate3d(-0.6px, 0.4px, 0); }
+          75% { transform: rotate(0.4deg) translate3d(0.8px, -0.3px, 0); }
         }
 
         @keyframes organicBranchBreezeRight {
-          0%, 100% {
-            transform: rotate(0deg) translate3d(0, 0, 0);
-          }
-          25% {
-            transform: rotate(-0.8deg) translate3d(-1.5px, 1px, 0);
-          }
-          50% {
-            transform: rotate(0.4deg) translate3d(0.8px, 0.5px, 0);
-          }
-          75% {
-            transform: rotate(-0.5deg) translate3d(-1px, -0.4px, 0);
-          }
+          0%, 100% { transform: rotate(0deg) translate3d(0, 0, 0); }
+          25% { transform: rotate(-0.7deg) translate3d(-1.2px, 0.8px, 0); }
+          50% { transform: rotate(0.3deg) translate3d(0.6px, 0.4px, 0); }
+          75% { transform: rotate(-0.4deg) translate3d(-0.8px, -0.3px, 0); }
+        }
+
+        @keyframes branchSpringShakeLeft {
+          0% { transform: rotate(0deg) scale(1); }
+          22% { transform: rotate(3.0deg) scale(1.02) translate3d(2px, 2px, 0); }
+          45% { transform: rotate(-1.8deg) scale(0.99) translate3d(-1.2px, -0.8px, 0); }
+          72% { transform: rotate(0.8deg) scale(1.01); }
+          100% { transform: rotate(0deg) scale(1); }
+        }
+
+        @keyframes branchSpringShakeRight {
+          0% { transform: rotate(0deg) scale(1); }
+          22% { transform: rotate(-3.0deg) scale(1.02) translate3d(-2px, 2px, 0); }
+          45% { transform: rotate(1.8deg) scale(0.99) translate3d(1.2px, -0.8px, 0); }
+          72% { transform: rotate(-0.8deg) scale(1.01); }
+          100% { transform: rotate(0deg) scale(1); }
         }
 
         .branch-organic-sway-left {
@@ -1064,80 +514,97 @@ export function CornerFloralBranches() {
           animation: organicBranchBreezeRight 13.2s ease-in-out infinite;
           transform-origin: 100% 0%;
         }
+
+        .branch-spring-shake-left {
+          animation: branchSpringShakeLeft 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+          transform-origin: 0% 0%;
+        }
+
+        .branch-spring-shake-right {
+          animation: branchSpringShakeRight 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+          transform-origin: 100% 0%;
+        }
       `}</style>
 
-      {/* 3. KHUNG CÀNH HOA CỐ ĐỊNH GÓC HEADER (FIXED Z-35, POINTER-EVENTS-NONE, GPU LAYER) */}
-      <AnimatePresence>
-        {isActive && (
+      {/* KHUNG CÀNH HOA CỐ ĐỊNH - TỐI ƯU COMPOSITOR GPU THREAD */}
+      <div
+        className={cn(
+          "fixed inset-0 z-35 overflow-hidden select-none pointer-events-none transition-opacity duration-400 ease-out transform-gpu",
+          isActive ? "opacity-100" : "opacity-0"
+        )}
+        aria-hidden={!isActive}
+      >
+        {/* --- CÀNH HOA GÓC TRÁI (TOP-LEFT CORNER) --- */}
+        <div
+          onClick={(e) => handleBranchClick("left", e)}
+          onMouseEnter={handleBranchHover}
+          onMouseMove={handleBranchHover}
+          role="button"
+          tabIndex={0}
+          title="Chạm vào cành cây để nghe xào xạc và lá rụng dạt dào"
+          aria-label="Cành cây thi ca góc trái"
+          style={{
+            transform: isActive
+              ? "translate3d(0, 0, 0) scale(1)"
+              : "translate3d(-50px, -30px, 0) scale(0.88)",
+            transition: prefersReduced ? "none" : "transform 0.45s cubic-bezier(0.22, 1, 0.36, 1)",
+          }}
+          className="absolute top-[-10px] sm:top-[-15px] left-[-15px] sm:left-[-25px] md:left-[-35px] w-[130px] xs:w-[155px] sm:w-[190px] md:w-[230px] lg:w-[265px] xl:w-[290px] max-w-[34vw] h-[115px] xs:h-[135px] sm:h-[160px] md:h-[195px] lg:h-[225px] xl:h-[245px] pointer-events-auto cursor-pointer origin-top-left transform-gpu will-change-transform group"
+        >
           <div
-            className="fixed inset-0 pointer-events-none z-35 overflow-hidden select-none"
-            aria-hidden="true"
-          >
-            {/* --- CÀNH HOA GÓC TRÁI (TOP-LEFT CORNER) --- */}
-            <motion.div
-              initial={
-                prefersReduced
-                  ? { opacity: 0 }
-                  : { opacity: 0, x: -90, y: -50, scale: 0.85, rotate: -10 }
-              }
-              animate={{ opacity: 1, x: 0, y: 0, scale: 1, rotate: 0 }}
-              exit={
-                prefersReduced
-                  ? { opacity: 0 }
-                  : { opacity: 0, x: -80, y: -40, scale: 0.88, rotate: -8 }
-              }
-              transition={{
-                duration: 0.65,
-                ease: [0.16, 1, 0.3, 1],
-              }}
-              className="absolute top-[-15px] sm:top-[-20px] left-[-20px] sm:left-[-35px] md:left-[-45px] w-[140px] xs:w-[170px] sm:w-[250px] md:w-[320px] lg:w-[380px] xl:w-[430px] max-w-[40vw] h-[120px] xs:h-[140px] sm:h-[210px] md:h-[265px] lg:h-[315px] xl:h-[355px] pointer-events-none origin-top-left transform-gpu will-change-[transform,opacity]"
-            >
-              <div className="w-full h-full branch-organic-sway-left">
-                <LeftCornerBranchSvg />
-              </div>
-            </motion.div>
-
-            {/* --- CÀNH HOA GÓC PHẢI (TOP-RIGHT CORNER) --- */}
-            <motion.div
-              initial={
-                prefersReduced
-                  ? { opacity: 0 }
-                  : { opacity: 0, x: 90, y: -50, scale: 0.85, rotate: 10 }
-              }
-              animate={{ opacity: 1, x: 0, y: 0, scale: 1, rotate: 0 }}
-              exit={
-                prefersReduced
-                  ? { opacity: 0 }
-                  : { opacity: 0, x: 80, y: -40, scale: 0.88, rotate: 8 }
-              }
-              transition={{
-                duration: 0.65,
-                ease: [0.16, 1, 0.3, 1],
-              }}
-              className="absolute top-[-15px] sm:top-[-20px] right-[-20px] sm:right-[-35px] md:right-[-45px] w-[140px] xs:w-[170px] sm:w-[250px] md:w-[320px] lg:w-[380px] xl:w-[430px] max-w-[40vw] h-[120px] xs:h-[140px] sm:h-[210px] md:h-[265px] lg:h-[315px] xl:h-[355px] pointer-events-none origin-top-right transform-gpu will-change-[transform,opacity]"
-            >
-              <div className="w-full h-full branch-organic-sway-right">
-                <RightCornerBranchSvg />
-              </div>
-            </motion.div>
-
-            {/* --- HỆ THỐNG LÁ & CÁNH HOA RƠI LÃNG MẠN --- */}
-            {!prefersReduced && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.5 }}
-                className="absolute inset-0 pointer-events-none overflow-hidden"
-              >
-                {FALLING_PARTICLES.map((particle) => (
-                  <FallingDriftingParticle key={particle.id} p={particle} />
-                ))}
-              </motion.div>
+            className={cn(
+              "w-full h-full transition-transform duration-200",
+              shakeSide === "left"
+                ? "branch-spring-shake-left"
+                : isActive
+                ? "branch-organic-sway-left group-hover:scale-[1.025]"
+                : ""
             )}
+          >
+            <DelicateFloralBranchSvg side="left" season={season} />
+          </div>
+        </div>
+
+        {/* --- CÀNH HOA GÓC PHẢI (TOP-RIGHT CORNER) --- */}
+        <div
+          onClick={(e) => handleBranchClick("right", e)}
+          onMouseEnter={handleBranchHover}
+          onMouseMove={handleBranchHover}
+          role="button"
+          tabIndex={0}
+          title="Chạm vào cành cây để nghe xào xạc và lá rụng dạt dào"
+          aria-label="Cành cây thi ca góc phải"
+          style={{
+            transform: isActive
+              ? "translate3d(0, 0, 0) scale(1)"
+              : "translate3d(50px, -30px, 0) scale(0.88)",
+            transition: prefersReduced ? "none" : "transform 0.45s cubic-bezier(0.22, 1, 0.36, 1)",
+          }}
+          className="absolute top-[-10px] sm:top-[-15px] right-[-15px] sm:right-[-25px] md:right-[-35px] w-[130px] xs:w-[155px] sm:w-[190px] md:w-[230px] lg:w-[265px] xl:w-[290px] max-w-[34vw] h-[115px] xs:h-[135px] sm:h-[160px] md:h-[195px] lg:h-[225px] xl:h-[245px] pointer-events-auto cursor-pointer origin-top-right transform-gpu will-change-transform group"
+        >
+          <div
+            className={cn(
+              "w-full h-full transition-transform duration-200",
+              shakeSide === "right"
+                ? "branch-spring-shake-right"
+                : isActive
+                ? "branch-organic-sway-right group-hover:scale-[1.025]"
+                : ""
+            )}
+          >
+            <DelicateFloralBranchSvg side="right" season={season} />
+          </div>
+        </div>
+
+        {/* --- HỆ THỐNG LÁ & CÁNH HOA RƠI LÃNG MẠN (CHỈ RENDER KHI ACTIVE) --- */}
+        {!prefersReduced && isActive && (
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            {burstParticles.map((particle) => (
+              <FallingDriftingParticle key={particle.id} p={particle} />
+            ))}
           </div>
         )}
-      </AnimatePresence>
+      </div>
     </>
   );
 }

@@ -622,7 +622,20 @@ export async function getCollections(): Promise<Collection[]> {
   }
 
   const localCols = getLocalStoredCollections();
-  return localCols.length > 0 ? localCols : localCollections;
+  const rawCols = localCols.length > 0 ? localCols : localCollections;
+  const allPoems = getAllFallbackPoems();
+
+  return rawCols.map((col) => {
+    const colPoems = allPoems.filter(
+      (p) => p.collection_id === col.id || (p as any).collection?.id === col.id
+    );
+    return {
+      ...col,
+      type: col.type || "poetry",
+      poems_count: colPoems.length,
+      poems: colPoems,
+    };
+  });
 }
 
 export async function getCollectionBySlug(slug: string): Promise<Collection | null> {
@@ -660,12 +673,20 @@ export async function getCollectionBySlug(slug: string): Promise<Collection | nu
   }
 
   const localCols = getLocalStoredCollections();
-  const col = localCols.find((c) => c.slug === slug) || localCollections.find((c) => c.slug === slug);
+  const rawCols = localCols.length > 0 ? localCols : localCollections;
+  const col = rawCols.find((c) => c.slug === slug);
   if (!col) return null;
+
+  const allPoems = getAllFallbackPoems();
+  const colPoems = allPoems.filter(
+    (p) => p.collection_id === col.id || (p as any).collection?.id === col.id
+  );
 
   return {
     ...col,
-    poems: getAllFallbackPoems().slice(0, 4),
+    type: col.type || "poetry",
+    poems_count: colPoems.length,
+    poems: colPoems,
   };
 }
 
@@ -734,6 +755,7 @@ export async function createCollection(
     cover_image_url: colData.cover_image_url || "/floral/flower-pink.png",
     is_featured: colData.is_featured ?? true,
     sort_order: colData.sort_order ?? 0,
+    type: colData.type || "poetry",
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     poems_count: 0,
@@ -759,6 +781,7 @@ export async function updateCollection(
       if (colData.cover_image_url !== undefined) payload.cover_image_url = colData.cover_image_url;
       if (colData.is_featured !== undefined) payload.is_featured = colData.is_featured;
       if (colData.sort_order !== undefined) payload.sort_order = colData.sort_order;
+      if (colData.type !== undefined) payload.type = colData.type;
 
       const { data, error } = await supabase
         .from("collections")

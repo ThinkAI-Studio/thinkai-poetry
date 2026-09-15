@@ -79,6 +79,16 @@ export default function RootLayout({
                     document.documentElement.setAttribute('data-reader-theme', 'ivory');
                     document.documentElement.style.colorScheme = 'light';
                   }
+
+                  // Khởi tạo mùa (Four Seasons) chống chớp màn hình
+                  var savedSeason = localStorage.getItem('site-season');
+                  if (savedSeason && ['spring', 'summer', 'autumn', 'winter'].indexOf(savedSeason) !== -1) {
+                    document.documentElement.setAttribute('data-season', savedSeason);
+                  } else {
+                    var m = new Date().getMonth();
+                    var defaultSeason = (m >= 1 && m <= 3) ? 'spring' : (m >= 4 && m <= 6) ? 'summer' : (m >= 7 && m <= 9) ? 'autumn' : 'winter';
+                    document.documentElement.setAttribute('data-season', defaultSeason);
+                  }
                 } catch (e) {}
               })();
             `,

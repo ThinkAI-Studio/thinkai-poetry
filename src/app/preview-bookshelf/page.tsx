@@ -1,11 +1,13 @@
 "use client";
 
-import React, { Suspense } from "react";
+import React, { Suspense, useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { ThemeSwitch } from "@/components/layout/ThemeSwitch";
 import { PoeticBookshelf, DEFAULT_BOOKSHELF_ITEMS } from "@/components/bookshelf/PoeticBookshelf";
+import { PoeticMultiTierBookshelf } from "@/components/bookshelf/PoeticMultiTierBookshelf";
+import { Collection } from "@/types/database";
 import { 
   Feather, 
   Compass, 
@@ -15,7 +17,8 @@ import {
   ChevronRight,
   Eye,
   CheckCircle2,
-  Info
+  Info,
+  Library
 } from "lucide-react";
 
 function BookshelfPreviewContent() {
@@ -25,11 +28,69 @@ function BookshelfPreviewContent() {
   const defaultViewMode = viewParam === "grid" ? "grid" : "shelf";
   const defaultBookId = bookParam || undefined;
 
+  const [activeTab, setActiveTab] = useState<"multitier" | "classic">("multitier");
+  const [collections, setCollections] = useState<Collection[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/collections")
+      .then((res) => res.json())
+      .then((json) => {
+        if (json.success && Array.isArray(json.data)) {
+          setCollections(json.data);
+        }
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
   return (
-    <PoeticBookshelf 
-      defaultViewMode={defaultViewMode}
-      defaultBookId={defaultBookId}
-    />
+    <div className="flex flex-col gap-8">
+      {/* Switch giữa Kệ Đa Tầng Mới và Tủ Sách Đơn Cũ */}
+      <div className="flex items-center justify-center">
+        <div className="inline-flex items-center p-1.5 rounded-2xl bg-neutral-200/60 dark:bg-neutral-900 border border-neutral-300/80 dark:border-neutral-800 shadow-sm">
+          <button
+            type="button"
+            onClick={() => setActiveTab("multitier")}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-serif font-medium transition-all cursor-pointer ${
+              activeTab === "multitier"
+                ? "bg-[#1E3F2E] text-white shadow-md font-semibold dark:bg-emerald-700"
+                : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white"
+            }`}
+          >
+            <Library className="w-3.5 h-3.5" />
+            <span>Kệ Đa Tầng Mới (Mỗi tầng là Tuyển tập, các sách Thơ & Văn)</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("classic")}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-serif font-medium transition-all cursor-pointer ${
+              activeTab === "classic"
+                ? "bg-[#1E3F2E] text-white shadow-md font-semibold dark:bg-emerald-700"
+                : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white"
+            }`}
+          >
+            <BookOpen className="w-3.5 h-3.5" />
+            <span>Tủ Sách Tuyển Tập Đơn (Bản Trước)</span>
+          </button>
+        </div>
+      </div>
+
+      {activeTab === "multitier" ? (
+        loading ? (
+          <div className="h-64 flex items-center justify-center font-serif text-sm text-neutral-400">
+            Đang tải dữ liệu kệ sách thư viện...
+          </div>
+        ) : (
+          <PoeticMultiTierBookshelf collections={collections} />
+        )
+      ) : (
+        <PoeticBookshelf 
+          defaultViewMode={defaultViewMode}
+          defaultBookId={defaultBookId}
+        />
+      )}
+    </div>
   );
 }
 

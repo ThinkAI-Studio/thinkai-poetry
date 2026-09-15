@@ -25,12 +25,13 @@ export default function HomePage() {
 
         {/* Container nội dung Hero */}
         <div className="relative z-10 max-w-5xl mx-auto flex flex-col items-center w-full">
-          {/* Tiêu đề chính: Hallmark Gate 38a Purity (EB Garamond Roman) */}
-          <div className="mb-8 select-none text-center">
-            <h1 className="font-poem-heading text-5xl sm:text-6xl md:text-[68px] font-bold tracking-tight text-neutral-900 dark:text-[#EAE6DF] leading-[1.1]">
+
+          {/* Tiêu đề chính: Hallmark Gate 38a Purity (EB Garamond Roman) & text-wrap balance */}
+          <div className="mb-8 select-none text-center max-w-3xl">
+            <h1 className="font-poem-heading text-5xl sm:text-6xl md:text-[68px] font-bold tracking-tight text-neutral-900 dark:text-[#EAE6DF] leading-[1.1] [text-wrap:balance]">
               Không gian thi ca đương đại
             </h1>
-            <p className="font-poem-heading text-3xl sm:text-4xl md:text-[46px] text-neutral-700 dark:text-[#A6A39C] font-light mt-3 tracking-tight">
+            <p className="font-poem-heading text-3xl sm:text-4xl md:text-[46px] text-neutral-700 dark:text-[#A6A39C] font-light mt-3 tracking-tight [text-wrap:balance]">
               Nơi hồn thơ lắng đọng
             </p>
           </div>
@@ -40,9 +41,9 @@ export default function HomePage() {
             {/* THẺ THỂ LOẠI 1 (TRÁI): Thơ Lục Bát */}
             <a
               href="#khong-gian-sach-tho"
-              className="hidden md:flex absolute right-full mr-6 lg:mr-8 top-[71%] -translate-y-1/2 items-center gap-2 rounded-full border border-neutral-200/90 dark:border-white/10 bg-white/95 dark:bg-[#181816]/95 px-4 py-1.5 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.7),0_4px_12px_rgba(0,0,0,0.05)] dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08),0_4px_16px_rgba(0,0,0,0.4)] backdrop-blur-md z-30 transition-all duration-200 hover:scale-105 active:scale-95 select-none whitespace-nowrap group cursor-pointer"
+              className="hidden md:flex absolute right-full mr-6 lg:mr-8 top-[71%] -translate-y-1/2 items-center gap-2 rounded-full border border-neutral-200/90 dark:border-white/10 bg-white/95 dark:bg-[#181816]/95 px-4 py-1.5 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.7),0_4px_12px_rgba(0,0,0,0.05)] dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08),0_4px_16px_rgba(0,0,0,0.4)] backdrop-blur-md z-30 transition-[transform,border-color,box-shadow] duration-200 hover:scale-[1.03] active:scale-[0.97] select-none whitespace-nowrap group cursor-pointer focus-visible:outline-2 focus-visible:outline-[var(--color-focus)]"
             >
-              <div className="h-2.5 w-2.5 shrink-0 rounded-full bg-[var(--accent-green)] dark:bg-[var(--accent-gold)]" />
+              <div className="h-2.5 w-2.5 shrink-0 rounded-full bg-[var(--genre-luc-bat)]" />
               <span className="font-serif text-xs tracking-wider text-neutral-800 dark:text-[#EAE6DF] font-medium group-hover:text-[var(--accent-green)] dark:group-hover:text-[var(--accent-gold)] transition-colors">
                 Thơ Lục Bát
               </span>
@@ -51,9 +52,9 @@ export default function HomePage() {
             {/* THẺ THỂ LOẠI 2 (PHẢI TRÊN): Thơ Tự Do */}
             <a
               href="#khong-gian-sach-tho"
-              className="hidden md:flex absolute left-full ml-6 lg:ml-8 top-[28%] -translate-y-1/2 items-center gap-2 rounded-full border border-neutral-200/90 dark:border-white/10 bg-white/95 dark:bg-[#181816]/95 px-4 py-1.5 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.7),0_4px_12px_rgba(0,0,0,0.05)] dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08),0_4px_16px_rgba(0,0,0,0.4)] backdrop-blur-md z-30 transition-all duration-200 hover:scale-105 active:scale-95 select-none whitespace-nowrap group cursor-pointer"
+              className="hidden md:flex absolute left-full ml-6 lg:ml-8 top-[28%] -translate-y-1/2 items-center gap-2 rounded-full border border-neutral-200/90 dark:border-white/10 bg-white/95 dark:bg-[#181816]/95 px-4 py-1.5 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.7),0_4px_12px_rgba(0,0,0,0.05)] dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08),0_4px_16px_rgba(0,0,0,0.4)] backdrop-blur-md z-30 transition-[transform,border-color,box-shadow] duration-200 hover:scale-[1.03] active:scale-[0.97] select-none whitespace-nowrap group cursor-pointer focus-visible:outline-2 focus-visible:outline-[var(--color-focus)]"
             >
-              <div className="h-2.5 w-2.5 shrink-0 rounded-full bg-[#C87932]" />
+              <div className="h-2.5 w-2.5 shrink-0 rounded-full bg-[var(--genre-tu-do)]" />
               <span className="font-serif text-xs tracking-wider text-neutral-800 dark:text-[#EAE6DF] font-medium group-hover:text-[var(--accent-green)] dark:group-hover:text-[var(--accent-gold)] transition-colors">
                 Thơ Tự Do
               </span>
@@ -62,9 +63,9 @@ export default function HomePage() {
             {/* THẺ THỂ LOẠI 3 (PHẢI DƯỚI): Thơ Đường Luật */}
             <a
               href="#khong-gian-sach-tho"
-              className="hidden md:flex absolute left-full ml-6 lg:ml-8 top-[78%] -translate-y-1/2 items-center gap-2 rounded-full border border-neutral-200/90 dark:border-white/10 bg-white/95 dark:bg-[#181816]/95 px-4 py-1.5 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.7),0_4px_12px_rgba(0,0,0,0.05)] dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08),0_4px_16px_rgba(0,0,0,0.4)] backdrop-blur-md z-30 transition-all duration-200 hover:scale-105 active:scale-95 select-none whitespace-nowrap group cursor-pointer"
+              className="hidden md:flex absolute left-full ml-6 lg:ml-8 top-[78%] -translate-y-1/2 items-center gap-2 rounded-full border border-neutral-200/90 dark:border-white/10 bg-white/95 dark:bg-[#181816]/95 px-4 py-1.5 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.7),0_4px_12px_rgba(0,0,0,0.05)] dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08),0_4px_16px_rgba(0,0,0,0.4)] backdrop-blur-md z-30 transition-[transform,border-color,box-shadow] duration-200 hover:scale-[1.03] active:scale-[0.97] select-none whitespace-nowrap group cursor-pointer focus-visible:outline-2 focus-visible:outline-[var(--color-focus)]"
             >
-              <div className="h-2.5 w-2.5 shrink-0 rounded-full bg-[#756A88]" />
+              <div className="h-2.5 w-2.5 shrink-0 rounded-full bg-[var(--genre-duong-luat)]" />
               <span className="font-serif text-xs tracking-wider text-neutral-800 dark:text-[#EAE6DF] font-medium group-hover:text-[var(--accent-green)] dark:group-hover:text-[var(--accent-gold)] transition-colors">
                 Thơ Đường Luật
               </span>
@@ -92,9 +93,16 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* Tên tác giả: Thịnh (Wind) */}
-              <div className="mt-5 mb-5 text-right font-poem-heading text-sm font-medium text-neutral-700 dark:text-[#A6A39C] select-none pr-1">
-                Thịnh (Ký danh: Wind)
+              {/* Tên tác giả và Triện Son Chu Sa (Chop Mark: 風 Wind) */}
+              <div className="mt-5 mb-5 flex items-center justify-end gap-2.5 font-poem-heading text-sm font-medium text-neutral-700 dark:text-[#A6A39C] select-none pr-1">
+                <span>Thịnh (Ký danh: Wind)</span>
+                <span
+                  className="inline-flex items-center justify-center w-5 h-5 rounded-[3px] border border-[var(--book-seal-border)] bg-[var(--accent-vermilion)]/10 text-[var(--accent-vermilion)] font-serif text-[10px] font-bold tracking-tighter leading-none shadow-2xs select-none"
+                  title="Dấu triện Wind · Chu Sa son đỏ"
+                  aria-hidden="true"
+                >
+                  風
+                </span>
               </div>
 
               {/* Nút Mở Cuốn Sách Thơ 3D */}
@@ -102,7 +110,7 @@ export default function HomePage() {
                 <button
                   type="button"
                   onClick={() => openBook()}
-                  className="inline-flex items-center justify-center gap-2 px-5 py-2 rounded-full text-xs font-serif tracking-wider text-[var(--accent-green)] dark:text-[var(--accent-gold)] bg-amber-950/[0.03] dark:bg-white/[0.04] border border-amber-950/10 dark:border-white/10 hover:border-[var(--accent-green)] dark:hover:border-[var(--accent-gold)] hover:bg-[var(--accent-green)]/10 dark:hover:bg-[var(--accent-gold)]/15 transition-all duration-200 cursor-pointer font-semibold focus-visible:outline-2 focus-visible:outline-[var(--color-focus)] active:scale-[0.97] shadow-xs group"
+                  className="impeccable-touch-target inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full text-xs font-serif tracking-wider text-[var(--accent-green)] dark:text-[var(--accent-gold)] bg-amber-950/[0.03] dark:bg-white/[0.04] border border-amber-950/10 dark:border-white/10 hover:border-[var(--accent-green)] dark:hover:border-[var(--accent-gold)] hover:bg-[var(--accent-green)]/10 dark:hover:bg-[var(--accent-gold)]/15 transition-all duration-200 cursor-pointer font-semibold focus-visible:outline-2 focus-visible:outline-[var(--color-focus)] active:scale-[0.97] shadow-xs group"
                 >
                   <BookOpen className="w-3.5 h-3.5 transition-transform duration-200 group-hover:scale-110" />
                   <span>Mở Cuốn Sách Thơ 3D</span>
@@ -110,8 +118,47 @@ export default function HomePage() {
               </div>
             </motion.div>
           </div>
+
+          {/* DẢI THẺ THỂ LOẠI DÀNH CHO MOBILE (HALLMARK AFFORDANCE) */}
+          <div className="flex md:hidden items-center justify-center gap-2 mt-4 flex-wrap select-none">
+            <a
+              href="#khong-gian-sach-tho"
+              className="impeccable-touch-target inline-flex items-center gap-1.5 rounded-full border border-neutral-200/90 dark:border-white/10 bg-white/95 dark:bg-[#181816]/95 px-3 py-1.5 shadow-2xs text-[11px] font-serif font-medium text-neutral-800 dark:text-[#EAE6DF] active:scale-95"
+            >
+              <div className="h-2 w-2 rounded-full bg-[var(--genre-luc-bat)]" />
+              <span>Lục Bát</span>
+            </a>
+            <a
+              href="#khong-gian-sach-tho"
+              className="impeccable-touch-target inline-flex items-center gap-1.5 rounded-full border border-neutral-200/90 dark:border-white/10 bg-white/95 dark:bg-[#181816]/95 px-3 py-1.5 shadow-2xs text-[11px] font-serif font-medium text-neutral-800 dark:text-[#EAE6DF] active:scale-95"
+            >
+              <div className="h-2 w-2 rounded-full bg-[var(--genre-tu-do)]" />
+              <span>Tự Do</span>
+            </a>
+            <a
+              href="#khong-gian-sach-tho"
+              className="impeccable-touch-target inline-flex items-center gap-1.5 rounded-full border border-neutral-200/90 dark:border-white/10 bg-white/95 dark:bg-[#181816]/95 px-3 py-1.5 shadow-2xs text-[11px] font-serif font-medium text-neutral-800 dark:text-[#EAE6DF] active:scale-95"
+            >
+              <div className="h-2 w-2 rounded-full bg-[var(--genre-duong-luat)]" />
+              <span>Đường Luật</span>
+            </a>
+          </div>
         </div>
       </section>
+
+      {/* POETIC INTERMEZZO: Hairline divider with classic rhombus motif */}
+      <div
+        className="relative w-full max-w-4xl mx-auto px-6 py-2 flex items-center justify-center select-none opacity-60 dark:opacity-40"
+        aria-hidden="true"
+      >
+        <div className="flex-1 h-[1px] bg-gradient-to-r from-transparent via-[var(--border-strong)] to-transparent" />
+        <div className="mx-4 flex items-center gap-1.5 text-[var(--accent-gold)]">
+          <span className="w-1 h-1 rotate-45 border border-current" />
+          <span className="w-1.5 h-1.5 rotate-45 bg-current" />
+          <span className="w-1 h-1 rotate-45 border border-current" />
+        </div>
+        <div className="flex-1 h-[1px] bg-gradient-to-r from-transparent via-[var(--border-strong)] to-transparent" />
+      </div>
 
       {/* ========================================================= */}
       {/* 2. KHÔNG GIAN CUỐN SÁCH THƠ MỞ 3D                           */}

@@ -120,12 +120,12 @@ export function ThemeSwitch({ className, id }: ThemeSwitchProps) {
       whileTap={prefersReducedMotion ? {} : { scale: 0.95 }}
       transition={SPRINGS.responsive}
       className={cn(
-        "relative inline-flex items-center w-[60px] h-[32px] p-[3px] rounded-full cursor-pointer select-none shrink-0",
-        "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-green)]",
+        "impeccable-touch-target relative inline-flex items-center w-[60px] h-[32px] p-[3px] rounded-full cursor-pointer select-none shrink-0",
+        "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus)]",
         "transition-colors duration-500",
         // Đường ray (Track) chuẩn token phong cách thi ca ThinkAI UI
         isDark
-          ? "bg-[var(--bg-card)] border border-[var(--accent-green)]/35 shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)]"
+          ? "bg-[var(--bg-card)] border border-[var(--border-strong)] shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)]"
           : "bg-[var(--bg-card)] border border-[var(--border-strong)] shadow-[inset_0_2px_4px_rgba(0,0,0,0.06)]",
         className
       )}
@@ -139,7 +139,7 @@ export function ThemeSwitch({ className, id }: ThemeSwitchProps) {
         <span
           className={cn(
             "transition-opacity duration-300 select-none flex items-center justify-center",
-            isDark ? "opacity-40 text-[var(--accent-green)]" : "opacity-0"
+            isDark ? "opacity-40 text-[var(--accent-gold)]" : "opacity-0"
           )}
         >
           <Sun className="w-3 h-3 stroke-[2.2]" />
@@ -167,7 +167,7 @@ export function ThemeSwitch({ className, id }: ThemeSwitchProps) {
           "relative z-10 w-[26px] h-[26px] rounded-full flex items-center justify-center pointer-events-none",
           "transition-all duration-300 border",
           isDark
-            ? "bg-[#27272a] border-[var(--accent-green)]/40 text-emerald-400 shadow-[0_2px_6px_rgba(0,0,0,0.4)]"
+            ? "bg-[#232320] border-[var(--accent-gold)]/40 text-[var(--accent-gold)] shadow-[0_2px_6px_rgba(0,0,0,0.4)]"
             : "bg-white border-[var(--border-subtle)] text-[var(--accent-green)] shadow-[0_2px_4px_rgba(0,0,0,0.08)]"
         )}
       >
@@ -195,7 +195,7 @@ export function ThemeSwitch({ className, id }: ThemeSwitchProps) {
               transition={{ duration: 0.2, ease: "easeOut" }}
               className="flex items-center justify-center w-full h-full"
             >
-              <Moon className="w-3.5 h-3.5 text-emerald-400 dark:text-emerald-300 fill-emerald-400/20 stroke-[2.2]" />
+              <Moon className="w-3.5 h-3.5 text-[var(--accent-gold)] fill-[var(--accent-gold)]/20 stroke-[2.2]" />
             </motion.div>
           )}
         </AnimatePresence>

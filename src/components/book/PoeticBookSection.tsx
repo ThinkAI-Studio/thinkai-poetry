@@ -8,6 +8,7 @@ import { PoemFormType, Poem } from "@/types/database";
 import { cn } from "@/lib/utils";
 import { motion } from "motion/react";
 import { SPRINGS } from "@/lib/motion";
+import { isPoemMatchingForm, getPoemGenreInfo } from "@/lib/poem-genre";
 
 export function PoeticBookSection({ className }: { className?: string }) {
   const {
@@ -22,21 +23,8 @@ export function PoeticBookSection({ className }: { className?: string }) {
   const [selectedForm, setSelectedForm] = useState<FilterCategory>("all");
   const [hoveredTab, setHoveredTab] = useState<string | null>(null);
 
-  const isPoemMatchingCategory = (p: Poem, form: FilterCategory) => {
-    if (form === "all") return true;
-    const isProse =
-      p.form_type === "tan_van" ||
-      p.category?.slug === "tan-van" ||
-      Boolean(p.category?.name && /tản văn|văn xuôi|tùy bút/i.test(p.category.name));
-
-    if (form === "tan_van") return isProse;
-    if (isProse) return false; // Thơ không lọt vào tản văn và ngược lại
-
-    return p.form_type === form;
-  };
-
-  // Lọc danh sách bài thơ / văn nếu người dùng chọn tab
-  const filteredPoems = poems.filter((p) => isPoemMatchingCategory(p, selectedForm));
+  // Lọc danh sách bài thơ / văn chuẩn hóa
+  const filteredPoems = poems.filter((p) => isPoemMatchingForm(p, selectedForm));
 
   const handleSelectPoem = (poem: Poem) => {
     const idx = poems.findIndex((p) => p.id === poem.id);
@@ -108,7 +96,7 @@ export function PoeticBookSection({ className }: { className?: string }) {
                     setSelectedForm(tab.id as any);
                     // Tự lật đến bài đầu tiên thuộc thể loại đó
                     if (tab.id !== "all") {
-                      const firstMatchIdx = poems.findIndex((p) => isPoemMatchingCategory(p, tab.id as any));
+                      const firstMatchIdx = poems.findIndex((p) => isPoemMatchingForm(p, tab.id as any));
                       if (firstMatchIdx !== -1) {
                         goToPage(firstMatchIdx);
                       }
@@ -253,15 +241,7 @@ export function PoeticBookSection({ className }: { className?: string }) {
 
                 <div className="shrink-0 ml-2 text-right">
                   <span className="text-[10px] font-serif uppercase tracking-wider text-neutral-400 dark:text-neutral-500 block">
-                    {isPoemMatchingCategory(poem, "tan_van")
-                      ? "Tản Văn"
-                      : poem.form_type === "luc_bat"
-                      ? "Lục Bát"
-                      : poem.form_type === "song_that_luc_bat"
-                      ? "Song Thất"
-                      : poem.form_type === "that_ngon"
-                      ? "Đường Luật"
-                      : "Tự Do"}
+                    {getPoemGenreInfo(poem).shortLabel}
                   </span>
                   <span className="text-[11px] font-mono text-neutral-400 group-hover:text-[var(--accent-green)] dark:group-hover:text-[var(--accent-gold)] transition-colors">
                     Tr.{(actualIdx * 2 + 1).toString().padStart(2, "0")} →

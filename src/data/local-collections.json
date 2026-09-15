@@ -1,0 +1,38 @@
+[
+  {
+    "id": "col-gio-dau-mua",
+    "title": "Gió Đầu Mùa",
+    "slug": "gio-dau-mua",
+    "description": "Tập thơ tập hợp những sáng tác tiêu biểu về tình người, nỗi nhớ và những giao cảm tinh tế với đất trời lúc giao mùa chớm lạnh.",
+    "cover_image_url": "/floral/flower-pink.png",
+    "is_featured": true,
+    "sort_order": 1,
+    "type": "poetry",
+    "created_at": "2026-09-05T10:00:00.000Z",
+    "updated_at": "2026-09-07T12:00:00.000Z"
+  },
+  {
+    "id": "col-nhung-khoang-lang-binh-yen",
+    "title": "Những Khoảng Lặng Bình Yên",
+    "slug": "nhung-khoang-lang-binh-yen",
+    "description": "Tuyển tập tản văn & tùy bút của Wind. Lắng đọng những lát cắt đời thường, sự thấu hiểu và tấm lòng bao dung chân thành.",
+    "cover_image_url": "/floral/leaf-1.png",
+    "is_featured": true,
+    "sort_order": 2,
+    "type": "prose",
+    "created_at": "2026-09-05T10:00:00.000Z",
+    "updated_at": "2026-09-07T12:00:00.000Z"
+  },
+  {
+    "id": "col-huong-sac-mua-thu",
+    "title": "Hương Sắc Mùa Thu",
+    "slug": "huong-sac-mua-thu",
+    "description": "Những vần thơ dệt nên từ heo may se lạnh, hoa cúc vàng rực và những chiều sương bảng lảng bên hồ nước phẳng lặng.",
+    "cover_image_url": "/floral/flower-yellow.png",
+    "is_featured": true,
+    "sort_order": 3,
+    "type": "poetry",
+    "created_at": "2026-09-05T10:00:00.000Z",
+    "updated_at": "2026-09-07T12:00:00.000Z"
+  }
+]

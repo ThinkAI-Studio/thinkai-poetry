@@ -567,14 +567,14 @@ function BookPreviewCard({ book, onClose }: BookPreviewProps) {
             <div>
               {/* Badges */}
               <div className="flex flex-wrap items-center gap-2 mb-3">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-medium bg-[#1E3F2E]/10 text-[#1E3F2E] dark:text-[#4ade80] border border-[#1E3F2E]/20">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-medium bg-[var(--accent-green)]/10 text-[var(--accent-green)] dark:text-[var(--accent-gold)] border border-[var(--accent-green)]/20 dark:border-[var(--accent-gold)]/30">
                   <Bookmark className="w-3 h-3" />
                   <span>{book.poemsCount} thi phẩm</span>
                 </span>
               </div>
 
               {/* Tiêu đề & Giới thiệu */}
-              <h3 className="font-poem-heading text-2xl sm:text-3xl font-bold text-neutral-900 dark:text-neutral-100 tracking-tight mb-2">
+              <h3 className="font-poem-heading text-2xl sm:text-3xl font-bold text-neutral-900 dark:text-neutral-100 tracking-tight mb-2 [text-wrap:balance]">
                 {book.title}
               </h3>
               <p className="font-poem-verse text-neutral-600 dark:text-neutral-300 text-sm sm:text-base leading-relaxed mb-5">
@@ -592,9 +592,9 @@ function BookPreviewCard({ book, onClose }: BookPreviewProps) {
                     <Link
                       key={p.slug}
                       href={`/poems/${p.slug}`}
-                      className="group inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-neutral-100 dark:bg-neutral-800/80 hover:bg-[#1E3F2E]/10 dark:hover:bg-[#1E3F2E]/20 border border-neutral-200/60 dark:border-neutral-700/60 transition-colors text-xs"
+                      className="group inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-neutral-100 dark:bg-neutral-800/80 hover:bg-[var(--accent-green)]/10 dark:hover:bg-[var(--accent-gold)]/15 border border-neutral-200/60 dark:border-neutral-700/60 transition-colors text-xs"
                     >
-                      <span className="font-poem-heading font-medium text-neutral-800 dark:text-neutral-200 group-hover:text-[#1E3F2E] dark:group-hover:text-[#4ade80]">
+                      <span className="font-poem-heading font-medium text-neutral-800 dark:text-neutral-200 group-hover:text-[var(--accent-green)] dark:group-hover:text-[var(--accent-gold)]">
                         {p.title}
                       </span>
                       <span className="text-[10px] font-mono text-neutral-400">({p.form})</span>
@@ -613,7 +613,7 @@ function BookPreviewCard({ book, onClose }: BookPreviewProps) {
 
               <Link
                 href={`/collections/${book.slug}`}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-[#1E3F2E] hover:bg-[#152e21] text-white text-xs font-mono uppercase tracking-wider transition-all duration-300 shadow-md hover:shadow-lg active:scale-95"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-[var(--accent-green)] hover:bg-[var(--accent-green-hover)] text-white text-xs font-sans font-medium uppercase tracking-wider transition-all duration-300 shadow-md hover:shadow-lg active:scale-95"
               >
                 <span>Mở đọc toàn bộ tuyển tập</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -681,11 +681,11 @@ export function PoeticBookshelf({
       {/* Header đề mục và nút Toggle View */}
       <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-8 gap-4">
         <div>
-          <span className="text-xs font-mono uppercase tracking-widest text-[#1E3F2E] dark:text-[#4ade80] font-semibold">
+          <span className="text-xs font-mono uppercase tracking-widest text-[var(--accent-green)] dark:text-[var(--accent-gold)] font-semibold">
             Tuyển Tập & Bộ Sưu Tập
           </span>
-          <h2 className="font-poem-heading text-3xl sm:text-4xl font-bold text-neutral-900 dark:text-neutral-100 mt-1">
-            Những miền cảm xúc <span className="italic font-normal">chắt chiu</span>
+          <h2 className="font-poem-heading text-3xl sm:text-4xl font-bold text-neutral-900 dark:text-neutral-100 mt-1 [text-wrap:balance]">
+            Những miền cảm xúc <span className="font-normal text-[var(--accent-green)] dark:text-[var(--accent-gold)]">chắt chiu</span>
           </h2>
         </div>
 
@@ -706,7 +706,7 @@ export function PoeticBookshelf({
                 <motion.div
                   layoutId="activeViewMode"
                   transition={SPRINGS.responsive}
-                  className="absolute inset-0 bg-[#1E3F2E] rounded-full -z-10 shadow-xs"
+                  className="absolute inset-0 bg-[var(--accent-green)] dark:bg-[var(--accent-gold)] rounded-full -z-10 shadow-xs"
                 />
               )}
               <Library className="w-3.5 h-3.5" />
@@ -727,7 +727,7 @@ export function PoeticBookshelf({
                 <motion.div
                   layoutId="activeViewMode"
                   transition={SPRINGS.responsive}
-                  className="absolute inset-0 bg-[#1E3F2E] rounded-full -z-10 shadow-xs"
+                  className="absolute inset-0 bg-[var(--accent-green)] dark:bg-[var(--accent-gold)] rounded-full -z-10 shadow-xs"
                 />
               )}
               <LayoutGrid className="w-3.5 h-3.5" />
@@ -812,7 +812,7 @@ export function PoeticBookshelf({
             <Link
               key={book.id}
               href={`/collections/${book.slug}`}
-              className="group p-6 flex flex-col justify-between rounded-2xl bg-white dark:bg-[#111115] border border-neutral-200/70 dark:border-neutral-800 shadow-sm hover:shadow-xl hover:border-[#1E3F2E]/30 transition-all duration-300 h-full block"
+              className="group p-6 flex flex-col justify-between rounded-2xl bg-white dark:bg-[#111115] border border-neutral-200/70 dark:border-neutral-800 shadow-sm hover:shadow-xl hover:border-[var(--accent-green)]/30 dark:hover:border-[var(--accent-gold)]/30 transition-all duration-300 h-full block"
             >
               <div>
                 {/* Khung bìa mộc bản nghệ thuật */}
@@ -838,7 +838,7 @@ export function PoeticBookshelf({
                   </span>
                 </div>
 
-                <h3 className="font-poem-heading text-xl font-bold text-neutral-900 dark:text-neutral-100 group-hover:text-[#1E3F2E] dark:group-hover:text-[#4ade80] transition-colors mb-2">
+                <h3 className="font-poem-heading text-xl font-bold text-neutral-900 dark:text-neutral-100 group-hover:text-[var(--accent-green)] dark:group-hover:text-[var(--accent-gold)] transition-colors mb-2 [text-wrap:balance]">
                   {book.title}
                 </h3>
                 <p className="font-poem-verse text-sm text-neutral-600 dark:text-neutral-400 line-clamp-2 leading-relaxed mb-4">

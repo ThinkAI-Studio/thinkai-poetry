@@ -13,6 +13,9 @@ import { Poem } from "@/types/database";
 import { cn } from "@/lib/utils";
 import { playPageTurnSound } from "@/lib/book-audio";
 import { buildBookSpreads, BookSpread } from "@/lib/prose-paginator";
+import { getPoemGenreInfo } from "@/lib/poem-genre";
+import { useSeason } from "@/context/SeasonContext";
+import { playLeafRustleSound, playBranchShakeSound, playFrostCrunchSound } from "@/lib/nature-audio";
 
 interface Realistic3DPageFlipProps {
   poems: Poem[];
@@ -96,17 +99,7 @@ function PageLeft({
             </div>
 
             <div className="inline-flex items-center px-3 py-0.5 rounded-full bg-[var(--accent-green)]/10 text-[var(--accent-green)] dark:text-[var(--accent-gold)] text-[10px] font-serif uppercase tracking-wider mb-2 border border-[var(--accent-green)]/20 dark:border-[var(--accent-gold)]/20 font-medium shadow-2xs">
-              <span>
-                {isProse
-                  ? "Tản Văn / Tùy Bút"
-                  : poem.form_type === "luc_bat"
-                  ? "Thơ Lục Bát"
-                  : poem.form_type === "that_ngon"
-                  ? "Thất Ngôn Bát Cú"
-                  : poem.form_type === "song_that_luc_bat"
-                  ? "Song Thất Lục Bát"
-                  : "Thơ Tự Do"}
-              </span>
+              <span>{getPoemGenreInfo(poem).label}</span>
             </div>
 
             <h2 className="font-poem-heading text-2xl sm:text-3xl font-bold text-neutral-900 dark:text-[#EAE6DF] mb-3 tracking-tight leading-tight">
@@ -278,11 +271,11 @@ function PageRight({
             </div>
 
             <div
-              className="w-11 h-11 rounded-lg border-2 border-[#9E2A2B] bg-[#9E2A2B]/10 dark:bg-[#9E2A2B]/15 p-0.5 shadow-xs relative flex items-center justify-center shrink-0 transition-transform duration-300 hover:scale-105"
+              className="w-11 h-11 rounded-lg border-2 border-[var(--book-seal-border)] bg-[var(--accent-vermilion)]/10 dark:bg-[var(--accent-vermilion)]/15 p-0.5 shadow-xs relative flex items-center justify-center shrink-0 transition-transform duration-300 hover:scale-105"
               title={`Dấu ấn thi phẩm ${poem.author?.name || "Thịnh"} (${poem.author?.pen_name || "Wind"})`}
             >
-              <div className="w-full h-full border border-[#9E2A2B]/50 rounded-sm flex items-center justify-center">
-                <span className="font-serif text-[11px] font-bold text-[#9E2A2B] tracking-tighter leading-tight text-center select-none uppercase">
+              <div className="w-full h-full border border-[var(--book-seal-border)] rounded-sm flex items-center justify-center">
+                <span className="font-serif text-[11px] font-bold text-[var(--accent-vermilion)] tracking-tighter leading-tight text-center select-none uppercase">
                   {poem.author?.name || "Thịnh"}
                   <br />
                   {poem.author?.pen_name || "Wind"}
@@ -339,23 +332,22 @@ function PageMobile({
       {/* Thân trang mobile */}
       <div className="py-4">
         <div className="flex items-center justify-between gap-2 mb-3">
-          <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-[var(--accent-green)]/10 text-[var(--accent-green)] dark:text-[var(--accent-gold)] text-[10px] font-serif uppercase tracking-wider border border-[var(--accent-green)]/20 dark:border-[var(--accent-gold)]/20 font-medium">
-            {leftPage.isProse
-              ? "Tản Văn"
-              : poem.form_type === "luc_bat"
-              ? "Thơ Lục Bát"
-              : poem.form_type === "that_ngon"
-              ? "Thất Ngôn Bát Cú"
-              : poem.form_type === "song_that_luc_bat"
-              ? "Song Thất Lục Bát"
-              : "Thơ Tự Do"}
-          </span>
+          {(() => {
+            const genre = getPoemGenreInfo(poem);
+            return (
+              <>
+                <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-[var(--accent-green)]/10 text-[var(--accent-green)] dark:text-[var(--accent-gold)] text-[10px] font-serif uppercase tracking-wider border border-[var(--accent-green)]/20 dark:border-[var(--accent-gold)]/20 font-medium">
+                  {genre.label}
+                </span>
 
-          <div className="w-7 h-7 rounded-md border-2 border-[#9E2A2B] bg-[#9E2A2B]/10 p-0.5 shadow-xs flex items-center justify-center">
-            <div className="w-full h-full border border-[#9E2A2B]/50 rounded-xs flex items-center justify-center font-serif text-[9px] font-bold text-[#9E2A2B]">
-              Thơ
-            </div>
-          </div>
+                <div className="w-7 h-7 rounded-md border-2 border-[#9E2A2B] bg-[#9E2A2B]/10 p-0.5 shadow-xs flex items-center justify-center">
+                  <div className="w-full h-full border border-[#9E2A2B]/50 rounded-xs flex items-center justify-center font-serif text-[9px] font-bold text-[#9E2A2B]">
+                    {genre.sealText}
+                  </div>
+                </div>
+              </>
+            );
+          })()}
         </div>
 
         <h2 className="font-poem-heading text-xl sm:text-2xl font-bold text-neutral-900 dark:text-[#EAE6DF] mb-4 tracking-tight leading-tight">
@@ -456,11 +448,11 @@ function PageMobile({
               </span>
             </div>
             <div
-              className="w-10 h-10 rounded-lg border-2 border-[#9E2A2B] bg-[#9E2A2B]/10 dark:bg-[#9E2A2B]/15 p-0.5 shadow-xs flex items-center justify-center shrink-0"
+              className="w-10 h-10 rounded-lg border-2 border-[var(--book-seal-border)] bg-[var(--accent-vermilion)]/10 dark:bg-[var(--accent-vermilion)]/15 p-0.5 shadow-xs flex items-center justify-center shrink-0"
               title={`Dấu ấn thi phẩm ${poem.author?.name || "Thịnh"} (${poem.author?.pen_name || "Wind"})`}
             >
-              <div className="w-full h-full border border-[#9E2A2B]/50 rounded-sm flex items-center justify-center">
-                <span className="font-serif text-[10px] font-bold text-[#9E2A2B] tracking-tighter leading-tight text-center uppercase">
+              <div className="w-full h-full border border-[var(--book-seal-border)] rounded-sm flex items-center justify-center">
+                <span className="font-serif text-[10px] font-bold text-[var(--accent-vermilion)] tracking-tighter leading-tight text-center uppercase">
                   {poem.author?.name || "Thịnh"}
                   <br />
                   {poem.author?.pen_name || "Wind"}
@@ -476,10 +468,15 @@ function PageMobile({
         <div className="flex items-center justify-between text-xs font-sans gap-1.5">
           <button
             type="button"
-            onClick={onPrev}
+            onClick={() => {
+              if (typeof navigator !== "undefined" && navigator.vibrate) {
+                try { navigator.vibrate(8); } catch {}
+              }
+              onPrev();
+            }}
             disabled={currentSpreadIndex === 0}
             className={cn(
-              "flex items-center justify-center gap-1 py-1.5 px-2.5 sm:px-3.5 rounded-full border border-neutral-300/80 dark:border-white/15 bg-white/70 dark:bg-white/5 font-medium text-xs text-neutral-800 dark:text-[#EAE6DF] transition-all shadow-2xs shrink-0 select-none whitespace-nowrap",
+              "impeccable-touch-target min-h-[44px] flex items-center justify-center gap-1.5 py-2 px-3 sm:px-4 rounded-full border border-neutral-300/80 dark:border-white/15 bg-white/80 dark:bg-white/5 font-medium text-xs text-neutral-800 dark:text-[#EAE6DF] transition-all shadow-2xs shrink-0 select-none whitespace-nowrap focus-visible:outline-2 focus-visible:outline-[var(--color-focus)]",
               currentSpreadIndex === 0
                 ? "opacity-30 cursor-not-allowed"
                 : "hover:bg-black/5 dark:hover:bg-white/10 cursor-pointer active:scale-95"
@@ -491,16 +488,21 @@ function PageMobile({
           </button>
 
           {/* Chỉ số trang đọc hiện tại */}
-          <div className="flex items-center justify-center font-mono text-[11px] font-semibold text-neutral-700 dark:text-[#EAE6DF] shrink-0 px-2 py-1 rounded-full bg-amber-900/5 dark:bg-white/5 border border-amber-900/10 dark:border-white/10">
+          <div className="flex items-center justify-center font-mono text-[11px] font-semibold text-neutral-700 dark:text-[#EAE6DF] shrink-0 px-2.5 py-1.5 rounded-full bg-amber-900/5 dark:bg-white/5 border border-amber-900/10 dark:border-white/10">
             <span>{(currentSpreadIndex + 1).toString().padStart(2, "0")} / {totalSpreads.toString().padStart(2, "0")}</span>
           </div>
 
           <button
             type="button"
-            onClick={onNext}
+            onClick={() => {
+              if (typeof navigator !== "undefined" && navigator.vibrate) {
+                try { navigator.vibrate(8); } catch {}
+              }
+              onNext();
+            }}
             disabled={currentSpreadIndex === totalSpreads - 1}
             className={cn(
-              "flex items-center justify-center gap-1 py-1.5 px-2.5 sm:px-3.5 rounded-full border border-neutral-300/80 dark:border-white/15 bg-white/70 dark:bg-white/5 font-medium text-xs text-neutral-800 dark:text-[#EAE6DF] transition-all shadow-2xs shrink-0 select-none whitespace-nowrap",
+              "impeccable-touch-target min-h-[44px] flex items-center justify-center gap-1.5 py-2 px-3 sm:px-4 rounded-full border border-neutral-300/80 dark:border-white/15 bg-white/80 dark:bg-white/5 font-medium text-xs text-neutral-800 dark:text-[#EAE6DF] transition-all shadow-2xs shrink-0 select-none whitespace-nowrap focus-visible:outline-2 focus-visible:outline-[var(--color-focus)]",
               currentSpreadIndex === totalSpreads - 1
                 ? "opacity-30 cursor-not-allowed"
                 : "hover:bg-black/5 dark:hover:bg-white/10 cursor-pointer active:scale-95"
@@ -516,6 +518,260 @@ function PageMobile({
           ← Vuốt ngang màn hình để lật trang →
         </div>
       </div>
+    </div>
+  );
+}
+
+// 1. CÁNH HOA ĐÀO PHAI MÙA XUÂN VƯƠNG KHẼ TRÊN GÁY SÁCH
+function BookSpringPetal({ isFlipping }: { isFlipping: boolean }) {
+  const { season } = useSeason();
+  const [petalState, setPetalState] = useState<"resting" | "fluttering" | "hidden">("resting");
+
+  useEffect(() => {
+    if (season !== "spring") {
+      setPetalState("hidden");
+      return;
+    }
+    setPetalState("resting");
+  }, [season]);
+
+  useEffect(() => {
+    if (isFlipping && petalState === "resting") {
+      setPetalState("fluttering");
+      const timer = setTimeout(() => {
+        setPetalState("hidden");
+        const respawn = setTimeout(() => {
+          if (season === "spring") {
+            setPetalState("resting");
+          }
+        }, 18000);
+        return () => clearTimeout(respawn);
+      }, 700);
+      return () => clearTimeout(timer);
+    }
+  }, [isFlipping, petalState, season]);
+
+  if (season !== "spring" || petalState === "hidden") return null;
+
+  const handlePetalClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    playBranchShakeSound(0.1);
+    setPetalState("fluttering");
+    setTimeout(() => {
+      setPetalState("hidden");
+      setTimeout(() => {
+        if (season === "spring") setPetalState("resting");
+      }, 16000);
+    }, 700);
+  };
+
+  return (
+    <div
+      onClick={handlePetalClick}
+      title="Cánh hoa đào phai vương trên mép sách • Chạm để thổi bay"
+      className={cn(
+        "absolute z-40 cursor-pointer pointer-events-auto select-none transition-all duration-300",
+        "top-4 left-1/2 -translate-x-1/2 sm:top-6",
+        petalState === "resting" && "hover:scale-125 transition-transform duration-200",
+        petalState === "fluttering" && "animate-[spring-petal-flutter_0.7s_ease-out_forwards] pointer-events-none"
+      )}
+    >
+      <Image
+        src="/floral/flower-pink.png"
+        alt="Cánh hoa đào xuân"
+        width={22}
+        height={22}
+        className="drop-shadow-xs select-none opacity-85 rotate-12"
+        style={{ width: "20px", height: "auto" }}
+      />
+    </div>
+  );
+}
+
+// 2. VỆT NẮNG ẤM MÙA HẠ XIÊN QUA TRANG SÁCH
+function BookSummerSunbeam() {
+  const { season } = useSeason();
+  if (season !== "summer") return null;
+
+  return (
+    <div
+      aria-hidden="true"
+      className="absolute top-0 right-0 w-72 h-64 pointer-events-none z-20 overflow-hidden select-none"
+    >
+      <div
+        className="w-full h-full bg-gradient-to-bl from-amber-200/18 via-yellow-100/8 to-transparent opacity-80"
+        style={{
+          animation: "sunbeam-pulse 9s ease-in-out infinite",
+        }}
+      />
+      <span
+        className="absolute top-8 right-16 w-1.5 h-1.5 rounded-full bg-amber-300/80 shadow-[0_0_6px_#FDE047]"
+        style={{ animation: "sun-mote-drift 6s ease-in-out infinite" }}
+      />
+      <span
+        className="absolute top-20 right-28 w-1 h-1 rounded-full bg-amber-200/70 shadow-[0_0_4px_#FEF08A]"
+        style={{ animation: "sun-mote-drift 8s ease-in-out 2s infinite" }}
+      />
+    </div>
+  );
+}
+
+// 3. CHIẾC LÁ MÙA THU MẮC VÀO TRANG SÁCH (TƯƠNG TÁC CHẠM THỔI BAY)
+interface BookAutumnLeafProps {
+  isFlipping: boolean;
+}
+
+function BookAutumnLeaf({ isFlipping }: BookAutumnLeafProps) {
+  const { season } = useSeason();
+  const [leafState, setLeafState] = useState<"hidden" | "landing" | "resting" | "blowing">("hidden");
+  const [leafIndex, setLeafIndex] = useState(0);
+
+  const leaves = [
+    { src: "/floral/autumn-momiji-pink.png", alt: "Lá phong mùa thu", width: 34, height: 32 },
+    { src: "/floral/autumn-leaf-1.png", alt: "Lá ngân hạnh mùa thu", width: 32, height: 32 },
+    { src: "/floral/autumn-leaf-2.png", alt: "Lá phong hổ phách", width: 30, height: 30 },
+    { src: "/floral/autumn-flower-yellow.png", alt: "Đóa cúc vàng mùa thu", width: 28, height: 28 },
+  ];
+
+  // Kích hoạt lá rơi mắc vào sách khi vào mùa thu
+  useEffect(() => {
+    if (season !== "autumn") {
+      setLeafState("hidden");
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      setLeafState("landing");
+      const settleTimer = setTimeout(() => {
+        setLeafState("resting");
+      }, 1600);
+      return () => clearTimeout(settleTimer);
+    }, 3200);
+
+    return () => clearTimeout(timer);
+  }, [season]);
+
+  // Khi lật trang sách, gió lật thổi lá bay đi
+  useEffect(() => {
+    if (isFlipping && (leafState === "resting" || leafState === "landing")) {
+      setLeafState("blowing");
+      const blowTimer = setTimeout(() => {
+        setLeafState("hidden");
+        // Sau 24s có thể xuất hiện lá mới
+        const nextTimer = setTimeout(() => {
+          if (season === "autumn") {
+            setLeafIndex((prev) => (prev + 1) % leaves.length);
+            setLeafState("landing");
+            setTimeout(() => setLeafState("resting"), 1600);
+          }
+        }, 24000);
+        return () => clearTimeout(nextTimer);
+      }, 650);
+      return () => clearTimeout(blowTimer);
+    }
+  }, [isFlipping, leafState, season, leaves.length]);
+
+  if (season !== "autumn" || leafState === "hidden") return null;
+
+  const currentLeaf = leaves[leafIndex % leaves.length];
+
+  const handleLeafClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    playBranchShakeSound(0.12);
+    setLeafState("blowing");
+    setTimeout(() => {
+      setLeafState("hidden");
+      setTimeout(() => {
+        if (season === "autumn") {
+          setLeafIndex((prev) => (prev + 1) % leaves.length);
+          setLeafState("landing");
+          setTimeout(() => setLeafState("resting"), 1600);
+        }
+      }, 22000);
+    }, 650);
+  };
+
+  const handleLeafHover = () => {
+    playLeafRustleSound("leaves", 0.12);
+  };
+
+  return (
+    <div
+      onClick={handleLeafClick}
+      onMouseEnter={handleLeafHover}
+      role="button"
+      tabIndex={0}
+      title="Chiếc lá mùa thu mắc vào trang sách • Chạm vào để thổi bay đi"
+      className={cn(
+        "absolute z-40 cursor-pointer pointer-events-auto select-none transition-all duration-300",
+        "bottom-5 right-6 sm:bottom-7 sm:right-10 md:bottom-9 md:right-12",
+        leafState === "landing" && "animate-[leaf-book-land_1.6s_cubic-bezier(0.25,1,0.5,1)_forwards]",
+        leafState === "resting" && "animate-[leaf-book-breeze_4.2s_ease-in-out_infinite] hover:scale-120 hover:rotate-[-10deg]",
+        leafState === "blowing" && "animate-[leaf-book-blow_0.65s_ease-out_forwards] pointer-events-none"
+      )}
+    >
+      <div className="relative group">
+        <Image
+          src={currentLeaf.src}
+          alt={currentLeaf.alt}
+          width={currentLeaf.width}
+          height={currentLeaf.height}
+          className="drop-shadow-[0_4px_8px_rgba(0,0,0,0.18)] dark:drop-shadow-[0_4px_10px_rgba(0,0,0,0.6)]"
+          style={{ width: `${currentLeaf.width}px`, height: "auto" }}
+          draggable={false}
+        />
+        <div className="absolute inset-0 rounded-full bg-amber-400/10 opacity-0 group-hover:opacity-100 transition-opacity blur-xs" />
+      </div>
+    </div>
+  );
+}
+
+// 4. HƠI THỞ SƯƠNG MAI MÙA ĐÔNG TRÊN BÌA SÁCH (TAN BIẾN DẦN KHI MỞ / LẬT TRANG)
+function BookWinterFrostCondensation({ isFlipping }: { isFlipping: boolean }) {
+  const { season } = useSeason();
+  const [isMelting, setIsMelting] = useState(false);
+
+  // Khi lật trang, nhiệt động lực học và gió lật làm sương giá tan biến dần
+  useEffect(() => {
+    if (isFlipping) {
+      setIsMelting(true);
+      const timer = setTimeout(() => {
+        setIsMelting(false);
+      }, 3500);
+      return () => clearTimeout(timer);
+    }
+  }, [isFlipping]);
+
+  if (season !== "winter") return null;
+
+  const handleFrostTouch = () => {
+    playFrostCrunchSound();
+    setIsMelting(true);
+    setTimeout(() => {
+      setIsMelting(false);
+    }, 4000);
+  };
+
+  return (
+    <div
+      onClick={handleFrostTouch}
+      title="Hơi sương mùa đông trên bìa sách • Nhấp để làm tan sương giá"
+      className={cn(
+        "absolute inset-0 z-30 pointer-events-none rounded-xl overflow-hidden transition-all duration-1000",
+        isMelting ? "opacity-0 scale-[0.99] blur-xs" : "opacity-90 scale-100"
+      )}
+    >
+      {/* Màng sương mờ ngưng tụ viền 4 góc và mép bìa */}
+      <div
+        className="absolute inset-0 pointer-events-auto cursor-pointer"
+        style={{
+          background:
+            "radial-gradient(ellipse at top left, rgba(224,242,254,0.32) 0%, transparent 40%), radial-gradient(ellipse at top right, rgba(224,242,254,0.32) 0%, transparent 40%), radial-gradient(ellipse at bottom left, rgba(224,242,254,0.28) 0%, transparent 35%), radial-gradient(ellipse at bottom right, rgba(224,242,254,0.28) 0%, transparent 35%)",
+          animation: "frost-condense-breathe 8s ease-in-out infinite",
+        }}
+      />
+      {/* Đường viền tinh thể sương lạnh quanh mép cuốn sách */}
+      <div className="absolute inset-0 border border-sky-100/40 dark:border-sky-200/25 rounded-xl pointer-events-none shadow-[inset_0_0_12px_rgba(186,230,253,0.25)]" />
     </div>
   );
 }
@@ -795,7 +1051,7 @@ export function Realistic3DPageFlip({
                 <div
                   className="absolute bottom-0 left-0 w-12 h-12 pointer-events-none transition-transform duration-300 group-hover:scale-125 origin-bottom-left opacity-70 group-hover:opacity-100 z-30"
                   style={{
-                    background: "linear-gradient(225deg, transparent 50%, rgba(0,0,0,0.18) 51%, #DFD6BE 100%)",
+                    background: "linear-gradient(225deg, transparent 50%, rgba(0,0,0,0.18) 51%, var(--book-corner-curl) 100%)",
                   }}
                 />
               )}
@@ -823,7 +1079,7 @@ export function Realistic3DPageFlip({
                 <div
                   className="absolute bottom-0 right-0 w-12 h-12 pointer-events-none transition-transform duration-300 group-hover:scale-125 origin-bottom-right opacity-70 group-hover:opacity-100 z-30"
                   style={{
-                    background: "linear-gradient(135deg, transparent 50%, rgba(0,0,0,0.18) 51%, #DFD6BE 100%)",
+                    background: "linear-gradient(135deg, transparent 50%, rgba(0,0,0,0.18) 51%, var(--book-corner-curl) 100%)",
                   }}
                 />
               )}
@@ -945,6 +1201,12 @@ export function Realistic3DPageFlip({
               </motion.div>
             )}
           </div>
+
+          {/* BỘ TỨ QUÝ TƯƠNG TÁC SÁCH THƠ 4 MÙA */}
+          <BookSpringPetal isFlipping={isFlipping} />
+          <BookSummerSunbeam />
+          <BookAutumnLeaf isFlipping={isFlipping} />
+          <BookWinterFrostCondensation isFlipping={isFlipping} />
         </div>
       </div>
 
@@ -962,7 +1224,7 @@ export function Realistic3DPageFlip({
             "w-12 h-12 rounded-full bg-white/95 dark:bg-[#181816]/95 backdrop-blur-md shadow-[0_8px_30px_rgba(0,0,0,0.18)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.6)] border border-amber-900/20 dark:border-[var(--accent-gold)]/30 flex items-center justify-center transition-all duration-200 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus)]",
             displayedSpreadIdx === 0 || isFlipping
               ? "opacity-20 cursor-not-allowed"
-              : "hover:scale-110 active:scale-90 text-neutral-800 dark:text-[#EAE6DF] hover:border-[var(--accent-green)] hover:text-[var(--accent-green)] dark:hover:border-[var(--accent-gold)] dark:hover:text-[var(--accent-gold)]"
+              : "hover:scale-[1.06] active:scale-[0.94] text-neutral-800 dark:text-[#EAE6DF] hover:border-[var(--accent-green)] hover:text-[var(--accent-green)] dark:hover:border-[var(--accent-gold)] dark:hover:text-[var(--accent-gold)]"
           )}
           aria-label="Lật trang trước (Phím ←)"
         >
@@ -983,7 +1245,7 @@ export function Realistic3DPageFlip({
             "w-12 h-12 rounded-full bg-white/95 dark:bg-[#181816]/95 backdrop-blur-md shadow-[0_8px_30px_rgba(0,0,0,0.18)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.6)] border border-amber-900/20 dark:border-[var(--accent-gold)]/30 flex items-center justify-center transition-all duration-200 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus)]",
             displayedSpreadIdx === spreads.length - 1 || isFlipping
               ? "opacity-20 cursor-not-allowed"
-              : "hover:scale-110 active:scale-90 text-neutral-800 dark:text-[#EAE6DF] hover:border-[var(--accent-green)] hover:text-[var(--accent-green)] dark:hover:border-[var(--accent-gold)] dark:hover:text-[var(--accent-gold)]"
+              : "hover:scale-[1.06] active:scale-[0.94] text-neutral-800 dark:text-[#EAE6DF] hover:border-[var(--accent-green)] hover:text-[var(--accent-green)] dark:hover:border-[var(--accent-gold)] dark:hover:text-[var(--accent-gold)]"
           )}
           aria-label="Lật trang tiếp (Phím →)"
         >

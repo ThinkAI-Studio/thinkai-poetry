@@ -80,9 +80,9 @@ export function FloatingReaderBar({
   const handleZoomIn = () => updateSize((prev) => Math.min(26, prev + 1));
 
   const themeOptions: { id: ReaderTheme; label: string; icon: typeof Sun; activeColor: string }[] = [
-    { id: "ivory", label: "Sáng ngà", icon: Sun, activeColor: "#2D5A3D" },
+    { id: "ivory", label: "Sáng ngà", icon: Sun, activeColor: "var(--accent-green)" },
     { id: "sepia", label: "Giấy Dó", icon: BookOpen, activeColor: "#5C4F44" },
-    { id: "dark", label: "Đêm sâu", icon: Moon, activeColor: "#F4F4F5" },
+    { id: "dark", label: "Đêm sâu", icon: Moon, activeColor: "#FFFFFF" },
   ];
 
   return (
@@ -91,14 +91,14 @@ export function FloatingReaderBar({
       animate={{ opacity: 1, y: 0 }}
       transition={SPRINGS.responsive}
       className={cn(
-        "fixed bottom-6 right-6 z-40 flex items-center gap-1.5 p-1.5 px-2 rounded-full",
-        "bg-white/95 dark:bg-[#111114]/95 backdrop-blur-md border border-neutral-300 dark:border-neutral-800 shadow-2xl",
-        "text-neutral-800 dark:text-neutral-200 transition-all select-none",
+        "fixed bottom-[calc(1.5rem+env(safe-area-inset-bottom,0px))] right-4 sm:right-6 z-40 flex items-center gap-1.5 p-1.5 px-2.5 rounded-full",
+        "bg-white/95 dark:bg-[#181816]/95 backdrop-blur-md border border-neutral-300 dark:border-white/10 shadow-2xl",
+        "text-neutral-800 dark:text-[#EAE6DF] transition-all select-none",
         className
       )}
     >
       {/* 3 Nút chọn Theme với viên thuốc trượt lò xo layoutId */}
-      <div className="flex items-center gap-0.5 relative">
+      <div className="flex items-center gap-1 relative">
         {themeOptions.map((t) => {
           const isActive = theme === t.id;
           const Icon = t.icon;
@@ -108,7 +108,7 @@ export function FloatingReaderBar({
               type="button"
               onClick={(e) => changeTheme(e, t.id)}
               title={t.label}
-              className="relative w-8 h-8 flex items-center justify-center rounded-full transition-colors cursor-pointer z-10"
+              className="impeccable-touch-target relative w-8 h-8 flex items-center justify-center rounded-full transition-colors cursor-pointer z-10 focus-visible:outline-2 focus-visible:outline-[var(--color-focus)]"
             >
               {isActive && (
                 <motion.div
@@ -137,14 +137,14 @@ export function FloatingReaderBar({
 
       <div className="w-[1px] h-4 bg-neutral-200 dark:bg-neutral-800 mx-0.5" />
 
-      {/* Điều chỉnh cỡ chữ với lò xo nảy số */}
+      {/* Điều chỉnh cỡ chữ với lò xo nảy số (Impeccable Touch Targets) */}
       <button
         type="button"
         onClick={handleZoomOut}
         title="Giảm cỡ chữ"
-        className="w-7 h-7 flex items-center justify-center rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-300 transition-transform active:scale-90 cursor-pointer"
+        className="impeccable-touch-target w-8 h-8 flex items-center justify-center rounded-full hover:bg-neutral-100 dark:hover:bg-white/10 text-neutral-700 dark:text-neutral-300 transition-transform active:scale-90 cursor-pointer focus-visible:outline-2 focus-visible:outline-[var(--color-focus)]"
       >
-        <Minus className="w-3 h-3" />
+        <Minus className="w-3.5 h-3.5" />
       </button>
 
       <motion.span
@@ -161,9 +161,9 @@ export function FloatingReaderBar({
         type="button"
         onClick={handleZoomIn}
         title="Tăng cỡ chữ"
-        className="w-7 h-7 flex items-center justify-center rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-300 transition-transform active:scale-90 cursor-pointer"
+        className="impeccable-touch-target w-8 h-8 flex items-center justify-center rounded-full hover:bg-neutral-100 dark:hover:bg-white/10 text-neutral-700 dark:text-neutral-300 transition-transform active:scale-90 cursor-pointer focus-visible:outline-2 focus-visible:outline-[var(--color-focus)]"
       >
-        <Plus className="w-3 h-3" />
+        <Plus className="w-3.5 h-3.5" />
       </button>
 
       {/* Nút Tạo trích dẫn ảnh nếu có handler */}
@@ -174,9 +174,9 @@ export function FloatingReaderBar({
             type="button"
             onClick={onOpenQuoteModal}
             title="Tạo ảnh trích dẫn"
-            className="w-7 h-7 flex items-center justify-center rounded-full bg-[#2D5A3D]/10 hover:bg-[#2D5A3D]/20 text-[#2D5A3D] dark:text-[#4ade80] transition-transform active:scale-90 cursor-pointer"
+            className="impeccable-touch-target w-8 h-8 flex items-center justify-center rounded-full bg-[var(--accent-green)]/10 hover:bg-[var(--accent-green)]/20 text-[var(--accent-green)] dark:text-[var(--accent-gold)] transition-transform active:scale-90 cursor-pointer focus-visible:outline-2 focus-visible:outline-[var(--color-focus)]"
           >
-            <Quote className="w-3 h-3" />
+            <Quote className="w-3.5 h-3.5" />
           </button>
         </>
       )}

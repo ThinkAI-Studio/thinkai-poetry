@@ -28,7 +28,53 @@
     --accent-vermilion: #9E2A2B;
     --color-focus: #2D5A3D;
     --book-corner-curl: #DFD6BE;
+    --book-seal-border: rgba(158, 42, 43, 0.45);
+
+    /* GENRE BADGES (HALLMARK TOKEN LOCK) */
+    --genre-luc-bat: #1E5E3A;
+    --genre-tu-do: #916207;
+    --genre-duong-luat: #9E2A2B;
+
+    /* SẮC HƯƠNG 4 MÙA THI CA MẶC ĐỊNH (THU) */
+    --season-accent: #D97706;
+    --season-accent-hover: #B45309;
+    --season-accent-light: #FDE68A;
+    --season-grass: #B45309;
+    --season-grass-subtle: #FEF3C7;
     color-scheme: light;
+  }
+
+  /* 4 MÙA THI CA (FOUR SEASONS MICROCLIMATES) */
+  :root[data-season="spring"] {
+    --season-accent: #E11D48;
+    --season-accent-hover: #BE123C;
+    --season-accent-light: #FDA4AF;
+    --season-grass: #16A34A;
+    --season-grass-subtle: #DCFCE7;
+  }
+
+  :root[data-season="summer"] {
+    --season-accent: #1E5E3A;
+    --season-accent-hover: #16462B;
+    --season-accent-light: #86EFAC;
+    --season-grass: #15803D;
+    --season-grass-subtle: #D1FAE5;
+  }
+
+  :root[data-season="autumn"] {
+    --season-accent: #D97706;
+    --season-accent-hover: #B45309;
+    --season-accent-light: #FDE68A;
+    --season-grass: #B45309;
+    --season-grass-subtle: #FEF3C7;
+  }
+
+  :root[data-season="winter"] {
+    --season-accent: #0284C7;
+    --season-accent-hover: #0369A1;
+    --season-accent-light: #BAE6FD;
+    --season-grass: #64748B;
+    --season-grass-subtle: #E2E8F0;
   }
 
   /* Toàn trang Dark Mode */
@@ -47,6 +93,12 @@
     --accent-vermilion: #B83A3B;
     --color-focus: #C5A059;
     --book-corner-curl: #2A2721;
+    --book-seal-border: rgba(184, 58, 59, 0.55);
+
+    /* GENRE BADGES DARK MODE (ACCESSIBLE CONTRAST) */
+    --genre-luc-bat: #4ADE80;
+    --genre-tu-do: #FDE047;
+    --genre-duong-luat: #F87171;
     color-scheme: dark;
   }
 
@@ -64,6 +116,13 @@
     --accent-gold: #B8860B;
     --accent-vermilion: #9E2A2B;
     --color-focus: #2D5A3D;
+    --book-corner-curl: #DFD6BE;
+    --book-seal-border: rgba(158, 42, 43, 0.45);
+
+    /* GENRE BADGES SEPIA MODE */
+    --genre-luc-bat: #2D5A3D;
+    --genre-tu-do: #B8860B;
+    --genre-duong-luat: #9E2A2B;
     color-scheme: light;
   }
 
@@ -265,3 +324,331 @@ html.theme-transitioning *::after {
 .poem-song-that .stanza p:nth-child(4n) {
   padding-left: 0ch;
 }
+
+/* ============================================================
+   SEASONAL ATMOSPHERE ANIMATIONS (NẮNG, GIÓ, BĂNG, SƯƠNG)
+   ============================================================ */
+
+/* 1. MÙA HẠ: Nắng chiếu từ góc & bụi nắng lơ lửng */
+@keyframes sunbeam-pulse {
+  0%, 100% {
+    opacity: 0.72;
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    opacity: 0.96;
+    transform: scale(1.03) rotate(0.5deg);
+  }
+}
+
+@keyframes sun-mote-drift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(0.8);
+    opacity: 0.2;
+  }
+  30% {
+    opacity: 0.85;
+  }
+  70% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translate3d(-120px, 140px, 0) scale(1.1);
+    opacity: 0;
+  }
+}
+
+/* 2. MÙA THU: Gió thổi lốc lá qua màn hình */
+@keyframes autumn-wind-dash {
+  0% {
+    stroke-dashoffset: 800;
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.35;
+  }
+  80% {
+    opacity: 0.25;
+  }
+  100% {
+    stroke-dashoffset: -800;
+    opacity: 0;
+  }
+}
+
+@keyframes autumn-leaf-sweep-1 {
+  0% {
+    transform: translate3d(-60px, -40px, 0) rotate(0deg) rotateY(0deg) scale(0.85);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.9;
+  }
+  50% {
+    transform: translate3d(55vw, 42vh, 0) rotate(220deg) rotateY(180deg) scale(1);
+    opacity: 0.85;
+  }
+  85% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate3d(115vw, 85vh, 0) rotate(480deg) rotateY(360deg) scale(0.9);
+    opacity: 0;
+  }
+}
+
+@keyframes autumn-leaf-sweep-2 {
+  0% {
+    transform: translate3d(-80px, 15vh, 0) rotate(40deg) rotateX(0deg) scale(0.8);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.85;
+  }
+  55% {
+    transform: translate3d(50vw, 55vh, 0) rotate(260deg) rotateX(160deg) scale(0.95);
+    opacity: 0.8;
+  }
+  85% {
+    opacity: 0.75;
+  }
+  100% {
+    transform: translate3d(115vw, 95vh, 0) rotate(540deg) rotateX(360deg) scale(0.85);
+    opacity: 0;
+  }
+}
+
+/* 3. MÙA ĐÔNG: Vết nứt sương giá thanh nhã trong suốt (Delicate Translucent Frost Seams) */
+@keyframes frost-shimmer {
+  0%, 100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 0.82;
+  }
+}
+
+/* 4. MÙA XUÂN: Bụi phấn & hạt sương mai buổi sớm */
+@keyframes spring-dew-float {
+  0% {
+    transform: translate3d(0, 0, 0) scale(0.7);
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.8;
+  }
+  75% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translate3d(40px, -90px, 0) scale(1.1);
+    opacity: 0;
+  }
+}
+
+/* 5. TƯƠNG TÁC LÁ MÙA THU MẮC VÀO TRANG SÁCH (AUTUMN LEAF ON POETRY BOOK) */
+@keyframes leaf-book-land {
+  0% {
+    transform: translate3d(60px, -90px, 0) rotate(90deg) scale(1.25);
+    opacity: 0;
+  }
+  40% {
+    transform: translate3d(20px, -30px, 0) rotate(35deg) scale(1.1);
+    opacity: 0.9;
+  }
+  75% {
+    transform: translate3d(-5px, 4px, 0) rotate(-15deg) scale(0.98);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes leaf-book-breeze {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  30% {
+    transform: translate3d(-1.5px, -2px, 0) rotate(3deg);
+  }
+  65% {
+    transform: translate3d(1px, 1px, 0) rotate(-2deg);
+  }
+}
+
+/* 6. ĐỘNG LỰC HỌC LÁ ĐỌNG ĐÁY MÙA THU (FALLEN GROUND LEAVES & WHIRLWIND) */
+@keyframes leaf-whirlwind-scatter-left {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(var(--leaf-base-rot, 0deg)) scale(1);
+    opacity: 0.95;
+  }
+  25% {
+    transform: translate3d(35px, -35px, 0) rotate(calc(var(--leaf-base-rot, 0deg) + 75deg)) scale(1.15);
+    opacity: 0.95;
+  }
+  60% {
+    transform: translate3d(140px, -150px, 0) rotate(calc(var(--leaf-base-rot, 0deg) + 240deg)) scale(1.05);
+    opacity: 0.75;
+  }
+  100% {
+    transform: translate3d(320px, -240px, 0) rotate(calc(var(--leaf-base-rot, 0deg) + 420deg)) scale(0.7);
+    opacity: 0;
+  }
+}
+
+@keyframes leaf-whirlwind-scatter-right {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(var(--leaf-base-rot, 0deg)) scale(1);
+    opacity: 0.95;
+  }
+  25% {
+    transform: translate3d(-35px, -35px, 0) rotate(calc(var(--leaf-base-rot, 0deg) - 75deg)) scale(1.15);
+    opacity: 0.95;
+  }
+  60% {
+    transform: translate3d(-140px, -150px, 0) rotate(calc(var(--leaf-base-rot, 0deg) - 240deg)) scale(1.05);
+    opacity: 0.75;
+  }
+  100% {
+    transform: translate3d(-320px, -240px, 0) rotate(calc(var(--leaf-base-rot, 0deg) - 420deg)) scale(0.7);
+    opacity: 0;
+  }
+}
+
+@keyframes leaf-whirlwind-scatter-center {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(var(--leaf-base-rot, 0deg)) scale(1);
+    opacity: 0.95;
+  }
+  25% {
+    transform: translate3d(20px, -50px, 0) rotate(calc(var(--leaf-base-rot, 0deg) + 95deg)) scale(1.18);
+    opacity: 0.95;
+  }
+  60% {
+    transform: translate3d(-45px, -165px, 0) rotate(calc(var(--leaf-base-rot, 0deg) + 260deg)) scale(1.05);
+    opacity: 0.75;
+  }
+  100% {
+    transform: translate3d(90px, -270px, 0) rotate(calc(var(--leaf-base-rot, 0deg) + 480deg)) scale(0.65);
+    opacity: 0;
+  }
+}
+
+@keyframes leaf-drift-settle {
+  0% {
+    transform: translate3d(0, -60px, 0) rotate(calc(var(--leaf-base-rot, 0deg) - 25deg)) scale(0.85);
+    opacity: 0;
+  }
+  65% {
+    transform: translate3d(0, 3px, 0) rotate(var(--leaf-base-rot, 0deg)) scale(1.04);
+    opacity: 0.92;
+  }
+  100% {
+    transform: translate3d(0, 0, 0) rotate(var(--leaf-base-rot, 0deg)) scale(1);
+    opacity: 0.95;
+  }
+}
+
+/* 7. LÁ MÙA ĐÔNG ĐÔNG CỨNG & SƯƠNG LAM BẢNG LẢNG */
+@keyframes frost-leaf-crunch {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) rotate(var(--leaf-base-rot, 0deg));
+  }
+  20% {
+    transform: translate3d(-1.5px, 1px, 0) rotate(calc(var(--leaf-base-rot, 0deg) + 2deg));
+  }
+  45% {
+    transform: translate3d(1.5px, -1px, 0) rotate(calc(var(--leaf-base-rot, 0deg) - 1.5deg));
+  }
+  75% {
+    transform: translate3d(-0.8px, 0.5px, 0) rotate(calc(var(--leaf-base-rot, 0deg) + 1deg));
+  }
+}
+
+@keyframes winter-mist-drift {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scaleY(1);
+    opacity: 0.45;
+  }
+  50% {
+    transform: translate3d(30px, -6px, 0) scaleY(1.18);
+    opacity: 0.75;
+  }
+}
+
+@keyframes leaf-book-blow {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+    opacity: 1;
+  }
+  40% {
+    transform: translate3d(35px, -45px, 0) rotate(65deg) scale(0.9);
+    opacity: 0.85;
+  }
+  100% {
+    transform: translate3d(90px, -110px, 0) rotate(160deg) scale(0.4);
+    opacity: 0;
+  }
+}
+
+@keyframes frost-condense-breathe {
+  0%, 100% {
+    opacity: 0.65;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.88;
+    transform: scale(1.02);
+  }
+}
+
+@keyframes spring-petal-flutter {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+    opacity: 0.9;
+  }
+  40% {
+    transform: translate3d(-25px, -35px, 0) rotate(-45deg) scale(1.05);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate3d(-70px, -90px, 0) rotate(-130deg) scale(0.4);
+    opacity: 0;
+  }
+}
+
+/* ============================================================
+   IMPECCABLE & HALLMARK MICRO-MOTION EASINGS & ACCESSIBILITY
+   ============================================================ */
+:root {
+  --ease-luxury: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-snappy: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* 44x44px minimum touch target without visual bloat (WCAG 2.5.5 / Hallmark Gate 43) */
+.impeccable-touch-target {
+  position: relative;
+}
+.impeccable-touch-target::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  min-width: 44px;
+  min-height: 44px;
+  width: 100%;
+  height: 100%;
+  pointer-events: auto;
+}
+
+/* Impeccable focus-visible ring */
+.impeccable-focus-ring:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+

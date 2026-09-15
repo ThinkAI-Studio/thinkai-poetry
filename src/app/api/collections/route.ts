@@ -51,6 +51,7 @@ export async function POST(request: NextRequest) {
       cover_image_url: body.cover_image_url || "/floral/flower-pink.png",
       is_featured: body.is_featured ?? true,
       sort_order: body.sort_order ?? 0,
+      type: body.type || "poetry",
     });
 
     if (error) {

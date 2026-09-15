@@ -3,6 +3,9 @@
 import React, { useState, useEffect, useRef, useMemo, memo } from "react";
 import Image from "next/image";
 import { motion, useSpring, useMotionValue, AnimatePresence } from "motion/react";
+import { useSeason, Season } from "@/context/SeasonContext";
+import { useReadingZone } from "@/hooks/useReadingZone";
+import { playLeafRustleSound, playBranchShakeSound } from "@/lib/nature-audio";
 
 interface FloralPosition {
   x: number;
@@ -117,22 +120,107 @@ const rightClusterPositions: FloralPosition[] = [
   { delay: 0.6, rotation: 10, scale: 0.8, type: "pink", x: 54, y: 66 },
 ];
 
-const imageMap = {
-  pink: "/floral/flower-pink.png",
-  yellow: "/floral/flower-yellow.png",
-  leaf1: "/floral/leaf-1.png",
-  leaf2: "/floral/leaf-2.png",
+const seasonalImageMap: Record<Season, Record<"pink" | "yellow" | "leaf1" | "leaf2", string>> = {
+  spring: {
+    pink: "/floral/flower-pink.png",
+    yellow: "/floral/flower-yellow.png",
+    leaf1: "/floral/leaf-1.png",
+    leaf2: "/floral/leaf-2.png",
+  },
+  summer: {
+    pink: "/floral/summer-lotus-pink.png",
+    yellow: "/floral/summer-flower-yellow.png",
+    leaf1: "/floral/summer-leaf-1.png",
+    leaf2: "/floral/summer-leaf-2.png",
+  },
+  autumn: {
+    pink: "/floral/autumn-momiji-pink.png",
+    yellow: "/floral/autumn-flower-yellow.png",
+    leaf1: "/floral/autumn-leaf-1.png",
+    leaf2: "/floral/autumn-leaf-2.png",
+  },
+  winter: {
+    pink: "/floral/winter-camellia-pink.png",
+    yellow: "/floral/winter-flower-white.png",
+    leaf1: "/floral/winter-leaf-1.png",
+    leaf2: "/floral/winter-leaf-2.png",
+  },
 };
 
+/* =========================================================================
+   1. ĐỊNH NGHĨA GRADIENT CÁNH HOA BAY THEO 4 MÙA (DRIFTING PETALS DEFS)
+   ========================================================================= */
+const SharedSeasonalDefs = memo(() => (
+  <svg width="0" height="0" className="absolute pointer-events-none">
+    <defs>
+      <linearGradient id="driftingCherryPetal" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stopColor="#FFF1F2" />
+        <stop offset="60%" stopColor="#FBCFE8" />
+        <stop offset="100%" stopColor="#F472B6" />
+      </linearGradient>
+      <linearGradient id="driftingLotusPetal" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stopColor="#FFF5F8" />
+        <stop offset="50%" stopColor="#FCE7F3" />
+        <stop offset="100%" stopColor="#F472B6" />
+      </linearGradient>
+      <linearGradient id="driftingMaplePetal" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stopColor="#FEF08A" />
+        <stop offset="50%" stopColor="#FDBA74" />
+        <stop offset="100%" stopColor="#FB7185" />
+      </linearGradient>
+      <linearGradient id="driftingSnowflakePetal" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stopColor="#FFFFFF" />
+        <stop offset="60%" stopColor="#BAE6FD" />
+        <stop offset="100%" stopColor="#7DD3FC" />
+      </linearGradient>
+    </defs>
+  </svg>
+));
+SharedSeasonalDefs.displayName = "SharedSeasonalDefs";
+
+/* =========================================================================
+   2. VISUAL THỰC VẬT THEO CHUẨN SORA LATTICE RASTER PNG (100% LATTICE ASSETS)
+   - Tất cả 4 mùa sử dụng ảnh raster PNG chuẩn 95x91 và 90x90
+   - Feathered alpha viền mềm, phản quang tinh tế, phản hồi chuột và đổ bóng drop-shadow-sm
+   ========================================================================= */
+interface SeasonalGraphicProps {
+  season: Season;
+  type: "pink" | "yellow" | "leaf1" | "leaf2";
+  seed?: number;
+}
+
+const SeasonalFloralGraphic = memo(({ season, type }: SeasonalGraphicProps) => {
+  const currentMap = seasonalImageMap[season] || seasonalImageMap.spring;
+  const src = currentMap[type] || currentMap.pink;
+
+  return (
+    <Image
+      src={src}
+      alt={`${season} ${type}`}
+      width={95}
+      height={91}
+      priority
+      className="h-full w-full select-none object-contain drop-shadow-sm transition-opacity duration-500 dark:opacity-85 dark:brightness-95 hover:scale-110 active:scale-95 transition-transform"
+      style={{ width: "auto", height: "auto" }}
+      draggable={false}
+    />
+  );
+});
+SeasonalFloralGraphic.displayName = "SeasonalFloralGraphic";
+
+/* =========================================================================
+   4. NODE THỰC VẬT TƯƠNG TÁC (FLORAL NODE)
+   ========================================================================= */
 interface FloralItemProps {
   pos: FloralPosition;
   mouseX: any;
   mouseY: any;
   cluster: "left" | "right";
+  season: Season;
   onFlowerClick?: (e: React.MouseEvent) => void;
 }
 
-const FloralNode = memo(({ pos, mouseX, mouseY, cluster, onFlowerClick }: FloralItemProps) => {
+const FloralNode = memo(({ pos, mouseX, mouseY, cluster, season, onFlowerClick }: FloralItemProps) => {
   const nodeRef = useRef<HTMLDivElement>(null);
   const centerRef = useRef<{ x: number; y: number } | null>(null);
 
@@ -140,7 +228,7 @@ const FloralNode = memo(({ pos, mouseX, mouseY, cluster, onFlowerClick }: Floral
   const springX = useSpring(0, springConfig);
   const springY = useSpring(0, springConfig);
 
-  // Sinh số giả ngẫu nhiên tất định từ tọa độ pos để Server & Client render đồng nhất 100%, triệt tiêu lỗi Hydration Mismatch
+  // Sinh số giả ngẫu nhiên tất định từ tọa độ pos để Server & Client render đồng nhất 100%
   const seed = useMemo(() => {
     const val = Math.abs(Math.sin(pos.x * 12.9898 + pos.y * 78.233 + (pos.delay || 0.1) * 43.123));
     return val - Math.floor(val);
@@ -153,6 +241,7 @@ const FloralNode = memo(({ pos, mouseX, mouseY, cluster, onFlowerClick }: Floral
 
   // Tính tâm phần tử để phản xạ chuột (Mouse repulsion physics)
   useEffect(() => {
+    let animId: number;
     const updateCenter = () => {
       if (!nodeRef.current) return;
       const rect = nodeRef.current.getBoundingClientRect();
@@ -162,11 +251,9 @@ const FloralNode = memo(({ pos, mouseX, mouseY, cluster, onFlowerClick }: Floral
       };
     };
 
-    const animId = requestAnimationFrame(updateCenter);
-    window.addEventListener("resize", updateCenter);
+    animId = requestAnimationFrame(updateCenter);
     return () => {
       cancelAnimationFrame(animId);
-      window.removeEventListener("resize", updateCenter);
     };
   }, []);
 
@@ -200,6 +287,10 @@ const FloralNode = memo(({ pos, mouseX, mouseY, cluster, onFlowerClick }: Floral
       unsubY();
     };
   }, [mouseX, mouseY, springX, springY]);
+
+  const handleMouseEnter = () => {
+    playLeafRustleSound("leaves", 0.08);
+  };
 
   if (pos.type === "bubble" && pos.token) {
     return (
@@ -246,8 +337,7 @@ const FloralNode = memo(({ pos, mouseX, mouseY, cluster, onFlowerClick }: Floral
     );
   }
 
-  const src = imageMap[pos.type as keyof typeof imageMap];
-  if (!src) return null;
+  if (pos.type === "bubble") return null;
 
   return (
     <div
@@ -277,21 +367,13 @@ const FloralNode = memo(({ pos, mouseX, mouseY, cluster, onFlowerClick }: Floral
           x: springX,
           y: springY,
         }}
+        onMouseEnter={handleMouseEnter}
         onClick={onFlowerClick}
       >
         <div className="floral-hide">
           <div className="floral-sway-rotate">
             <div className="floral-sway-translate">
-              <Image
-                src={src}
-                alt="Botanical Flower"
-                width={95}
-                height={91}
-                priority
-                className="h-full w-full select-none object-contain drop-shadow-sm transition-opacity duration-500 dark:opacity-85 dark:brightness-95 hover:scale-110 active:scale-95 transition-transform"
-                style={{ width: "auto", height: "auto" }}
-                draggable={false}
-              />
+              <SeasonalFloralGraphic season={season} type={pos.type} seed={seed} />
             </div>
           </div>
         </div>
@@ -302,71 +384,93 @@ const FloralNode = memo(({ pos, mouseX, mouseY, cluster, onFlowerClick }: Floral
 
 FloralNode.displayName = "FloralNode";
 
+/* =========================================================================
+   5. COMPONENT CHÍNH: FLORAL DECORATION (HERO SECTION)
+   - Đồng bộ 100% với useReadingZone: khi cuộn đến vùng đọc sách, hoa trôi
+     nhẹ nhàng mờ dần cùng nhịp với lúc ẩn navbar và cành hoa 2 góc xòe ra
+   ========================================================================= */
 export function FloralDecoration() {
   const containerRef = useRef<HTMLDivElement>(null);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
-  const [isPast, setIsPast] = useState(false);
+  const [isDormant, setIsDormant] = useState(false);
+  const dormantTimerRef = useRef<NodeJS.Timeout | null>(null);
   const [burstPetals, setBurstPetals] = useState<BurstPetal[]>([]);
+  const { season, metadata } = useSeason();
+  const inReadingZone = useReadingZone();
 
-  // Lắng nghe scroll nhẹ nhàng với rAF để ẩn hoa khi cuộn xuống dưới, không lag CPU
+  // Quản lý ngủ đông tiết kiệm RAM: Chỉ ngủ đông sau khi hiệu ứng mờ 0.6s đã hoàn tất 100%
   useEffect(() => {
-    let ticking = false;
-    let lastPast = false;
-
-    const handleScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          const past = window.scrollY > 180;
-          if (past !== lastPast) {
-            lastPast = past;
-            setIsPast(past);
-          }
-          ticking = false;
-        });
-        ticking = true;
-      }
+    if (inReadingZone) {
+      if (dormantTimerRef.current) clearTimeout(dormantTimerRef.current);
+      dormantTimerRef.current = setTimeout(() => {
+        setIsDormant(true);
+      }, 700);
+    } else {
+      if (dormantTimerRef.current) clearTimeout(dormantTimerRef.current);
+      setIsDormant(false);
+    }
+    return () => {
+      if (dormantTimerRef.current) clearTimeout(dormantTimerRef.current);
     };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [inReadingZone]);
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    if (isPast) return;
+    if (inReadingZone || isDormant) return;
     mouseX.set(e.clientX);
     mouseY.set(e.clientY);
   };
 
-  // Click vào hoa bắn cánh hoa bay nhẹ nhàng
+  // Click vào hoa/cây: Âm thanh lay cành, rung haptic điện thoại & bắn chùm hạt theo mùa
   const handleFlowerClick = (e: React.MouseEvent) => {
+    playBranchShakeSound(0.16);
+
     const rect = e.currentTarget.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
 
-    const colors = ["#F8D7DA", "#FDE68A", "#FBCFE8", "#FED7AA", "#FEF08A"];
-    const newPetals: BurstPetal[] = Array.from({ length: 6 }).map((_, i) => ({
-      id: Date.now() + i,
+    if (typeof navigator !== "undefined" && navigator.vibrate) {
+      try {
+        navigator.vibrate([15, 30, 15]);
+      } catch {}
+    }
+
+    const colors = metadata.petalColors;
+    const newPetals: BurstPetal[] = Array.from({ length: 18 }).map((_, i) => ({
+      id: Date.now() + i + Math.random(),
       x: centerX,
       y: centerY,
-      vx: (Math.random() - 0.5) * 160,
-      vy: -Math.random() * 120 - 40,
+      vx: (Math.random() - 0.5) * 220,
+      vy: -Math.random() * 140 - 35,
       color: colors[Math.floor(Math.random() * colors.length)],
-      size: Math.random() * 14 + 10,
+      size: Math.random() * 14 + 9,
       rotation: Math.random() * 360,
     }));
 
-    setBurstPetals((prev) => [...prev.slice(-18), ...newPetals]);
+    setBurstPetals((prev) => [...prev.slice(-32), ...newPetals]);
   };
+
+  if (isDormant) {
+    return <div aria-hidden="true" className="hidden" />;
+  }
 
   return (
     <div
       ref={containerRef}
       onMouseMove={handleMouseMove}
-      data-floral-past={isPast ? "true" : "false"}
-      className="floral-root pointer-events-none absolute inset-0 select-none overflow-hidden"
+      data-floral-past={inReadingZone ? "true" : "false"}
+      style={{
+        opacity: inReadingZone ? 0 : 1,
+        transform: inReadingZone ? "translate3d(0, 24px, 0) scale(0.92)" : "translate3d(0, 0, 0) scale(1)",
+        transition: "opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)",
+        pointerEvents: inReadingZone ? "none" : "auto",
+        visibility: isDormant ? "hidden" : "visible",
+      }}
+      className="floral-root pointer-events-none absolute inset-0 select-none overflow-hidden will-change-transform"
     >
+      {/* GRADIENTS DÙNG CHUNG CỦA 4 MÙA */}
+      <SharedSeasonalDefs />
+
       {/* Cụm hoa bên trái (Left Cluster) */}
       <div className="floral-cluster pointer-events-auto absolute bottom-[60px] left-[-20px] md:left-0 h-[580px] w-[34vw] max-w-[460px]">
         {leftClusterPositions.map((pos, idx) => (
@@ -374,6 +478,7 @@ export function FloralDecoration() {
             key={`left-${idx}`}
             pos={pos}
             cluster="left"
+            season={season}
             mouseX={mouseX}
             mouseY={mouseY}
             onFlowerClick={handleFlowerClick}
@@ -389,6 +494,7 @@ export function FloralDecoration() {
               key={`right-${idx}`}
               pos={pos}
               cluster="right"
+              season={season}
               mouseX={mouseX}
               mouseY={mouseY}
               onFlowerClick={handleFlowerClick}
@@ -397,18 +503,7 @@ export function FloralDecoration() {
         </div>
       </div>
 
-      {/* ĐỊNH NGHĨA GRADIENT CÁNH HOA DUY NHẤT */}
-      <svg width="0" height="0" className="absolute pointer-events-none">
-        <defs>
-          <linearGradient id="driftingCherryPetal" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#FCE4E8" />
-            <stop offset="60%" stopColor="#F7BAC3" />
-            <stop offset="100%" stopColor="#EE94A2" />
-          </linearGradient>
-        </defs>
-      </svg>
-
-      {/* 5 Cánh hoa đào trôi lãng mạn trên canvas (Pixel-faithful theo example-1.jpg) */}
+      {/* 5 CÁNH HOA / LÁ / BÔNG TUYẾT TRÔI LÃNG MẠN THEO MÙA */}
       {[
         { id: "dp-1", x: "7%", y: "47%", rotate: 25, scale: 1.0, duration: 4.8 },
         { id: "dp-2", x: "16%", y: "53%", rotate: -18, scale: 1.1, duration: 5.2 },
@@ -439,13 +534,47 @@ export function FloralDecoration() {
             ease: "easeInOut",
           }}
         >
-          <svg width="26" height="34" viewBox="0 0 28 36" fill="none" className="drop-shadow-xs">
-            <path
-              d="M14 2C8.5 9 1 17 1 25.5C1 31.3 6.8 35 14 35C21.2 35 27 31.3 27 25.5C27 17 19.5 9 14 2Z"
-              fill="url(#driftingCherryPetal)"
-              fillOpacity="0.88"
-            />
-          </svg>
+          {season === "summer" ? (
+            /* Cánh sen hồng ngọc trôi bồng bềnh */
+            <svg width="26" height="34" viewBox="0 0 28 36" fill="none" className="drop-shadow-xs">
+              <path
+                d="M14 2C7 10 2 18 2 26C2 31.5 7.5 35 14 35C20.5 35 26 31.5 26 26C26 18 21 10 14 2Z"
+                fill="url(#driftingLotusPetal)"
+                fillOpacity="0.88"
+              />
+            </svg>
+          ) : season === "autumn" ? (
+            /* Chiếc lá phong momiji thu đỏ cam chao liệng */
+            <svg width="28" height="30" viewBox="0 0 32 34" fill="none" className="drop-shadow-xs">
+              <path
+                d="M 16,2 C 14,7 11,10 7,12 C 11,14 13,17 11,22 C 14,19 16,18 16,22 C 16,18 18,19 21,22 C 19,17 21,14 25,12 C 21,10 18,7 16,2 Z"
+                fill="url(#driftingMaplePetal)"
+                fillOpacity="0.9"
+              />
+              <line x1="16" y1="18" x2="16" y2="30" stroke="#F59E0B" strokeWidth="1.2" strokeLinecap="round" />
+            </svg>
+          ) : season === "winter" ? (
+            /* Bông tuyết pha lê 6 cánh lấp lánh */
+            <svg width="24" height="24" viewBox="0 0 32 32" fill="none" className="drop-shadow-xs">
+              <g stroke="url(#driftingSnowflakePetal)" strokeWidth="1.8" strokeLinecap="round">
+                <line x1="16" y1="3" x2="16" y2="29" />
+                <line x1="3" y1="16" x2="29" y2="16" />
+                <line x1="7" y1="7" x2="25" y2="25" />
+                <line x1="7" y1="25" x2="25" y2="7" />
+                <path d="M 13,8 L 16,11 L 19,8 M 13,24 L 16,21 L 19,24 M 8,13 L 11,16 L 8,19 M 24,13 L 21,16 L 24,19" />
+              </g>
+              <circle cx="16" cy="16" r="2.2" fill="#FFFFFF" />
+            </svg>
+          ) : (
+            /* Mùa Xuân: Cánh hoa đào hồng phai */
+            <svg width="26" height="34" viewBox="0 0 28 36" fill="none" className="drop-shadow-xs">
+              <path
+                d="M14 2C8.5 9 1 17 1 25.5C1 31.3 6.8 35 14 35C21.2 35 27 31.3 27 25.5C27 17 19.5 9 14 2Z"
+                fill="url(#driftingCherryPetal)"
+                fillOpacity="0.88"
+              />
+            </svg>
+          )}
         </motion.div>
       ))}
 

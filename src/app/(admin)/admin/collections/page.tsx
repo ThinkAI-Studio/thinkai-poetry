@@ -12,10 +12,12 @@ export default function AdminCollectionsPage() {
   const [submitting, setSubmitting] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [colType, setColType] = useState<"poetry" | "prose" | "mixed">("poetry");
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingCol, setEditingCol] = useState<Collection | null>(null);
   const [editTitle, setEditTitle] = useState("");
   const [editDescription, setEditDescription] = useState("");
+  const [editColType, setEditColType] = useState<"poetry" | "prose" | "mixed">("poetry");
   const [toast, setToast] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
   const showToast = (type: "success" | "error", message: string) => {
@@ -54,6 +56,7 @@ export default function AdminCollectionsPage() {
         body: JSON.stringify({
           title: title.trim(),
           description: description.trim() || null,
+          type: colType,
         }),
       });
 
@@ -65,6 +68,7 @@ export default function AdminCollectionsPage() {
       setCollections((prev) => [json.data, ...prev]);
       setTitle("");
       setDescription("");
+      setColType("poetry");
       setShowCreateForm(false);
       showToast("success", `Đã tạo thành công tuyển tập "${json.data.title}"!`);
     } catch (err: any) {
@@ -78,6 +82,7 @@ export default function AdminCollectionsPage() {
     setEditingCol(col);
     setEditTitle(col.title);
     setEditDescription(col.description || "");
+    setEditColType(col.type || "poetry");
   };
 
   const handleUpdate = async (e: React.FormEvent) => {
@@ -93,6 +98,7 @@ export default function AdminCollectionsPage() {
           id: editingCol.id,
           title: editTitle.trim(),
           description: editDescription.trim() || null,
+          type: editColType,
         }),
       });
 
@@ -209,6 +215,47 @@ export default function AdminCollectionsPage() {
 
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-mono uppercase tracking-wider text-[var(--text-secondary)]">
+              Loại Tuyển Tập *
+            </label>
+            <div className="grid grid-cols-3 gap-2">
+              <button
+                type="button"
+                onClick={() => setColType("poetry")}
+                className={`py-2 px-3 rounded-xl border text-xs font-serif font-medium transition-all cursor-pointer ${
+                  colType === "poetry"
+                    ? "bg-[var(--accent-green)]/15 border-[var(--accent-green)] text-[var(--accent-green)] dark:text-emerald-300 font-bold"
+                    : "bg-[var(--bg-page)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                }`}
+              >
+                🌸 Tuyển Tập Thơ
+              </button>
+              <button
+                type="button"
+                onClick={() => setColType("prose")}
+                className={`py-2 px-3 rounded-xl border text-xs font-serif font-medium transition-all cursor-pointer ${
+                  colType === "prose"
+                    ? "bg-amber-500/15 border-amber-500 text-amber-700 dark:text-amber-300 font-bold"
+                    : "bg-[var(--bg-page)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                }`}
+              >
+                🍃 Tuyển Tập Tản Văn
+              </button>
+              <button
+                type="button"
+                onClick={() => setColType("mixed")}
+                className={`py-2 px-3 rounded-xl border text-xs font-serif font-medium transition-all cursor-pointer ${
+                  colType === "mixed"
+                    ? "bg-indigo-500/15 border-indigo-500 text-indigo-700 dark:text-indigo-300 font-bold"
+                    : "bg-[var(--bg-page)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                }`}
+              >
+                📖 Thơ & Tản Văn
+              </button>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-mono uppercase tracking-wider text-[var(--text-secondary)]">
               Lời Tựa / Giới Thiệu
             </label>
             <textarea
@@ -271,6 +318,47 @@ export default function AdminCollectionsPage() {
 
             <div className="flex flex-col gap-1.5">
               <label className="text-xs font-mono uppercase tracking-wider text-[var(--text-secondary)]">
+                Loại Tuyển Tập *
+              </label>
+              <div className="grid grid-cols-3 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setEditColType("poetry")}
+                  className={`py-2 px-3 rounded-xl border text-xs font-serif font-medium transition-all cursor-pointer ${
+                    editColType === "poetry"
+                      ? "bg-[var(--accent-green)]/15 border-[var(--accent-green)] text-[var(--accent-green)] dark:text-emerald-300 font-bold"
+                      : "bg-[var(--bg-page)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                  }`}
+                >
+                  🌸 Thơ Ca
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setEditColType("prose")}
+                  className={`py-2 px-3 rounded-xl border text-xs font-serif font-medium transition-all cursor-pointer ${
+                    editColType === "prose"
+                      ? "bg-amber-500/15 border-amber-500 text-amber-700 dark:text-amber-300 font-bold"
+                      : "bg-[var(--bg-page)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                  }`}
+                >
+                  🍃 Tản Văn
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setEditColType("mixed")}
+                  className={`py-2 px-3 rounded-xl border text-xs font-serif font-medium transition-all cursor-pointer ${
+                    editColType === "mixed"
+                      ? "bg-indigo-500/15 border-indigo-500 text-indigo-700 dark:text-indigo-300 font-bold"
+                      : "bg-[var(--bg-page)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                  }`}
+                >
+                  📖 Hỗn Hợp
+                </button>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-mono uppercase tracking-wider text-[var(--text-secondary)]">
                 Lời Tựa / Giới Thiệu
               </label>
               <textarea
@@ -325,50 +413,68 @@ export default function AdminCollectionsPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {collections.map((col) => (
-            <div
-              key={col.id}
-              className="p-6 bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-2xl flex flex-col justify-between shadow-xs hover:border-[var(--accent-green)]/40 transition-colors"
-            >
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-[11px] font-mono uppercase tracking-wider px-2.5 py-0.5 bg-[var(--text-primary)]/5 border border-[var(--border-subtle)] text-[var(--text-secondary)] rounded-full font-medium">
-                    {col.poems_count ?? 0} thi phẩm
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => handleStartEdit(col)}
-                      className="p-1.5 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors cursor-pointer"
-                      title="Chỉnh sửa"
-                    >
-                      <Edit className="w-3.5 h-3.5" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleDelete(col)}
-                      className="p-1.5 text-[var(--text-secondary)] hover:text-red-500 transition-colors cursor-pointer"
-                      title="Xóa"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
+          {collections.map((col) => {
+            const isProse = col.type === "prose";
+            const isMixed = col.type === "mixed";
+
+            return (
+              <div
+                key={col.id}
+                className="p-6 bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-2xl flex flex-col justify-between shadow-xs hover:border-[var(--accent-green)]/40 transition-colors"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                      <span
+                        className={`text-[11px] font-serif px-2.5 py-0.5 rounded-full font-medium border ${
+                          isProse
+                            ? "bg-amber-500/10 border-amber-500/30 text-amber-800 dark:text-amber-300"
+                            : isMixed
+                            ? "bg-indigo-500/10 border-indigo-500/30 text-indigo-800 dark:text-indigo-300"
+                            : "bg-[var(--accent-green)]/10 border-[var(--accent-green)]/30 text-[var(--accent-green)] dark:text-emerald-300"
+                        }`}
+                      >
+                        {isProse ? "🍃 Tản Văn" : isMixed ? "📖 Thơ & Văn" : "🌸 Thơ Ca"}
+                      </span>
+                      <span className="text-[11px] font-mono uppercase tracking-wider px-2 py-0.5 bg-[var(--text-primary)]/5 border border-[var(--border-subtle)] text-[var(--text-secondary)] rounded-full font-medium">
+                        {col.poems_count ?? 0} {isProse ? "bài tản văn" : "tác phẩm"}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handleStartEdit(col)}
+                        className="p-1.5 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors cursor-pointer"
+                        title="Chỉnh sửa"
+                      >
+                        <Edit className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleDelete(col)}
+                        className="p-1.5 text-[var(--text-secondary)] hover:text-red-500 transition-colors cursor-pointer"
+                        title="Xóa"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                   </div>
+
+                  <h3 className="font-serif font-bold text-xl text-[var(--text-primary)] mb-2 line-clamp-1">
+                    {col.title}
+                  </h3>
+                  <p className="font-serif text-sm text-[var(--text-secondary)] leading-relaxed line-clamp-3 mb-4">
+                    {col.description || "Chưa có lời tựa giới thiệu."}
+                  </p>
                 </div>
 
-                <h3 className="font-serif font-bold text-xl text-[var(--text-primary)] mb-2 line-clamp-1">
-                  {col.title}
-                </h3>
-                <p className="font-serif text-sm text-[var(--text-secondary)] leading-relaxed line-clamp-3 mb-4">
-                  {col.description || "Chưa có lời tựa giới thiệu."}
-                </p>
+                <div className="pt-4 border-t border-[var(--border-subtle)] flex items-center justify-between text-xs font-mono text-[var(--text-muted)]">
+                  <span>Slug: /{col.slug}</span>
+                  <span className="text-[var(--accent-green)] dark:text-emerald-400 font-medium">Đang hiển thị</span>
+                </div>
               </div>
-
-              <div className="pt-4 border-t border-[var(--border-subtle)] flex items-center justify-between text-xs font-mono text-[var(--text-muted)]">
-                <span>Slug: /{col.slug}</span>
-                <span className="text-[var(--accent-green)] dark:text-emerald-400 font-medium">Đang hiển thị</span>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

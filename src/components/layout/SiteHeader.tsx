@@ -7,44 +7,20 @@ import { usePathname, useRouter } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { ThemeSwitch } from "@/components/layout/ThemeSwitch";
+import { SeasonSwitch } from "@/components/layout/SeasonSwitch";
 import { BookSearchBar } from "@/components/book/BookSearchBar";
+import { useReadingZone } from "@/hooks/useReadingZone";
 import { usePoeticBook } from "@/context/PoeticBookContext";
 import { cn } from "@/lib/utils";
 
 export function SiteHeader() {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isBookSectionActive, setIsBookSectionActive] = useState(false);
+  const isReadingZone = useReadingZone();
+  const isBookSectionActive = isReadingZone;
   const [mobileOpen, setMobileOpen] = useState(false);
   const { openBook } = usePoeticBook();
   const pathname = usePathname();
   const router = useRouter();
-
-  // Lắng nghe vị trí phần sách bằng IntersectionObserver để ẩn/hiện header không gây reflow
-  useEffect(() => {
-    if (pathname !== "/") {
-      setIsBookSectionActive(false);
-      return;
-    }
-
-    const bookElem = document.getElementById("khong-gian-sach-tho");
-    if (!bookElem) {
-      setIsBookSectionActive(false);
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsBookSectionActive(entry.isIntersecting);
-      },
-      {
-        rootMargin: "-120px 0px 0px 0px",
-        threshold: 0,
-      }
-    );
-
-    observer.observe(bookElem);
-    return () => observer.disconnect();
-  }, [pathname]);
 
   // Kiểm tra scroll > 20 để đổi nền header nhẹ nhàng mà không reflow layout
   useEffect(() => {
@@ -105,16 +81,16 @@ export function SiteHeader() {
 
   return (
     <header
-      className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-[transform,opacity,background-color,border-color] duration-300 ease-out transform-gpu will-change-[transform,opacity]",
-        isScrolled
-          ? "bg-[var(--bg-page)]/90 backdrop-blur-md border-b border-[var(--border-subtle)] py-3 shadow-xs"
-          : "bg-transparent py-3 sm:py-4",
-        isBookSectionActive
-          ? "-translate-y-full opacity-0 pointer-events-none"
-          : "translate-y-0 opacity-100 pointer-events-auto"
-      )}
-    >
+        className={cn(
+          "fixed top-0 left-0 right-0 z-50 transition-[transform,opacity,background-color,border-color] duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] transform-gpu will-change-transform",
+          isScrolled
+            ? "bg-[var(--bg-page)]/90 backdrop-blur-md border-b border-[var(--border-subtle)] py-3 shadow-xs"
+            : "bg-transparent py-3 sm:py-4",
+          isBookSectionActive
+            ? "-translate-y-full opacity-0 pointer-events-none"
+            : "translate-y-0 opacity-100 pointer-events-auto"
+        )}
+      >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 md:px-8 flex items-center justify-between gap-4">
         {/* Logo: Biểu tượng Wind + Tên thương hiệu */}
         <Link
@@ -160,6 +136,11 @@ export function SiteHeader() {
           {/* Thanh tìm kiếm kẹp sách ẩn trên mobile, hiện từ màn hình sm trở lên */}
           <BookSearchBar className="hidden sm:block" />
 
+          {/* Nút chọn Mùa thi ca */}
+          <div className="shrink-0">
+            <SeasonSwitch />
+          </div>
+
           {/* Công tắc trượt Light / Dark Mode */}
           <div className="shrink-0">
             <ThemeSwitch />
@@ -174,11 +155,11 @@ export function SiteHeader() {
             <span>Bắt Đầu Đọc</span>
           </button>
 
-          {/* Nút Menu Burger Mobile có xoay icon 3D */}
+          {/* Nút Menu Burger Mobile có hit-box chuẩn 44x44px (Hallmark Gate 43) */}
           <button
             type="button"
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="lg:hidden p-2 text-neutral-800 dark:text-neutral-200 hover:bg-black/5 dark:hover:bg-white/5 rounded-full transition-transform active:scale-90 cursor-pointer"
+            className="lg:hidden min-w-[44px] min-h-[44px] w-11 h-11 flex items-center justify-center text-neutral-800 dark:text-neutral-200 hover:bg-black/5 dark:hover:bg-white/5 rounded-full transition-transform active:scale-90 cursor-pointer focus-visible:outline-2 focus-visible:outline-[var(--color-focus)]"
             aria-label="Toggle Navigation"
           >
             <motion.div
@@ -225,7 +206,7 @@ export function SiteHeader() {
                 <Link
                   href={link.href}
                   onClick={() => setMobileOpen(false)}
-                  className="font-serif text-base text-neutral-800 dark:text-[#EAE6DF] hover:text-[var(--accent-green)] dark:hover:text-[var(--accent-gold)] py-2 border-b border-neutral-200/50 dark:border-white/10 flex items-center justify-between transition-colors"
+                  className="font-serif text-base text-neutral-800 dark:text-[#EAE6DF] hover:text-[var(--accent-green)] dark:hover:text-[var(--accent-gold)] py-2.5 border-b border-neutral-200/50 dark:border-white/10 flex items-center justify-between transition-colors"
                 >
                   <span>{link.label}</span>
                   <span className="font-mono text-xs opacity-40">→</span>
@@ -236,7 +217,18 @@ export function SiteHeader() {
             <motion.div
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.24, duration: 0.25 }}
+              transition={{ delay: 0.22, duration: 0.25 }}
+              className="flex items-center justify-between pt-2 border-t border-neutral-200/50 dark:border-white/10"
+            >
+              <span className="text-xs font-mono text-neutral-500 uppercase tracking-wider">Mùa thi ca:</span>
+              <SeasonSwitch />
+            </motion.div>
+
+
+            <motion.div
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.28, duration: 0.25 }}
               className="flex items-center justify-between pt-2"
             >
               <span className="text-xs font-mono text-neutral-500 uppercase tracking-wider">Chế độ hiển thị:</span>
@@ -247,18 +239,18 @@ export function SiteHeader() {
               type="button"
               initial={{ opacity: 0, y: 10, scale: 0.96 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ delay: 0.28, duration: 0.25 }}
+              transition={{ delay: 0.3, duration: 0.25 }}
               onClick={() => {
                 setMobileOpen(false);
                 openBook();
               }}
-              className="w-full text-center py-2.5 text-xs font-mono uppercase tracking-wider text-white bg-[var(--accent-green)] hover:bg-[var(--accent-green-hover)] rounded-full shadow-sm flex items-center justify-center transition-all cursor-pointer active:scale-98"
+              className="w-full text-center py-3 text-sm font-sans font-medium text-white bg-[var(--accent-green)] hover:bg-[var(--accent-green-hover)] rounded-full shadow-sm flex items-center justify-center transition-all cursor-pointer active:scale-98"
             >
               <span>Bắt Đầu Đọc</span>
             </motion.button>
           </motion.div>
         )}
       </AnimatePresence>
-    </header>
+      </header>
   );
 }

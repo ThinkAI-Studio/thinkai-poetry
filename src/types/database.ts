@@ -29,6 +29,7 @@ export interface Collection {
   cover_image_url: string | null;
   is_featured: boolean;
   sort_order: number;
+  type?: 'poetry' | 'prose' | 'mixed';
   created_at: string;
   updated_at: string;
   // Computed / joined fields
