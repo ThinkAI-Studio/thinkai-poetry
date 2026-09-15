@@ -1,6 +1,25 @@
-# Thi Ca Anh Thịnh (Wind Poetic Platform)
+<div align="center">
 
-A contemporary digital poetry sanctuary that harmonizes East Asian aesthetics with modern web engineering. The platform delivers an immersive reading experience centered around a physics-driven 3D page-flip book, a real-time four-season atmospheric ecosystem, an interactive multi-tier bookshelf, and a zero-asset procedural nature audio engine powered directly by the Web Audio API.
+# Thi Ca Anh Thịnh
+### Contemporary East Asian Poetry Platform · Wind Poetic Sanctuary
+
+[![Next.js](https://img.shields.io/badge/Next.js_15-000000?style=flat-square&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React_19-20232A?style=flat-square&logo=react&logoColor=61DAFB)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript_5-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS_v4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=flat-square&logo=supabase&logoColor=white)](https://supabase.com/)
+[![Framer Motion](https://img.shields.io/badge/Motion_12-0055FF?style=flat-square&logo=framer&logoColor=white)](https://motion.dev/)
+[![Web Audio API](https://img.shields.io/badge/Web_Audio_API-E34F26?style=flat-square&logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API)
+[![Turbopack](https://img.shields.io/badge/Turbopack-000000?style=flat-square&logo=vercel&logoColor=white)](https://turbo.build/pack)
+
+<p align="center">
+  A contemporary digital poetry sanctuary that harmonizes East Asian aesthetics with modern web engineering. <br/>
+  Featuring a physics-driven 3D page-flip book, a dynamic four-season atmospheric ecosystem, an interactive multi-tier bookshelf, and a zero-asset procedural nature audio engine.
+</p>
+
+[Core Experiences](#core-experiences--product-features) • [Architecture](#technology-stack--architecture) • [Directory Structure](#directory-structure) • [Getting Started](#getting-started) • [Design Principles](#design-principles--craftsmanship)
+
+</div>
 
 ---
 
