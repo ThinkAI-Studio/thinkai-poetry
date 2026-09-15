@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { EB_Garamond, Lora, Be_Vietnam_Pro } from "next/font/google";
 import { PoeticPaperTexture } from "@/components/effects/PoeticPaperTexture";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 // 1. Phông Tiêu Đề & Thi Phẩm: EB Garamond (Kinh điển thời Thơ Mới, tao nhã, chuẩn mực)
@@ -102,6 +103,7 @@ export default function RootLayout({
         {/* Lớp vân thớ giấy Dó hữu cơ & Bộ lọc SVG Loang Mực */}
         <PoeticPaperTexture />
         {children}
+        <Analytics />
       </body>
     </html>
   );
