@@ -471,8 +471,8 @@ export function FloralDecoration() {
       {/* GRADIENTS DÙNG CHUNG CỦA 4 MÙA */}
       <SharedSeasonalDefs />
 
-      {/* Cụm hoa bên trái (Left Cluster) */}
-      <div className="floral-cluster pointer-events-auto absolute bottom-[60px] left-[-20px] md:left-0 h-[580px] w-[34vw] max-w-[460px]">
+      {/* Cụm hoa bên trái (Left Cluster) - Chỉ hiện trên màn hình lớn để tránh đè nội dung mobile */}
+      <div className="floral-cluster hidden lg:block pointer-events-auto absolute bottom-[60px] left-0 h-[580px] w-[34vw] max-w-[460px]">
         {leftClusterPositions.map((pos, idx) => (
           <FloralNode
             key={`left-${idx}`}
@@ -486,8 +486,8 @@ export function FloralDecoration() {
         ))}
       </div>
 
-      {/* Cụm hoa bên phải (Right Cluster) */}
-      <div className="floral-cluster pointer-events-auto absolute right-[-20px] md:right-0 bottom-[60px] h-[580px] w-[34vw] max-w-[460px]">
+      {/* Cụm hoa bên phải (Right Cluster) - Chỉ hiện trên màn hình lớn */}
+      <div className="floral-cluster hidden lg:block pointer-events-auto absolute right-0 bottom-[60px] h-[580px] w-[34vw] max-w-[460px]">
         <div className="relative h-full w-full">
           {rightClusterPositions.map((pos, idx) => (
             <FloralNode
@@ -503,14 +503,15 @@ export function FloralDecoration() {
         </div>
       </div>
 
-      {/* 5 CÁNH HOA / LÁ / BÔNG TUYẾT TRÔI LÃNG MẠN THEO MÙA */}
-      {[
-        { id: "dp-1", x: "7%", y: "47%", rotate: 25, scale: 1.0, duration: 4.8 },
-        { id: "dp-2", x: "16%", y: "53%", rotate: -18, scale: 1.1, duration: 5.2 },
-        { id: "dp-3", x: "23%", y: "65%", rotate: 32, scale: 0.9, duration: 4.5 },
-        { id: "dp-4", x: "92%", y: "38%", rotate: -22, scale: 1.05, duration: 5.0 },
-        { id: "dp-5", x: "78%", y: "68%", rotate: 20, scale: 0.95, duration: 4.6 },
-      ].map((petal) => (
+      {/* 5 CÁNH HOA / LÁ / BÔNG TUYẾT TRÔI LÃNG MẠN THEO MÙA - Chỉ hiện trên màn hình lớn để không đè chữ */}
+      <div className="hidden lg:block pointer-events-none absolute inset-0 select-none z-20 overflow-hidden">
+        {[
+          { id: "dp-1", x: "7%", y: "47%", rotate: 25, scale: 1.0, duration: 4.8 },
+          { id: "dp-2", x: "16%", y: "53%", rotate: -18, scale: 1.1, duration: 5.2 },
+          { id: "dp-3", x: "23%", y: "65%", rotate: 32, scale: 0.9, duration: 4.5 },
+          { id: "dp-4", x: "92%", y: "38%", rotate: -22, scale: 1.05, duration: 5.0 },
+          { id: "dp-5", x: "78%", y: "68%", rotate: 20, scale: 0.95, duration: 4.6 },
+        ].map((petal) => (
         <motion.div
           key={petal.id}
           className="pointer-events-none absolute select-none z-20"
@@ -577,6 +578,7 @@ export function FloralDecoration() {
           )}
         </motion.div>
       ))}
+      </div>
 
       {/* Cánh hoa bay khi click */}
       <AnimatePresence>

@@ -19,7 +19,7 @@ export default function HomePage() {
       {/* ========================================================= */}
       {/* 1. HERO SECTION: KHÔNG GIAN THI CA ĐƯƠNG ĐẠI               */}
       {/* ========================================================= */}
-      <section className="relative min-h-[85vh] sm:min-h-[88vh] flex flex-col items-center justify-center px-4 sm:px-6 text-center overflow-hidden pt-4 pb-16">
+      <section className="relative min-h-[85vh] sm:min-h-[88vh] flex flex-col items-center justify-center px-4 sm:px-6 text-center overflow-hidden pt-2 sm:pt-4 pb-20 sm:pb-16">
         {/* Nền hoa lá màu nước đung đưa & cánh hoa tương tác */}
         <FloralDecoration />
 
@@ -27,17 +27,17 @@ export default function HomePage() {
         <div className="relative z-10 max-w-5xl mx-auto flex flex-col items-center w-full">
 
           {/* Tiêu đề chính: Hallmark Gate 38a Purity (EB Garamond Roman) & text-wrap balance */}
-          <div className="mb-8 select-none text-center max-w-3xl">
-            <h1 className="font-poem-heading text-5xl sm:text-6xl md:text-[68px] font-bold tracking-tight text-neutral-900 dark:text-[#EAE6DF] leading-[1.1] [text-wrap:balance]">
+          <div className="mb-4 sm:mb-8 select-none text-center max-w-3xl">
+            <h1 className="font-poem-heading text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-[68px] font-bold tracking-tight text-neutral-900 dark:text-[#EAE6DF] leading-[1.15] [text-wrap:balance]">
               Không gian thi ca đương đại
             </h1>
-            <p className="font-poem-heading text-3xl sm:text-4xl md:text-[46px] text-neutral-700 dark:text-[#A6A39C] font-light mt-3 tracking-tight [text-wrap:balance]">
+            <p className="font-poem-heading text-base xs:text-lg sm:text-2xl md:text-3xl lg:text-[46px] text-neutral-700 dark:text-[#A6A39C] font-light mt-1.5 sm:mt-3 tracking-tight [text-wrap:balance]">
               Nơi hồn thơ lắng đọng
             </p>
           </div>
 
           {/* VÙNG KHUNG THƠ TRUNG TÂM VÀ CÁC THẺ PHÂN LOẠI THI CA */}
-          <div className="relative w-full max-w-[410px] mx-auto flex items-center justify-center mt-2">
+          <div className="relative w-full max-w-[410px] mx-auto flex items-center justify-center mt-1 sm:mt-2">
             {/* THẺ THỂ LOẠI 1 (TRÁI): Thơ Lục Bát */}
             <a
               href="#khong-gian-sach-tho"
@@ -75,17 +75,17 @@ export default function HomePage() {
             <motion.div
               initial={false}
               animate={{ opacity: 1, y: 0 }}
-              className="w-full px-8 pt-8 pb-6 sm:px-9 sm:pt-9 sm:pb-7 rounded-2xl bg-[#FAF8F5]/95 dark:bg-[#181816]/95 text-neutral-900 dark:text-[#EAE6DF] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.9),0_15px_35px_rgba(0,0,0,0.06)] dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08),0_20px_50px_rgba(0,0,0,0.7)] backdrop-blur-md border border-amber-950/10 dark:border-white/10 text-center relative z-20 transition-all duration-300 hover:shadow-[inset_0_1px_0_0_rgba(255,255,255,1),0_20px_45px_rgba(0,0,0,0.09)] dark:hover:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.12),0_25px_60px_rgba(0,0,0,0.8)]"
+              className="w-full px-5 py-5 sm:px-9 sm:pt-9 sm:pb-7 rounded-2xl bg-[#FAF8F5]/95 dark:bg-[#181816]/95 text-neutral-900 dark:text-[#EAE6DF] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.9),0_15px_35px_rgba(0,0,0,0.06)] dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08),0_20px_50px_rgba(0,0,0,0.7)] backdrop-blur-md border border-amber-950/10 dark:border-white/10 text-center relative z-20 transition-all duration-300 hover:shadow-[inset_0_1px_0_0_rgba(255,255,255,1),0_20px_45px_rgba(0,0,0,0.09)] dark:hover:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.12),0_25px_60px_rgba(0,0,0,0.8)]"
             >
               {/* Nội dung bài thơ */}
-              <div className="space-y-4 font-poem-verse text-[14.5px] sm:text-[15px] leading-[1.8] text-neutral-800 dark:text-[#EAE6DF] select-none">
-                <div className="space-y-1">
+              <div className="space-y-3 sm:space-y-4 font-poem-verse text-[14px] sm:text-[15px] leading-[1.75] sm:leading-[1.8] text-neutral-800 dark:text-[#EAE6DF] select-none">
+                <div className="space-y-0.5 sm:space-y-1">
                   <p>Những tháng ngày đã cũ</p>
                   <p>Em nhắc lại làm gì?</p>
                   <p>Do yêu thương chưa đủ</p>
                   <p>Nên chúng mình rời đi</p>
                 </div>
-                <div className="space-y-1">
+                <div className="space-y-0.5 sm:space-y-1">
                   <p>Hạnh phúc do em chọn</p>
                   <p>Cớ sao phải nặng lòng?</p>
                   <p>Bước qua bao mùa hạ</p>
@@ -94,10 +94,10 @@ export default function HomePage() {
               </div>
 
               {/* Tên tác giả và Triện Son Chu Sa (Chop Mark: 風 Wind) */}
-              <div className="mt-5 mb-5 flex items-center justify-end gap-2.5 font-poem-heading text-sm font-medium text-neutral-700 dark:text-[#A6A39C] select-none pr-1">
+              <div className="mt-3.5 mb-3.5 sm:mt-5 sm:mb-5 flex items-center justify-end gap-2 font-poem-heading text-xs sm:text-sm font-medium text-neutral-700 dark:text-[#A6A39C] select-none pr-1">
                 <span>Thịnh (Ký danh: Wind)</span>
                 <span
-                  className="inline-flex items-center justify-center w-5 h-5 rounded-[3px] border border-[var(--book-seal-border)] bg-[var(--accent-vermilion)]/10 text-[var(--accent-vermilion)] font-serif text-[10px] font-bold tracking-tighter leading-none shadow-2xs select-none"
+                  className="inline-flex items-center justify-center w-4.5 h-4.5 sm:w-5 sm:h-5 rounded-[3px] border border-[var(--book-seal-border)] bg-[var(--accent-vermilion)]/10 text-[var(--accent-vermilion)] font-serif text-[9px] sm:text-[10px] font-bold tracking-tighter leading-none shadow-2xs select-none"
                   title="Dấu triện Wind · Chu Sa son đỏ"
                   aria-hidden="true"
                 >
@@ -106,11 +106,11 @@ export default function HomePage() {
               </div>
 
               {/* Nút Mở Cuốn Sách Thơ 3D */}
-              <div className="mt-5 pt-4 border-t border-amber-950/10 dark:border-white/10 flex items-center justify-center">
+              <div className="mt-3 pt-3 sm:mt-5 sm:pt-4 border-t border-amber-950/10 dark:border-white/10 flex items-center justify-center">
                 <button
                   type="button"
                   onClick={() => openBook()}
-                  className="impeccable-touch-target inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full text-xs font-serif tracking-wider text-[var(--accent-green)] dark:text-[var(--accent-gold)] bg-amber-950/[0.03] dark:bg-white/[0.04] border border-amber-950/10 dark:border-white/10 hover:border-[var(--accent-green)] dark:hover:border-[var(--accent-gold)] hover:bg-[var(--accent-green)]/10 dark:hover:bg-[var(--accent-gold)]/15 transition-all duration-200 cursor-pointer font-semibold focus-visible:outline-2 focus-visible:outline-[var(--color-focus)] active:scale-[0.97] shadow-xs group"
+                  className="impeccable-touch-target inline-flex items-center justify-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 rounded-full text-xs font-serif tracking-wider text-[var(--accent-green)] dark:text-[var(--accent-gold)] bg-amber-950/[0.03] dark:bg-white/[0.04] border border-amber-950/10 dark:border-white/10 hover:border-[var(--accent-green)] dark:hover:border-[var(--accent-gold)] hover:bg-[var(--accent-green)]/10 dark:hover:bg-[var(--accent-gold)]/15 transition-all duration-200 cursor-pointer font-semibold focus-visible:outline-2 focus-visible:outline-[var(--color-focus)] active:scale-[0.97] shadow-xs group"
                 >
                   <BookOpen className="w-3.5 h-3.5 transition-transform duration-200 group-hover:scale-110" />
                   <span>Mở Cuốn Sách Thơ 3D</span>
@@ -120,7 +120,7 @@ export default function HomePage() {
           </div>
 
           {/* DẢI THẺ THỂ LOẠI DÀNH CHO MOBILE (HALLMARK AFFORDANCE) */}
-          <div className="flex md:hidden items-center justify-center gap-2 mt-4 flex-wrap select-none">
+          <div className="flex md:hidden items-center justify-center gap-2 mt-3 sm:mt-4 flex-wrap select-none">
             <a
               href="#khong-gian-sach-tho"
               className="impeccable-touch-target inline-flex items-center gap-1.5 rounded-full border border-neutral-200/90 dark:border-white/10 bg-white/95 dark:bg-[#181816]/95 px-3 py-1.5 shadow-2xs text-[11px] font-serif font-medium text-neutral-800 dark:text-[#EAE6DF] active:scale-95"

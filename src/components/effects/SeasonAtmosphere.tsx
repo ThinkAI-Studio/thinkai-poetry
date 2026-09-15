@@ -45,10 +45,22 @@ const SeasonToneOverlay = memo(({ season }: { season: Season }) => {
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none fixed inset-0 z-[1] transition-opacity duration-1000 ease-out"
+      className="pointer-events-none fixed inset-0 z-[1]"
+      style={{
+        // GPU-composited layer → không bị paint lag khi cuộn nhanh trên mobile
+        transform: "translateZ(0)",
+        willChange: "opacity",
+        contain: "strict",
+      }}
     >
-      <div className={`absolute inset-0 transition-all duration-1000 ${current.ambient}`} />
-      <div className={`absolute inset-0 transition-all duration-1000 ${current.vignette}`} />
+      <div
+        className={`absolute inset-0 transition-all duration-1000 ${current.ambient}`}
+        style={{ transform: "translateZ(0)" }}
+      />
+      <div
+        className={`absolute inset-0 transition-all duration-1000 ${current.vignette}`}
+        style={{ transform: "translateZ(0)" }}
+      />
     </div>
   );
 });

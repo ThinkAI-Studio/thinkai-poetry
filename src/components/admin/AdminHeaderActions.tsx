@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { LogOut, ExternalLink, Menu, X, ShieldCheck, BookOpen, Plus, BookMarked, User, History } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { ThemeSwitch } from "@/components/layout/ThemeSwitch";
+import { SeasonSwitch } from "@/components/layout/SeasonSwitch";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
@@ -35,6 +36,9 @@ export function AdminHeaderActions() {
 
   return (
     <div className="flex items-center gap-2 sm:gap-3 text-xs font-mono">
+      {/* Season Switch — điều chỉnh mùa thi ca */}
+      <SeasonSwitch className="hidden sm:inline-flex" />
+
       {/* Theme Switch đồng bộ trải nghiệm Ngày/Đêm */}
       <ThemeSwitch id="admin-theme-switch" />
 

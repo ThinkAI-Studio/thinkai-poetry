@@ -27,7 +27,7 @@ export default async function PublicLayout({
           <SmoothScroll />
           <SeasonAtmosphere />
           <SiteHeader />
-          <main className="flex-1 pt-20">
+          <main className="flex-1 pt-14 sm:pt-20">
             <PageTransition>{children}</PageTransition>
           </main>
           <PoeticGrassFringe />

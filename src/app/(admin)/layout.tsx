@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { AdminHeaderActions } from "@/components/admin/AdminHeaderActions";
 import { AdminSidebarNav } from "@/components/admin/AdminSidebarNav";
+import { SeasonProvider } from "@/context/SeasonContext";
 
 export const metadata = {
   title: "Admin Studio | Wind",
@@ -25,6 +26,7 @@ export default async function AdminLayout({
   }
 
   return (
+    <SeasonProvider>
     <div className="min-h-screen bg-[var(--bg-page)] text-[var(--text-primary)] flex flex-col font-sans selection:bg-[var(--accent-green)] selection:text-white transition-colors duration-200">
       {/* Top Header Bar */}
       <header className="h-14 border-b border-[var(--border-subtle)] bg-[var(--bg-card)]/90 px-4 sm:px-6 flex items-center justify-between z-30 sticky top-0 backdrop-blur-md transition-colors duration-200">
@@ -72,5 +74,6 @@ export default async function AdminLayout({
         </main>
       </div>
     </div>
+    </SeasonProvider>
   );
 }
