@@ -40,27 +40,39 @@ const toneConfig: Record<Season, { vignette: string; ambient: string }> = {
   },
 };
 
+const SEASONS_LIST: Season[] = ["spring", "summer", "autumn", "winter"];
+
 const SeasonToneOverlay = memo(({ season }: { season: Season }) => {
-  const current = toneConfig[season] || toneConfig.spring;
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none fixed inset-0 z-[1]"
+      className="pointer-events-none fixed -top-[25vh] -bottom-[25vh] -left-[10vw] -right-[10vw] w-[120vw] min-h-[150vh] z-[1] overflow-hidden"
       style={{
-        // GPU-composited layer → không bị paint lag khi cuộn nhanh trên mobile
+        // Tối ưu GPU layer, không dùng contain:strict để tránh bị browser hoãn paint khi cuộn nhanh
         transform: "translateZ(0)",
         willChange: "opacity",
-        contain: "strict",
       }}
     >
-      <div
-        className={`absolute inset-0 transition-all duration-1000 ${current.ambient}`}
-        style={{ transform: "translateZ(0)" }}
-      />
-      <div
-        className={`absolute inset-0 transition-all duration-1000 ${current.vignette}`}
-        style={{ transform: "translateZ(0)" }}
-      />
+      {SEASONS_LIST.map((s) => {
+        const isActive = s === season;
+        const current = toneConfig[s];
+        return (
+          <div
+            key={s}
+            className={cn(
+              "absolute inset-0 transition-opacity duration-300 ease-out pointer-events-none",
+              isActive ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"
+            )}
+            style={{
+              transform: "translateZ(0)",
+              willChange: "opacity",
+            }}
+          >
+            <div className={`absolute inset-0 ${current.ambient}`} />
+            <div className={`absolute inset-0 ${current.vignette}`} />
+          </div>
+        );
+      })}
     </div>
   );
 });

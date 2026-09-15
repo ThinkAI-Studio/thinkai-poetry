@@ -44,7 +44,7 @@ export function SeasonSwitch({ className }: { className?: string }) {
         aria-label={`Chọn mùa thi ca (Hiện tại: ${metadata.fullName})`}
         aria-expanded={isOpen}
         className={cn(
-          "impeccable-touch-target inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-serif transition-all duration-200 cursor-pointer shadow-2xs backdrop-blur-md active:scale-95 focus-visible:outline-2 focus-visible:outline-[var(--color-focus)]",
+          "impeccable-touch-target inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full border text-xs font-serif transition-all duration-200 cursor-pointer shadow-2xs backdrop-blur-md active:scale-95 focus-visible:outline-2 focus-visible:outline-[var(--color-focus)]",
           "border-amber-900/15 dark:border-white/10 bg-white/80 dark:bg-[#181816]/90 text-neutral-800 dark:text-[#EAE6DF] hover:border-amber-900/30 dark:hover:border-white/25 hover:shadow-xs"
         )}
       >

@@ -91,12 +91,12 @@ export function SiteHeader() {
             : "translate-y-0 opacity-100 pointer-events-auto"
         )}
       >
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 md:px-8 flex items-center justify-between gap-4">
+      <div className="max-w-6xl mx-auto px-3 sm:px-6 md:px-8 flex items-center justify-between gap-2 sm:gap-4">
         {/* Logo: Biểu tượng Wind + Tên thương hiệu */}
         <Link
           href="/"
           onClick={handleLogoClick}
-          className="flex items-center gap-2.5 sm:gap-3 group select-none cursor-pointer shrink-0"
+          className="flex items-center gap-2 sm:gap-3 group select-none cursor-pointer shrink-0"
           title="Trở về đầu trang Wind"
         >
           <div className="relative w-8 h-8 sm:w-9 sm:h-9 shrink-0 transition-transform duration-200 group-hover:scale-105 active:scale-95 drop-shadow-xs">
@@ -108,11 +108,11 @@ export function SiteHeader() {
               className="object-contain"
             />
           </div>
-          <div className="flex flex-col">
+          <div className="flex flex-col min-w-0">
             <span className="font-serif text-lg sm:text-xl font-bold tracking-tight text-neutral-900 dark:text-[#EAE6DF] leading-none group-hover:text-[var(--accent-green)] dark:group-hover:text-[var(--accent-gold)] transition-colors">
               Wind
             </span>
-            <span className="font-sans text-[9px] sm:text-[10px] tracking-[0.2em] uppercase text-neutral-500 dark:text-neutral-400 mt-0.5">
+            <span className="hidden sm:block font-sans text-[9px] sm:text-[10px] tracking-[0.2em] uppercase text-neutral-500 dark:text-neutral-400 mt-0.5">
               Thi Quán Đương Đại
             </span>
           </div>
@@ -132,7 +132,7 @@ export function SiteHeader() {
         </nav>
 
         {/* Desktop Actions: Search Bar + Theme Switch + CTA Button */}
-        <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
           {/* Thanh tìm kiếm kẹp sách ẩn trên mobile, hiện từ màn hình sm trở lên */}
           <BookSearchBar className="hidden sm:block" />
 
@@ -159,7 +159,7 @@ export function SiteHeader() {
           <button
             type="button"
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="lg:hidden min-w-[44px] min-h-[44px] w-11 h-11 flex items-center justify-center text-neutral-800 dark:text-neutral-200 hover:bg-black/5 dark:hover:bg-white/5 rounded-full transition-transform active:scale-90 cursor-pointer focus-visible:outline-2 focus-visible:outline-[var(--color-focus)]"
+            className="lg:hidden shrink-0 min-w-[40px] min-h-[40px] w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center text-neutral-800 dark:text-neutral-200 hover:bg-black/5 dark:hover:bg-white/5 rounded-full transition-transform active:scale-90 cursor-pointer focus-visible:outline-2 focus-visible:outline-[var(--color-focus)]"
             aria-label="Toggle Navigation"
           >
             <motion.div

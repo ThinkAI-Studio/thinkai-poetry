@@ -100,10 +100,15 @@ export function executeKindlePageCurl({
     typeof window !== "undefined" &&
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+  const isMobile =
+    typeof window !== "undefined" &&
+    (window.innerWidth < 768 || window.matchMedia("(pointer: coarse)").matches);
+
   const supportsViewTransition =
     typeof document !== "undefined" &&
     "startViewTransition" in document &&
-    !prefersReduced;
+    !prefersReduced &&
+    !isMobile;
 
   if (!supportsViewTransition) {
     onCommit(targetTheme);
@@ -118,21 +123,28 @@ export function executeKindlePageCurl({
   const peelPolygons = isForward
     ? FORWARD_BOTTOM_PEEL_POLYGONS
     : BACKWARD_BOTTOM_PEEL_POLYGONS;
-  // Motion chậm lại theo nhịp thơ dịu êm (ThinkAI UI Poetic Motion: 980ms)
-  const duration = 980;
+  // Motion dịu êm: 550ms (nhanh và dứt khoát hơn để không giam giữ DOM)
+  const duration = 550;
 
   // Tạm thời tắt CSS transitions trên live DOM để chụp ảnh snapshot tức thì, triệt tiêu hoàn toàn flicker
   document.documentElement.classList.add("theme-transitioning");
 
-  // Safety net: luôn cleanup sau 1350ms
+  // Safety net: luôn cleanup sau 750ms
   const safetyCleanup = setTimeout(() => {
     document.documentElement.classList.remove("theme-transitioning");
-  }, 1350);
+  }, 750);
 
   const cleanup = () => {
     clearTimeout(safetyCleanup);
     document.documentElement.classList.remove("theme-transitioning");
   };
+
+  // Nếu người dùng cuộn chuột hoặc vuốt màn hình khi đang transition -> hủy ngay để tránh khựng
+  const onUserScroll = () => {
+    cleanup();
+    window.removeEventListener("scroll", onUserScroll);
+  };
+  window.addEventListener("scroll", onUserScroll, { passive: true, once: true });
 
   try {
     const transition = (document as any).startViewTransition(() => {
