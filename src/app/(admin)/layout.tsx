@@ -63,14 +63,14 @@ export default async function AdminLayout({
       </header>
 
       {/* Main Admin Workspace with Sidebar */}
-      <div className="flex-1 flex flex-col md:flex-row">
+      <div className="flex-1 w-full min-w-0 max-w-full flex flex-col md:flex-row">
         {/* Sidebar (Chỉ hiển thị thanh dọc cố định trên Desktop, trên Mobile tích hợp trực tiếp vào Header chính) */}
         <aside className="hidden md:block w-64 border-r border-[var(--border-subtle)] bg-[var(--bg-card)]/60 p-4 shrink-0 transition-colors duration-200">
           <AdminSidebarNav />
         </aside>
 
         {/* Content Area */}
-        <main className="flex-1 w-full min-w-0 p-4 sm:p-6 md:p-10 bg-[var(--bg-page)] overflow-y-auto overflow-x-hidden transition-colors duration-200">
+        <main className="flex-1 w-full min-w-0 max-w-full p-4 sm:p-6 md:p-10 bg-[var(--bg-page)] transition-colors duration-200">
           {children}
         </main>
       </div>

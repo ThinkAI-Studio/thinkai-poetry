@@ -109,7 +109,7 @@ export default function AdminPoemsListPage() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto flex flex-col gap-6 pb-16 relative">
+    <div className="w-full max-w-6xl mx-auto min-w-0 flex flex-col gap-6 pb-16 relative">
       {/* Toast thông báo — Cân xứng hoàn hảo trên cả mobile (left-4 right-4) và desktop (sm:w-96) */}
       {toast && (
         <div className="fixed top-4 left-4 right-4 sm:left-auto sm:right-6 sm:w-96 z-50 pointer-events-none transition-all duration-200 animate-in fade-in slide-in-from-top-2">
@@ -188,10 +188,11 @@ export default function AdminPoemsListPage() {
 
       {/* Bảng Thi phẩm */}
       <div
-        className="w-full max-w-full overflow-x-auto touch-pan-x overscroll-x-contain border border-[var(--border-subtle)] bg-[var(--bg-card)] rounded-2xl shadow-xs"
-        style={{ WebkitOverflowScrolling: "touch" }}
+        className="w-full max-w-full min-w-0 overflow-x-auto border border-[var(--border-subtle)] bg-[var(--bg-card)] rounded-2xl shadow-xs"
+        style={{ WebkitOverflowScrolling: "touch", touchAction: "auto" }}
       >
-        <table className="w-full text-left text-xs font-mono min-w-[720px]">
+        <div className="min-w-[720px] w-full">
+          <table className="w-full text-left text-xs font-mono">
           <thead className="bg-[var(--text-primary)]/[0.04] border-b border-[var(--border-subtle)] uppercase tracking-wider text-[var(--text-secondary)] whitespace-nowrap">
             <tr>
               <th className="py-3 px-4 min-w-[200px]">Tác phẩm</th>
@@ -367,6 +368,7 @@ export default function AdminPoemsListPage() {
             )}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );

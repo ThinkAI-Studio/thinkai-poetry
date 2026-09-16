@@ -84,7 +84,7 @@ export function PageTransition({ children }: PageTransitionProps) {
           duration: 0.32,
           ease: EASINGS.luxury,
         }}
-        className="w-full flex-1 flex flex-col min-h-full"
+        className="w-full max-w-full min-w-0 flex-1 flex flex-col min-h-full"
       >
         {children}
       </motion.div>

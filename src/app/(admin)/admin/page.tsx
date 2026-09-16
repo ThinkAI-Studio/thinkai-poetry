@@ -14,7 +14,7 @@ export default async function AdminDashboardPage() {
   const totalViews = poems.reduce((acc, p) => acc + p.view_count, 0);
 
   return (
-    <div className="max-w-6xl mx-auto flex flex-col gap-8">
+    <div className="w-full max-w-6xl mx-auto min-w-0 flex flex-col gap-8">
       {/* Top Banner */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-[var(--border-subtle)]">
         <div>

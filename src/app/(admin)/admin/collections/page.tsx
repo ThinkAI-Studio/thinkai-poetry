@@ -142,7 +142,7 @@ export default function AdminCollectionsPage() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto flex flex-col gap-8 pb-16 relative">
+    <div className="w-full max-w-5xl mx-auto min-w-0 flex flex-col gap-8 pb-16 relative">
       {/* Toast thông báo */}
       {toast && (
         <div className="fixed top-4 right-4 sm:right-8 z-50 max-w-sm w-[calc(100vw-2rem)] animate-in fade-in slide-in-from-top-4 duration-200">
