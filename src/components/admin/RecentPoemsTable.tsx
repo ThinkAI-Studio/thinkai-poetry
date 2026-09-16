@@ -143,9 +143,17 @@ export function RecentPoemsTable({ initialPoems }: RecentPoemsTableProps) {
         </Link>
       </div>
 
+      {/* Gợi ý vuốt ngang trên mobile */}
+      <div className="sm:hidden flex items-center justify-end gap-1.5 text-[11px] font-mono text-[var(--text-muted)] mb-2 select-none">
+        <span>← Vuốt ngang để xem thêm cột →</span>
+      </div>
+
       {/* Bảng */}
-      <div className="overflow-x-auto no-scrollbar border border-[var(--border-subtle)] bg-[var(--bg-card)] rounded-2xl shadow-xs">
-        <table className="w-full text-left text-xs font-mono">
+      <div
+        className="w-full max-w-full overflow-x-auto touch-pan-x overscroll-x-contain border border-[var(--border-subtle)] bg-[var(--bg-card)] rounded-2xl shadow-xs"
+        style={{ WebkitOverflowScrolling: "touch" }}
+      >
+        <table className="w-full text-left text-xs font-mono min-w-[720px]">
           <thead className="bg-[var(--text-primary)]/[0.04] border-b border-[var(--border-subtle)] uppercase tracking-wider text-[var(--text-secondary)] whitespace-nowrap">
             <tr>
               <th className="py-3.5 px-4 min-w-[200px]">Tiêu đề bài thơ / văn</th>

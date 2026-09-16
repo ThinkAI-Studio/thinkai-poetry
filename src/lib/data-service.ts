@@ -590,6 +590,53 @@ export async function updatePoem(
   return { data: updatedPoem, error: null };
 }
 
+/**
+ * Ghi nhận lượt đọc / lượt thưởng thức thi phẩm (Tự động tăng view_count trên Supabase & Local)
+ */
+export async function recordPoemView(
+  idOrSlug: string
+): Promise<{ success: boolean; view_count?: number; error?: string }> {
+  let newViewCount = 1;
+
+  if (isSupabaseConfigured()) {
+    try {
+      const supabase = getSupabaseClient(true);
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(idOrSlug);
+      const query = supabase.from("poems").select("id, slug, view_count");
+      const { data: poem } = isUuid
+        ? await query.eq("id", idOrSlug).single()
+        : await query.eq("slug", idOrSlug).single();
+
+      if (poem) {
+        const currentCount = poem.view_count || 0;
+        newViewCount = currentCount + 1;
+        await supabase
+          .from("poems")
+          .update({ view_count: newViewCount })
+          .eq("id", poem.id);
+      }
+    } catch (e: any) {
+      console.warn("Lỗi cập nhật lượt đọc trên Supabase:", e);
+    }
+  }
+
+  // Luôn đồng bộ vào local fallback file
+  try {
+    const filePath = path.join(process.cwd(), "src/data/local-poems.json");
+    const existingPoems = getLocalStoredPoems();
+    const targetPoem = existingPoems.find((p) => p.id === idOrSlug || p.slug === idOrSlug);
+    if (targetPoem) {
+      targetPoem.view_count = (targetPoem.view_count || 0) + 1;
+      newViewCount = targetPoem.view_count;
+      fs.writeFileSync(filePath, JSON.stringify(existingPoems, null, 2), "utf-8");
+    }
+  } catch (e) {
+    console.warn("Lỗi lưu lượt đọc vào local-poems.json:", e);
+  }
+
+  return { success: true, view_count: newViewCount };
+}
+
 // ==============================================================================
 // 2. COLLECTIONS (TUYỂN TẬP)
 // ==============================================================================

@@ -69,7 +69,7 @@ export default async function AdminLayout({
         </aside>
 
         {/* Content Area */}
-        <main className="flex-1 p-4 sm:p-6 md:p-10 bg-[var(--bg-page)] overflow-y-auto overflow-x-clip transition-colors duration-200">
+        <main className="flex-1 w-full min-w-0 p-4 sm:p-6 md:p-10 bg-[var(--bg-page)] overflow-y-auto overflow-x-hidden transition-colors duration-200">
           {children}
         </main>
       </div>

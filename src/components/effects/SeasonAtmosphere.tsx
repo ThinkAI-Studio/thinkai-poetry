@@ -90,97 +90,88 @@ const ExpandedSummerSunbeams = memo(({ prefersReducedMotion }: { prefersReducedM
       aria-hidden="true"
       className="pointer-events-none fixed inset-0 z-[25] overflow-hidden select-none"
     >
-      {/* Vùng chùm nắng tỏa rộng 75-80% viewport */}
+      {/* Vùng chùm nắng lan tỏa mượt mà toàn màn hình, triệt tiêu hoàn toàn viền hộp/ô vuông */}
       <div
-        className="absolute top-0 right-0 w-[95vw] sm:w-[85vw] md:w-[78vw] h-[85vh] origin-top-right opacity-90 transition-opacity duration-1000"
+        className="absolute inset-0 w-full h-full pointer-events-none opacity-90 transition-opacity duration-1000"
         style={{
           animation: prefersReducedMotion ? "none" : "sunbeam-pulse 10s ease-in-out infinite",
         }}
       >
         <svg
-          viewBox="0 0 1200 900"
+          viewBox="0 0 1440 900"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          className="h-full w-full object-cover"
+          className="h-full w-full pointer-events-none"
           preserveAspectRatio="none"
         >
           <defs>
-            {/* Tâm phát sáng mặt trời từ góc trên phải (1200, 0) */}
-            <radialGradient id="expandedSunGlow" cx="100%" cy="0%" r="80%">
-              <stop offset="0%" stopColor="#FEF08A" stopOpacity="0.32" />
-              <stop offset="25%" stopColor="#FDE047" stopOpacity="0.16" />
-              <stop offset="60%" stopColor="#F59E0B" stopOpacity="0.05" />
-              <stop offset="100%" stopColor="#F59E0B" stopOpacity="0" />
+            {/* Tâm phát sáng mặt trời từ góc trên phải (1440, 0) tan dần về trong suốt */}
+            <radialGradient id="expandedSunGlow" cx="100%" cy="0%" r="85%">
+              <stop offset="0%" stopColor="#FEF08A" stopOpacity="0.28" />
+              <stop offset="25%" stopColor="#FDE047" stopOpacity="0.14" />
+              <stop offset="55%" stopColor="#F59E0B" stopOpacity="0.04" />
+              <stop offset="90%" stopColor="#F59E0B" stopOpacity="0" />
             </radialGradient>
 
             {/* Các dải gradient tia nắng xiên tỏa rộng */}
             <linearGradient id="wideBeam1" x1="100%" y1="0%" x2="0%" y2="85%">
-              <stop offset="0%" stopColor="#FFFBEB" stopOpacity="0.22" />
-              <stop offset="40%" stopColor="#FEF08A" stopOpacity="0.12" />
-              <stop offset="80%" stopColor="#FBBF24" stopOpacity="0.03" />
+              <stop offset="0%" stopColor="#FFFBEB" stopOpacity="0.20" />
+              <stop offset="40%" stopColor="#FEF08A" stopOpacity="0.10" />
+              <stop offset="75%" stopColor="#FBBF24" stopOpacity="0.02" />
               <stop offset="100%" stopColor="#FBBF24" stopOpacity="0" />
             </linearGradient>
 
             <linearGradient id="wideBeam2" x1="100%" y1="0%" x2="25%" y2="100%">
-              <stop offset="0%" stopColor="#FEF08A" stopOpacity="0.24" />
-              <stop offset="50%" stopColor="#FDE68A" stopOpacity="0.10" />
-              <stop offset="100%" stopColor="#FDE68A" stopOpacity="0" />
+              <stop offset="0%" stopColor="#FEF08A" stopOpacity="0.22" />
+              <stop offset="50%" stopColor="#FDE68A" stopOpacity="0.08" />
+              <stop offset="85%" stopColor="#FDE68A" stopOpacity="0" />
             </linearGradient>
 
             <linearGradient id="wideBeam3" x1="100%" y1="0%" x2="55%" y2="100%">
-              <stop offset="0%" stopColor="#FFFBEB" stopOpacity="0.26" />
-              <stop offset="45%" stopColor="#FEF08A" stopOpacity="0.11" />
-              <stop offset="100%" stopColor="#FEF08A" stopOpacity="0" />
+              <stop offset="0%" stopColor="#FFFBEB" stopOpacity="0.24" />
+              <stop offset="45%" stopColor="#FEF08A" stopOpacity="0.09" />
+              <stop offset="85%" stopColor="#FEF08A" stopOpacity="0" />
             </linearGradient>
 
             <linearGradient id="wideBeam4" x1="100%" y1="0%" x2="75%" y2="100%">
-              <stop offset="0%" stopColor="#FEF08A" stopOpacity="0.18" />
-              <stop offset="55%" stopColor="#FBBF24" stopOpacity="0.06" />
-              <stop offset="100%" stopColor="#FBBF24" stopOpacity="0" />
+              <stop offset="0%" stopColor="#FEF08A" stopOpacity="0.16" />
+              <stop offset="55%" stopColor="#FBBF24" stopOpacity="0.05" />
+              <stop offset="90%" stopColor="#FBBF24" stopOpacity="0" />
             </linearGradient>
-
-            <filter id="wideSunFilter" x="-10%" y="-10%" width="120%" height="120%">
-              <feGaussianBlur stdDeviation="12" />
-            </filter>
           </defs>
 
-          {/* Hào quang nền */}
-          <rect width="1200" height="900" fill="url(#expandedSunGlow)" />
+          {/* Hào quang nền lan tỏa toàn màn hình */}
+          <rect width="1440" height="900" fill="url(#expandedSunGlow)" />
 
           {/* Tia 1: Tia lớn tỏa rộng sang tận góc dưới trái */}
           <polygon
-            points="1200,0 1060,0 0,680 0,900"
+            points="1440,0 1280,0 0,680 0,900"
             fill="url(#wideBeam1)"
-            filter="url(#wideSunFilter)"
           />
 
           {/* Tia 2: Tia trung tâm rực rỡ */}
           <polygon
-            points="1200,0 1140,0 180,900 420,900"
+            points="1440,0 1360,0 200,900 500,900"
             fill="url(#wideBeam2)"
-            filter="url(#wideSunFilter)"
           />
 
           {/* Tia 3: Tia phụ giữa */}
           <polygon
-            points="1200,0 1180,0 480,900 700,900"
+            points="1440,0 1410,0 580,900 840,900"
             fill="url(#wideBeam3)"
-            filter="url(#wideSunFilter)"
           />
 
           {/* Tia 4: Tia góc phải */}
           <polygon
-            points="1200,0 1200,120 760,900 980,900"
+            points="1440,0 1440,140 920,900 1180,900"
             fill="url(#wideBeam4)"
-            filter="url(#wideSunFilter)"
           />
 
           {/* Tia 5: Dải mỏng lấp lánh */}
           <polygon
-            points="1200,0 1200,280 880,900 1020,900"
+            points="1440,0 1440,320 1060,900 1220,900"
             fill="url(#wideBeam2)"
             opacity="0.6"
-            filter="url(#wideSunFilter)"
           />
         </svg>
       </div>

@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { usePoeticBook } from "@/context/PoeticBookContext";
 import { cn } from "@/lib/utils";
+import { trackPoemView } from "@/lib/view-tracker";
 
 interface PoemReaderViewProps {
   poem: Poem;
@@ -26,6 +27,15 @@ export function PoemReaderView({ poem }: PoemReaderViewProps) {
   const { openBook } = usePoeticBook();
   const [fontSize, setFontSize] = useState<number>(20);
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
+
+  // Tự động ghi nhận lượt đọc khi dừng lại thưởng thức tác phẩm
+  useEffect(() => {
+    if (!poem?.id) return;
+    const timer = setTimeout(() => {
+      trackPoemView(poem.id, poem.slug);
+    }, 2500);
+    return () => clearTimeout(timer);
+  }, [poem?.id, poem?.slug]);
 
   // Thanh tiến trình đọc (Reading Progress Bar)
   const { scrollYProgress } = useScroll();

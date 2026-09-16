@@ -14,10 +14,10 @@ export function middleware(request: NextRequest) {
     }
   }
 
-  // 2. Bảo vệ các thao tác ghi dữ liệu qua API (POST, PUT, PATCH, DELETE)
+  // 2. Bảo vệ các thao tác ghi dữ liệu qua API (POST, PUT, PATCH, DELETE), ngoại trừ ghi nhận lượt đọc công khai /api/poems/view
   const isWriteMethod = ["POST", "PUT", "PATCH", "DELETE"].includes(request.method);
   const isProtectedApiRoute =
-    pathname.startsWith("/api/poems") ||
+    (pathname.startsWith("/api/poems") && pathname !== "/api/poems/view") ||
     pathname.startsWith("/api/categories") ||
     pathname.startsWith("/api/collections") ||
     pathname.startsWith("/api/authors");

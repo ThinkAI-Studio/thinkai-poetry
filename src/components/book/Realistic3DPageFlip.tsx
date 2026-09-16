@@ -16,6 +16,7 @@ import { buildBookSpreads, BookSpread } from "@/lib/prose-paginator";
 import { getPoemGenreInfo } from "@/lib/poem-genre";
 import { useSeason } from "@/context/SeasonContext";
 import { playLeafRustleSound, playBranchShakeSound, playFrostCrunchSound } from "@/lib/nature-audio";
+import { trackPoemView } from "@/lib/view-tracker";
 
 interface Realistic3DPageFlipProps {
   poems: Poem[];
@@ -464,7 +465,7 @@ function PageMobile({
       </div>
 
       {/* Điều hướng bài trước / sau Mobile - Responsive & Impeccable Craft */}
-      <div className="pt-3.5 border-t border-amber-900/10 dark:border-white/10 flex flex-col gap-2">
+      <div className="pt-3.5 border-t border-amber-900/10 dark:border-white/10 flex flex-col gap-2 relative z-40 pointer-events-auto">
         <div className="flex items-center justify-between text-xs font-sans gap-1.5">
           <button
             type="button"
@@ -596,10 +597,10 @@ function BookSummerSunbeam() {
   return (
     <div
       aria-hidden="true"
-      className="absolute top-0 right-0 w-72 h-64 pointer-events-none z-20 overflow-hidden select-none"
+      className="absolute inset-0 w-full h-full pointer-events-none z-20 overflow-hidden select-none rounded-2xl"
     >
       <div
-        className="w-full h-full bg-gradient-to-bl from-amber-200/18 via-yellow-100/8 to-transparent opacity-80"
+        className="w-full h-full bg-[radial-gradient(ellipse_100%_80%_at_top_right,rgba(254,240,138,0.15)_0%,rgba(253,224,71,0.05)_45%,transparent_75%)] opacity-85"
         style={{
           animation: "sunbeam-pulse 9s ease-in-out infinite",
         }}
@@ -754,16 +755,16 @@ function BookWinterFrostCondensation({ isFlipping }: { isFlipping: boolean }) {
 
   return (
     <div
-      onClick={handleFrostTouch}
-      title="Hơi sương mùa đông trên bìa sách • Nhấp để làm tan sương giá"
+      aria-hidden="true"
+      title="Hơi sương mùa đông trên bìa sách"
       className={cn(
-        "absolute inset-0 z-30 pointer-events-none rounded-xl overflow-hidden transition-all duration-1000",
+        "absolute inset-0 z-15 pointer-events-none rounded-xl overflow-hidden transition-all duration-1000 select-none",
         isMelting ? "opacity-0 scale-[0.99] blur-xs" : "opacity-90 scale-100"
       )}
     >
       {/* Màng sương mờ ngưng tụ viền 4 góc và mép bìa */}
       <div
-        className="absolute inset-0 pointer-events-auto cursor-pointer"
+        className="absolute inset-0 pointer-events-none"
         style={{
           background:
             "radial-gradient(ellipse at top left, rgba(224,242,254,0.32) 0%, transparent 40%), radial-gradient(ellipse at top right, rgba(224,242,254,0.32) 0%, transparent 40%), radial-gradient(ellipse at bottom left, rgba(224,242,254,0.28) 0%, transparent 35%), radial-gradient(ellipse at bottom right, rgba(224,242,254,0.28) 0%, transparent 35%)",
@@ -801,6 +802,18 @@ export function Realistic3DPageFlip({
       if (flipTimerRef.current) clearTimeout(flipTimerRef.current);
     };
   }, []);
+
+  // Tự động ghi nhận lượt đọc khi độc giả dừng lại thưởng thức tác phẩm (2.5 giây)
+  useEffect(() => {
+    const currentPoem = spreads[displayedSpreadIdx]?.poem;
+    if (!currentPoem?.id) return;
+
+    const timer = setTimeout(() => {
+      trackPoemView(currentPoem.id, currentPoem.slug);
+    }, 2500);
+
+    return () => clearTimeout(timer);
+  }, [displayedSpreadIdx, spreads]);
 
   // Kết thúc lật trang & cập nhật state đồng bộ chuẩn xác
   const handleAnimationComplete = useCallback((finalSpreadIdx: number) => {
