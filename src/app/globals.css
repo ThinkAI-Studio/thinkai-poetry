@@ -332,12 +332,12 @@ html.theme-transitioning *::after {
 /* 1. MÙA HẠ: Nắng chiếu từ góc & bụi nắng lơ lửng */
 @keyframes sunbeam-pulse {
   0%, 100% {
-    opacity: 0.72;
-    transform: scale(1) rotate(0deg);
+    opacity: 0.70;
+    transform: scale(1);
   }
   50% {
-    opacity: 0.96;
-    transform: scale(1.03) rotate(0.5deg);
+    opacity: 0.92;
+    transform: scale(1.02);
   }
 }
 

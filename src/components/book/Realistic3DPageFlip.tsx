@@ -600,7 +600,7 @@ function BookSummerSunbeam() {
       className="absolute inset-0 w-full h-full pointer-events-none z-20 overflow-hidden select-none rounded-2xl"
     >
       <div
-        className="w-full h-full bg-[radial-gradient(ellipse_100%_80%_at_top_right,rgba(254,240,138,0.15)_0%,rgba(253,224,71,0.05)_45%,transparent_75%)] opacity-85"
+        className="w-full h-full bg-[radial-gradient(ellipse_100%_80%_at_top_right,rgba(254,240,138,0.14)_0%,rgba(253,224,71,0.04)_45%,transparent_75%)] dark:bg-[radial-gradient(ellipse_100%_80%_at_top_right,rgba(251,191,36,0.10)_0%,rgba(245,158,11,0.03)_40%,transparent_70%)] dark:mix-blend-screen mix-blend-soft-light filter blur-[12px] opacity-80"
         style={{
           animation: "sunbeam-pulse 9s ease-in-out infinite",
         }}

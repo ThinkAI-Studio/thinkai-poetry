@@ -80,105 +80,73 @@ SeasonToneOverlay.displayName = "SeasonToneOverlay";
 
 /* =========================================================================
    2. MÙA HẠ: NẮNG CHIẾU TỎA RỘNG (EXPANDED SUMMER SUNBEAMS & GOLDEN MOTES)
-   - Chùm nắng fanning phủ 75-80% viewport từ góc trên bên phải
-   - Các luồng sáng volumetric ray mềm mại không gây lóa mắt
-   - 12 hạt bụi phấn nắng bay lượn tạo không gian mùa hạ rực rỡ
+   - Thiết kế chuẩn mỹ cảm thi ca Sora Labs / Luxury: Êm dịu, thanh thoát, không thô
+   - Hào quang mặt trời & vạt nắng xiên mềm mại (soft volumetric god rays) ở tầng nền z-[2]
+   - Sử dụng gradient nón tán sắc kết hợp bộ lọc blur cực mịn (36px) và blend mode screen
+   - Tuyệt đối không dùng đa giác cứng (polygon) hay dải màu bùn đục trên nền tối
+   - 12 hạt bụi phấn nắng bay lơ lửng ở tầng không gian z-[25]
    ========================================================================= */
 const ExpandedSummerSunbeams = memo(({ prefersReducedMotion }: { prefersReducedMotion: boolean }) => {
   return (
-    <div
-      aria-hidden="true"
-      className="pointer-events-none fixed inset-0 z-[25] overflow-hidden select-none"
-    >
-      {/* Vùng chùm nắng lan tỏa mượt mà toàn màn hình, triệt tiêu hoàn toàn viền hộp/ô vuông */}
+    <>
+      {/* Layer 1: Nắng nền êm dịu (z-[2] — phía sau thi phẩm & card để không chém ngang chữ) */}
       <div
-        className="absolute inset-0 w-full h-full pointer-events-none opacity-90 transition-opacity duration-1000"
-        style={{
-          animation: prefersReducedMotion ? "none" : "sunbeam-pulse 10s ease-in-out infinite",
-        }}
+        aria-hidden="true"
+        className="pointer-events-none fixed inset-0 z-[2] overflow-hidden select-none"
       >
-        <svg
-          viewBox="0 0 1440 900"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-full w-full pointer-events-none"
-          preserveAspectRatio="none"
+        <div
+          className="absolute inset-0 w-full h-full pointer-events-none transition-opacity duration-1000"
+          style={{
+            animation: prefersReducedMotion ? "none" : "sunbeam-pulse 12s ease-in-out infinite",
+            transformOrigin: "95% 5%",
+          }}
         >
-          <defs>
-            {/* Tâm phát sáng mặt trời từ góc trên phải (1440, 0) tan dần về trong suốt */}
-            <radialGradient id="expandedSunGlow" cx="100%" cy="0%" r="85%">
-              <stop offset="0%" stopColor="#FEF08A" stopOpacity="0.28" />
-              <stop offset="25%" stopColor="#FDE047" stopOpacity="0.14" />
-              <stop offset="55%" stopColor="#F59E0B" stopOpacity="0.04" />
-              <stop offset="90%" stopColor="#F59E0B" stopOpacity="0" />
-            </radialGradient>
+          {/* Hào quang vầng dương ấm áp từ góc trên phải */}
+          <div className="absolute top-0 right-0 w-[85vw] max-w-[1200px] h-[75vh] max-h-[900px] bg-[radial-gradient(ellipse_95%_80%_at_100%_0%,rgba(254,240,138,0.18)_0%,rgba(251,191,36,0.08)_35%,rgba(245,158,11,0.02)_65%,transparent_80%)] dark:bg-[radial-gradient(ellipse_95%_80%_at_100%_0%,rgba(251,191,36,0.13)_0%,rgba(245,158,11,0.05)_38%,transparent_75%)] dark:mix-blend-screen mix-blend-soft-light" />
 
-            {/* Các dải gradient tia nắng xiên tỏa rộng */}
-            <linearGradient id="wideBeam1" x1="100%" y1="0%" x2="0%" y2="85%">
-              <stop offset="0%" stopColor="#FFFBEB" stopOpacity="0.20" />
-              <stop offset="40%" stopColor="#FEF08A" stopOpacity="0.10" />
-              <stop offset="75%" stopColor="#FBBF24" stopOpacity="0.02" />
-              <stop offset="100%" stopColor="#FBBF24" stopOpacity="0" />
-            </linearGradient>
-
-            <linearGradient id="wideBeam2" x1="100%" y1="0%" x2="25%" y2="100%">
-              <stop offset="0%" stopColor="#FEF08A" stopOpacity="0.22" />
-              <stop offset="50%" stopColor="#FDE68A" stopOpacity="0.08" />
-              <stop offset="85%" stopColor="#FDE68A" stopOpacity="0" />
-            </linearGradient>
-
-            <linearGradient id="wideBeam3" x1="100%" y1="0%" x2="55%" y2="100%">
-              <stop offset="0%" stopColor="#FFFBEB" stopOpacity="0.24" />
-              <stop offset="45%" stopColor="#FEF08A" stopOpacity="0.09" />
-              <stop offset="85%" stopColor="#FEF08A" stopOpacity="0" />
-            </linearGradient>
-
-            <linearGradient id="wideBeam4" x1="100%" y1="0%" x2="75%" y2="100%">
-              <stop offset="0%" stopColor="#FEF08A" stopOpacity="0.16" />
-              <stop offset="55%" stopColor="#FBBF24" stopOpacity="0.05" />
-              <stop offset="90%" stopColor="#FBBF24" stopOpacity="0" />
-            </linearGradient>
-          </defs>
-
-          {/* Hào quang nền lan tỏa toàn màn hình */}
-          <rect width="1440" height="900" fill="url(#expandedSunGlow)" />
-
-          {/* Tia 1: Tia lớn tỏa rộng sang tận góc dưới trái */}
-          <polygon
-            points="1440,0 1280,0 0,680 0,900"
-            fill="url(#wideBeam1)"
+          {/* Vạt nắng xiên tán sắc mềm mại tự nhiên (Volumetric feathery rays, không cạnh cứng) */}
+          <div
+            className="absolute -top-[15%] -right-[10%] w-[125vw] h-[125vh] pointer-events-none opacity-45 dark:opacity-28 dark:mix-blend-screen mix-blend-soft-light filter blur-[36px] will-change-transform"
+            style={{
+              background: `
+                conic-gradient(
+                  from 195deg at 92% 8%,
+                  transparent 0deg,
+                  rgba(254, 240, 138, 0.22) 10deg,
+                  transparent 18deg,
+                  transparent 26deg,
+                  rgba(253, 224, 71, 0.25) 38deg,
+                  transparent 48deg,
+                  transparent 56deg,
+                  rgba(251, 191, 36, 0.20) 66deg,
+                  transparent 78deg,
+                  transparent 90deg,
+                  rgba(254, 243, 199, 0.18) 102deg,
+                  transparent 114deg,
+                  transparent 360deg
+                )
+              `,
+              maskImage: "radial-gradient(ellipse 95% 95% at 92% 8%, black 20%, transparent 75%)",
+              WebkitMaskImage: "radial-gradient(ellipse 95% 95% at 92% 8%, black 20%, transparent 75%)",
+            }}
           />
 
-          {/* Tia 2: Tia trung tâm rực rỡ */}
-          <polygon
-            points="1440,0 1360,0 200,900 500,900"
-            fill="url(#wideBeam2)"
+          {/* Vầng sáng khuếch tán bổ trợ tạo chiều sâu quang học */}
+          <div
+            className="absolute top-0 right-0 w-[55vw] h-[55vh] pointer-events-none opacity-35 dark:opacity-20 dark:mix-blend-screen mix-blend-soft-light filter blur-[48px]"
+            style={{
+              background: "radial-gradient(circle at top right, rgba(254, 240, 138, 0.3) 0%, rgba(251, 191, 36, 0.1) 40%, transparent 70%)",
+            }}
           />
-
-          {/* Tia 3: Tia phụ giữa */}
-          <polygon
-            points="1440,0 1410,0 580,900 840,900"
-            fill="url(#wideBeam3)"
-          />
-
-          {/* Tia 4: Tia góc phải */}
-          <polygon
-            points="1440,0 1440,140 920,900 1180,900"
-            fill="url(#wideBeam4)"
-          />
-
-          {/* Tia 5: Dải mỏng lấp lánh */}
-          <polygon
-            points="1440,0 1440,320 1060,900 1220,900"
-            fill="url(#wideBeam2)"
-            opacity="0.6"
-          />
-        </svg>
+        </div>
       </div>
 
-      {/* 12 hạt bụi phấn nắng bay lượn đa tầng */}
+      {/* Layer 2: 12 hạt bụi phấn nắng bay lượn tiền cảnh (z-[25]) */}
       {!prefersReducedMotion && (
-        <div className="absolute inset-0 pointer-events-none">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none fixed inset-0 z-[25] overflow-hidden select-none"
+        >
           {[
             { id: "mote-1", right: "15%", top: "18%", size: 3.5, dur: "6.5s", del: "0s" },
             { id: "mote-2", right: "28%", top: "28%", size: 2.5, dur: "7.8s", del: "1.2s" },
@@ -195,7 +163,7 @@ const ExpandedSummerSunbeams = memo(({ prefersReducedMotion }: { prefersReducedM
           ].map((mote) => (
             <span
               key={mote.id}
-              className="absolute rounded-full bg-amber-300/85 dark:bg-yellow-200/75 shadow-[0_0_8px_rgba(253,224,71,0.85)]"
+              className="absolute rounded-full bg-amber-300/80 dark:bg-yellow-200/70 shadow-[0_0_8px_rgba(253,224,71,0.7)]"
               style={{
                 right: mote.right,
                 top: mote.top,
@@ -207,7 +175,7 @@ const ExpandedSummerSunbeams = memo(({ prefersReducedMotion }: { prefersReducedM
           ))}
         </div>
       )}
-    </div>
+    </>
   );
 });
 ExpandedSummerSunbeams.displayName = "ExpandedSummerSunbeams";
