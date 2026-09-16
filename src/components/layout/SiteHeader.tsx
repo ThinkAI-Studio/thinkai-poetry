@@ -99,13 +99,14 @@ export function SiteHeader() {
           className="flex items-center gap-2 sm:gap-3 group select-none cursor-pointer shrink-0"
           title="Trở về đầu trang Wind"
         >
-          <div className="relative w-8 h-8 sm:w-9 sm:h-9 shrink-0 transition-transform duration-200 group-hover:scale-105 active:scale-95 drop-shadow-xs">
+          <div className="relative w-8 h-8 sm:w-9 sm:h-9 shrink-0 transition-transform duration-200 group-hover:scale-105 active:scale-95 drop-shadow-xs flex items-center justify-center">
             <Image
               src="/thinh-va-tho-symbol.png"
               alt="Wind Logo"
-              fill
+              width={36}
+              height={36}
               priority
-              className="object-contain"
+              className="w-8 h-8 sm:w-9 sm:h-9 object-contain"
             />
           </div>
           <div className="flex flex-col min-w-0">

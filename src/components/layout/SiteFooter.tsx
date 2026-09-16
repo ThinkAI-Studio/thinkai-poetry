@@ -11,12 +11,13 @@ export function SiteFooter() {
         {/* Brand & Quote */}
         <div className="flex flex-col items-center md:items-start gap-2">
           <div className="flex items-center gap-2.5">
-            <div className="relative w-7 h-7 shrink-0">
+            <div className="relative w-7 h-7 shrink-0 flex items-center justify-center">
               <Image
                 src="/thinh-va-tho-symbol.png"
                 alt="Wind Logo"
-                fill
-                className="object-contain"
+                width={28}
+                height={28}
+                className="w-7 h-7 object-contain"
               />
             </div>
             <span className="font-serif font-bold text-lg text-neutral-900 dark:text-[#EAE6DF] tracking-tight">

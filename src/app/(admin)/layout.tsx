@@ -33,12 +33,13 @@ export default async function AdminLayout({
         <div className="flex items-center gap-3">
           <Link href="/admin" className="flex items-center gap-2.5 group">
             {/* Logo Biểu tượng Wind */}
-            <div className="relative w-8 h-8 rounded-lg overflow-hidden shrink-0 group-hover:scale-105 transition-transform select-none">
+            <div className="relative w-8 h-8 rounded-lg overflow-hidden shrink-0 group-hover:scale-105 transition-transform select-none flex items-center justify-center">
               <Image
                 src="/thinh-va-tho-symbol.png"
                 alt="Wind Logo"
-                fill
-                className="object-contain"
+                width={32}
+                height={32}
+                className="w-8 h-8 object-contain"
               />
             </div>
             <div className="flex flex-col">
