@@ -99,6 +99,7 @@ export function AdminSidebarNav() {
                   >
                     <Link
                       href={item.href}
+                      prefetch={true}
                       onClick={() => setMobileExpanded(false)}
                       className={cn(
                         "px-3 py-2.5 rounded-xl flex items-center justify-between transition-all select-none",
@@ -151,6 +152,7 @@ export function AdminSidebarNav() {
               <Link
                 key={item.href}
                 href={item.href}
+                prefetch={true}
                 className={cn(
                   "px-3.5 py-2.5 rounded-xl flex items-center gap-3 transition-all select-none",
                   item.highlight && !isActive && "text-amber-800 dark:text-amber-300 border border-amber-600/30 dark:border-amber-400/30 hover:bg-amber-500/10",

@@ -2,6 +2,8 @@ import React from "react";
 import { getCollections } from "@/lib/data-service";
 import { CollectionsClientView } from "./CollectionsClientView";
 
+export const revalidate = 60;
+
 export const metadata = {
   title: "Tuyển Tập Thi Ca & Tản Văn | Wind",
   description: "Khám phá các tập thơ và tản văn chọn lọc đặc sắc của tác giả Thịnh (Wind).",

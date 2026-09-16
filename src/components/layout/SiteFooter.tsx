@@ -31,16 +31,16 @@ export function SiteFooter() {
 
         {/* Links (Hallmark Gate 49: Wrapping and single-line affordance) */}
         <div className="flex flex-wrap justify-center items-center gap-4 sm:gap-6 text-xs font-sans uppercase tracking-wider text-neutral-700 dark:text-[#A6A39C]">
-          <Link href="/collections" className="hover:text-[var(--accent-green)] dark:hover:text-[var(--accent-gold)] transition-colors py-1">
+          <Link href="/collections" prefetch={true} className="hover:text-[var(--accent-green)] dark:hover:text-[var(--accent-gold)] transition-colors py-1">
             Tuyển Tập
           </Link>
-          <Link href="/authors" className="hover:text-[var(--accent-green)] dark:hover:text-[var(--accent-gold)] transition-colors py-1">
+          <Link href="/authors" prefetch={true} className="hover:text-[var(--accent-green)] dark:hover:text-[var(--accent-gold)] transition-colors py-1">
             Tác Giả
           </Link>
-          <Link href="/forum" className="hover:text-[var(--accent-green)] dark:hover:text-[var(--accent-gold)] transition-colors py-1">
+          <Link href="/forum" prefetch={true} className="hover:text-[var(--accent-green)] dark:hover:text-[var(--accent-gold)] transition-colors py-1">
             Diễn Đàn
           </Link>
-          <Link href="/admin" className="hover:text-[var(--accent-green)] dark:hover:text-[var(--accent-gold)] transition-colors py-1 opacity-80">
+          <Link href="/admin" prefetch={true} className="hover:text-[var(--accent-green)] dark:hover:text-[var(--accent-gold)] transition-colors py-1 opacity-80">
             Quản Trị
           </Link>
         </div>

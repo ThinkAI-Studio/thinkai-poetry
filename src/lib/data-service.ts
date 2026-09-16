@@ -28,6 +28,7 @@ function getLocalStoredPoems(): Poem[] {
 }
 
 function saveLocalStoredPoem(poem: Poem) {
+  clearDataCache("poems_");
   try {
     const filePath = path.join(process.cwd(), "src/data/local-poems.json");
     const existing = getLocalStoredPoems();
@@ -49,6 +50,7 @@ function getLocalStoredAuthors(): Author[] {
 }
 
 function saveLocalStoredAuthor(author: Author) {
+  clearDataCache("authors_");
   try {
     const filePath = path.join(process.cwd(), "src/data/local-authors.json");
     const existing = getLocalStoredAuthors();
@@ -92,6 +94,7 @@ function getLocalStoredCollections(): Collection[] {
 }
 
 function saveLocalStoredCollection(collection: Collection) {
+  clearDataCache("collections_");
   try {
     const filePath = path.join(process.cwd(), "src/data/local-collections.json");
     const existing = getLocalStoredCollections();
@@ -101,6 +104,7 @@ function saveLocalStoredCollection(collection: Collection) {
 }
 
 function deleteLocalStoredCollection(id: string) {
+  clearDataCache("collections_");
   try {
     const filePath = path.join(process.cwd(), "src/data/local-collections.json");
     const existing = getLocalStoredCollections();
@@ -134,6 +138,27 @@ function saveLocalStoredCategory(category: Category) {
 const localCollections: Collection[] = [...mockCollections];
 const localAuthors: Author[] = [...mockAuthors];
 const localCategories: Category[] = [...mockCategories];
+
+// High-performance server-side in-memory cache with TTL (eliminates redundant roundtrips to Supabase)
+interface CacheEntry<T> {
+  data: T;
+  timestamp: number;
+}
+
+const MEMORY_CACHE = new Map<string, CacheEntry<any>>();
+const CACHE_TTL_MS = 60 * 1000; // 60 seconds TTL
+
+export function clearDataCache(prefix?: string) {
+  if (!prefix) {
+    MEMORY_CACHE.clear();
+  } else {
+    for (const key of MEMORY_CACHE.keys()) {
+      if (key.startsWith(prefix)) {
+        MEMORY_CACHE.delete(key);
+      }
+    }
+  }
+}
 
 /**
  * Kiểm tra xem Supabase đã được cấu hình khóa API thực tế hay chưa
@@ -268,6 +293,13 @@ export async function getPoems(options?: {
   limit?: number;
   includeDrafts?: boolean;
 }): Promise<Poem[]> {
+  const cacheKey = `poems_${JSON.stringify(options || {})}`;
+  const cached = MEMORY_CACHE.get(cacheKey);
+  if (cached && Date.now() - cached.timestamp < CACHE_TTL_MS) {
+    return cached.data;
+  }
+
+  let results: Poem[] = [];
   if (isSupabaseConfigured()) {
     try {
       const supabase = getSupabaseClient(options?.includeDrafts ?? false);
@@ -295,7 +327,7 @@ export async function getPoems(options?: {
 
       const { data, error } = await query;
       if (!error && data && data.length > 0) {
-        return (data as any[]).map((p) => ({
+        results = (data as any[]).map((p) => ({
           ...p,
           collection_id: p.collection_poems?.[0]?.collection_id || null,
         })) as Poem[];
@@ -305,17 +337,21 @@ export async function getPoems(options?: {
     }
   }
 
-  // Fallback
-  let results = getAllFallbackPoems();
-  if (!options?.includeDrafts) {
-    results = results.filter((p) => p.status === "published");
+  // Fallback nếu Supabase không trả về kết quả
+  if (results.length === 0) {
+    results = getAllFallbackPoems();
+    if (!options?.includeDrafts) {
+      results = results.filter((p) => p.status === "published");
+    }
+    if (options?.formType && options.formType !== "all") {
+      results = results.filter((p) => p.form_type === options.formType);
+    }
+    if (options?.limit) {
+      results = results.slice(0, options.limit);
+    }
   }
-  if (options?.formType && options.formType !== "all") {
-    results = results.filter((p) => p.form_type === options.formType);
-  }
-  if (options?.limit) {
-    results = results.slice(0, options.limit);
-  }
+
+  MEMORY_CACHE.set(cacheKey, { data: results, timestamp: Date.now() });
   return results;
 }
 
@@ -614,6 +650,7 @@ export async function recordPoemView(
           .from("poems")
           .update({ view_count: newViewCount })
           .eq("id", poem.id);
+        clearDataCache("poems_");
       }
     } catch (e: any) {
       console.warn("Lỗi cập nhật lượt đọc trên Supabase:", e);
@@ -642,6 +679,13 @@ export async function recordPoemView(
 // ==============================================================================
 
 export async function getCollections(): Promise<Collection[]> {
+  const cacheKey = "collections_all";
+  const cached = MEMORY_CACHE.get(cacheKey);
+  if (cached && Date.now() - cached.timestamp < CACHE_TTL_MS) {
+    return cached.data;
+  }
+
+  let result: Collection[] = [];
   if (isSupabaseConfigured()) {
     try {
       const supabase = getSupabaseClient();
@@ -657,7 +701,7 @@ export async function getCollections(): Promise<Collection[]> {
         .order("sort_order", { ascending: true });
 
       if (!error && data) {
-        return data.map((col: any) => ({
+        result = data.map((col: any) => ({
           ...col,
           poems_count: col.collection_poems?.length || 0,
           poems: col.collection_poems?.map((cp: any) => cp.poem) || [],
@@ -668,21 +712,26 @@ export async function getCollections(): Promise<Collection[]> {
     }
   }
 
-  const localCols = getLocalStoredCollections();
-  const rawCols = localCols.length > 0 ? localCols : localCollections;
-  const allPoems = getAllFallbackPoems();
+  if (result.length === 0) {
+    const localCols = getLocalStoredCollections();
+    const rawCols = localCols.length > 0 ? localCols : localCollections;
+    const allPoems = getAllFallbackPoems();
 
-  return rawCols.map((col) => {
-    const colPoems = allPoems.filter(
-      (p) => p.collection_id === col.id || (p as any).collection?.id === col.id
-    );
-    return {
-      ...col,
-      type: col.type || "poetry",
-      poems_count: colPoems.length,
-      poems: colPoems,
-    };
-  });
+    result = rawCols.map((col) => {
+      const colPoems = allPoems.filter(
+        (p) => p.collection_id === col.id || (p as any).collection?.id === col.id
+      );
+      return {
+        ...col,
+        type: col.type || "poetry",
+        poems_count: colPoems.length,
+        poems: colPoems,
+      };
+    });
+  }
+
+  MEMORY_CACHE.set(cacheKey, { data: result, timestamp: Date.now() });
+  return result;
 }
 
 export async function getCollectionBySlug(slug: string): Promise<Collection | null> {
@@ -891,6 +940,13 @@ export async function deleteCollection(
 // ==============================================================================
 
 export async function getAuthors(): Promise<Author[]> {
+  const cacheKey = "authors_all";
+  const cached = MEMORY_CACHE.get(cacheKey);
+  if (cached && Date.now() - cached.timestamp < CACHE_TTL_MS) {
+    return cached.data;
+  }
+
+  let result: Author[] = [];
   if (isSupabaseConfigured()) {
     try {
       const supabase = getSupabaseClient();
@@ -900,14 +956,19 @@ export async function getAuthors(): Promise<Author[]> {
         .order("created_at", { ascending: true });
 
       if (!error && data && data.length > 0) {
-        return data as Author[];
+        result = data as Author[];
       }
     } catch (e) {
       console.warn("Lỗi getAuthors từ Supabase:", e);
     }
   }
 
-  return getLocalStoredAuthors();
+  if (result.length === 0) {
+    result = getLocalStoredAuthors();
+  }
+
+  MEMORY_CACHE.set(cacheKey, { data: result, timestamp: Date.now() });
+  return result;
 }
 
 export async function getAuthorBySlug(slug: string): Promise<Author | null> {

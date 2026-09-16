@@ -5,7 +5,7 @@ import { ArrowRoll } from "@/components/tai-ui/ArrowRoll";
 import { TiltCard } from "@/components/tai-ui/TiltCard";
 import { AuthorHeroWithAdminAccess } from "@/components/author/AuthorHeroWithAdminAccess";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export const metadata = {
   title: "Tác Giả | Wind",
@@ -13,8 +13,7 @@ export const metadata = {
 };
 
 export default async function AuthorsPage() {
-  const authors = await getAuthors();
-  const allPoems = await getPoems();
+  const [authors, allPoems] = await Promise.all([getAuthors(), getPoems()]);
   const author = authors[0];
   // Chỉ hiển thị những thi phẩm đã xuất bản và tác giả cho phép hiện thông tin tác giả
   const poems = allPoems.filter((p) => p.status === "published" && p.show_author_info !== false);

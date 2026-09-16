@@ -125,6 +125,7 @@ export function SiteHeader() {
             <Link
               key={link.href}
               href={link.href}
+              prefetch={true}
               className="text-sm font-sans font-medium text-neutral-800 dark:text-[#A6A39C] hover:text-[var(--accent-green)] dark:hover:text-[var(--accent-gold)] transition-colors focus-visible:outline-2 focus-visible:outline-[var(--color-focus)] rounded-sm whitespace-nowrap"
             >
               {link.label}
@@ -206,6 +207,7 @@ export function SiteHeader() {
               >
                 <Link
                   href={link.href}
+                  prefetch={true}
                   onClick={() => setMobileOpen(false)}
                   className="font-serif text-base text-neutral-800 dark:text-[#EAE6DF] hover:text-[var(--accent-green)] dark:hover:text-[var(--accent-gold)] py-2.5 border-b border-neutral-200/50 dark:border-white/10 flex items-center justify-between transition-colors"
                 >
