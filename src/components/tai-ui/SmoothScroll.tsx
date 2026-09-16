@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 import Lenis from "lenis";
 
 interface SmoothScrollProps {
@@ -9,6 +10,7 @@ interface SmoothScrollProps {
 
 export function SmoothScroll({ isLocked = false }: SmoothScrollProps) {
   const lenisRef = useRef<Lenis | null>(null);
+  const pathname = usePathname();
 
   useEffect(() => {
     // Khởi tạo cuộn mượt Lenis 120Hz
@@ -81,6 +83,22 @@ export function SmoothScroll({ isLocked = false }: SmoothScrollProps) {
       lenisRef.current.start();
     }
   }, [isLocked]);
+
+  // Cuộn lên đầu trang mượt mà ngay khi đổi route (trừ khi có hash anchor)
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.location.hash) {
+      const el = document.querySelector(window.location.hash);
+      if (el && lenisRef.current) {
+        lenisRef.current.scrollTo(el as HTMLElement, { immediate: true });
+        return;
+      }
+    }
+    if (lenisRef.current) {
+      lenisRef.current.scrollTo(0, { immediate: true });
+    } else if (typeof window !== "undefined") {
+      window.scrollTo(0, 0);
+    }
+  }, [pathname]);
 
   return null;
 }
